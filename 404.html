@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — deze vla bestaat niet</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f2a63b">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff7e9;--bg2:#ffeccd;--ink:#2b2119;--muted:#8b7a66;--accent:#f2a63b}
+:root:not([data-theme="light"]){@media (prefers-color-scheme:dark){
+  :root{--bg:#16120e;--bg2:#1e1812;--ink:#f6eee2;--muted:#a3927c}
+}}
+@media (prefers-color-scheme:dark){:root{--bg:#16120e;--bg2:#1e1812;--ink:#f6eee2;--muted:#a3927c}}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;
+  background:var(--bg);background-image:radial-gradient(900px 500px at 50% -160px,var(--bg2),transparent 70%);
+  color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;
+}
+.box{max-width:30rem}
+svg{width:120px;height:auto;transform:rotate(14deg);filter:drop-shadow(0 12px 16px rgba(43,33,25,.22));margin-bottom:26px}
+h1{font-family:Fredoka,sans-serif;font-weight:600;font-size:clamp(28px,7vw,40px);margin:0 0 12px;line-height:1.1}
+p{color:var(--muted);font-size:16px;margin:0 0 10px;line-height:1.6}
+a.btn{
+  display:inline-block;margin-top:22px;font-family:Fredoka,sans-serif;font-weight:600;font-size:17px;
+  background:var(--accent);color:#2b2119;text-decoration:none;border-radius:14px;padding:14px 26px;
+  box-shadow:0 3px 0 rgba(0,0,0,.14);transition:transform .12s,box-shadow .12s;
+}
+a.btn:active{transform:translateY(3px);box-shadow:0 0 0}
+small{display:block;margin-top:26px;color:var(--muted);opacity:.75;font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="box">
+  <svg viewBox="0 0 120 152" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d8d2c8"/><stop offset="100%" stop-color="#8d8478"/>
+    </linearGradient></defs>
+    <path d="M22 38 L60 12 L98 38 Z" fill="url(#g)"/>
+    <path d="M60 12 L98 38 L60 38 Z" fill="rgba(0,0,0,.14)"/>
+    <rect x="52" y="8" width="16" height="7" rx="3" fill="rgba(0,0,0,.22)"/>
+    <path d="M22 37 h76 v100 a7 7 0 0 1 -7 7 h-62 a7 7 0 0 1 -7 -7 Z" fill="url(#g)"/>
+    <path d="M84 37 h14 v100 a7 7 0 0 1 -7 7 h-7 Z" fill="rgba(0,0,0,.13)"/>
+    <text x="60" y="56" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="22" fill="rgba(255,255,255,.75)">?</text>
+    <rect x="29" y="68" width="62" height="46" rx="7" fill="#fffaf0" opacity=".94"/>
+    <text x="60" y="97" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="16" fill="#33261b">404</text>
+  </svg>
+  <h1>Deze vla bestaat niet</h1>
+  <p>Je zocht iets wat hier niet in de koelkast staat. Misschien heeft iemand het opgedronken, misschien heeft het er nooit gestaan.</p>
+  <p>Bij twijfel: gewoon opnieuw beginnen.</p>
+  <a class="btn" href="/">← Terug naar de vla</a>
+  <small>houdbarevla.nl</small>
+</div>
+</body>
+</html>
