@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Houdbare Vla — is jouw vla nog goed?</title>
+<meta name="description" content="Kies je vla, vul de houdbaarheidsdatum in en ontdek of je 'm nog kunt drinken. Wetenschappelijk onverantwoord.">
+<meta property="og:title" content="Houdbare Vla">
+<meta property="og:description" content="Is jouw vla nog goed? Check het in 10 seconden.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f2a63b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍮%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7e9;
+  --bg2:#ffeccd;
+  --card:#ffffff;
+  --ink:#2b2119;
+  --muted:#8b7a66;
+  --accent:#f2a63b;
+  --accent-ink:#2b2119;
+  --line:rgba(43,33,25,.10);
+  --shadow:0 2px 0 rgba(43,33,25,.06), 0 12px 28px -12px rgba(43,33,25,.25);
+  --ok:#2e9e5b;
+  --warn:#e08a1e;
+  --bad:#d94a3d;
+  --radius:18px;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#16120e;
+    --bg2:#1e1812;
+    --card:#241d16;
+    --ink:#f6eee2;
+    --muted:#a3927c;
+    --line:rgba(246,238,226,.12);
+    --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
+    --ok:#4ec47c;
+    --warn:#f0ab45;
+    --bad:#f4695b;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16120e; --bg2:#1e1812; --card:#241d16; --ink:#f6eee2; --muted:#a3927c;
+  --line:rgba(246,238,226,.12);
+  --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
+  --ok:#4ec47c; --warn:#f0ab45; --bad:#f4695b;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  background-image:radial-gradient(1200px 600px at 50% -200px, var(--bg2), transparent 70%);
+  color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:Fredoka,Inter,sans-serif;font-weight:600;letter-spacing:-.01em}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
+
+/* ---------- header ---------- */
+header{padding:34px 0 18px;text-align:center}
+.logo{display:inline-flex;align-items:center;gap:10px;font-family:Fredoka;font-weight:700;font-size:clamp(28px,6vw,44px);line-height:1.05}
+.logo .blob{
+  width:1.1em;height:1.1em;border-radius:46% 54% 52% 48%/48% 44% 56% 52%;
+  background:linear-gradient(160deg,#ffe193,var(--accent));
+  box-shadow:inset 0 -6px 12px rgba(0,0,0,.12);
+  animation:wobble 6s ease-in-out infinite;
+  flex:none;
+}
+@keyframes wobble{0%,100%{border-radius:46% 54% 52% 48%/48% 44% 56% 52%}50%{border-radius:54% 46% 44% 56%/56% 52% 48% 44%}}
+.tagline{color:var(--muted);margin:10px auto 0;max-width:42ch;font-size:15px}
+
+/* ---------- stepper ---------- */
+.steps{display:flex;align-items:center;justify-content:center;gap:6px;margin:22px 0 6px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);font-weight:500}
+.step .dot{
+  width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  background:var(--card);border:1.5px solid var(--line);font-size:11px;font-weight:600;
+}
+.step.on{color:var(--ink)}
+.step.on .dot{background:var(--accent);border-color:var(--accent);color:#2b2119}
+.step .bar{width:18px;height:2px;border-radius:2px;background:var(--line)}
+
+/* ---------- panels ---------- */
+.panel{display:none;animation:rise .35s cubic-bezier(.2,.8,.3,1) both}
+.panel.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px;
+}
+h2.section{font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 16px}
+
+/* ---------- search ---------- */
+.searchrow{position:relative;margin-bottom:12px}
+.searchrow svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.45;pointer-events:none}
+input[type="search"],input[type="date"]{
+  width:100%;font:inherit;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--line);border-radius:14px;padding:13px 14px 13px 42px;
+  outline:none;transition:border-color .15s, box-shadow .15s;
+}
+input[type="date"]{padding-left:14px;font-family:Fredoka;font-size:18px;text-align:center}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(242,166,59,.18)}
+input[type="search"]::-webkit-search-cancel-button{filter:grayscale(1);opacity:.5}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{
+  font:inherit;font-size:13px;font-weight:500;cursor:pointer;
+  background:transparent;color:var(--muted);
+  border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;
+  transition:.15s;
+}
+.chip:hover{color:var(--ink);border-color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#2b2119;font-weight:600}
+
+/* ---------- grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+.vla{
+  background:transparent;border:1.5px solid var(--line);border-radius:16px;
+  padding:10px 8px 12px;cursor:pointer;font:inherit;color:inherit;text-align:center;
+  transition:transform .16s cubic-bezier(.2,.8,.3,1), border-color .16s, box-shadow .16s, background .16s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.vla:hover{transform:translateY(-4px) rotate(-1deg);border-color:var(--accent);box-shadow:var(--shadow)}
+.vla:active{transform:translateY(-1px) scale(.98)}
+.vla svg{width:82px;height:auto;display:block;filter:drop-shadow(0 6px 8px rgba(43,33,25,.14))}
+.vla .merk{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;line-height:1.2}
+.vla .soort{font-family:Fredoka;font-weight:600;font-size:13.5px;line-height:1.2}
+.empty{text-align:center;color:var(--muted);padding:34px 10px;font-size:14px;grid-column:1/-1}
+
+/* ---------- step 2 ---------- */
+.chosen{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px dashed var(--line)}
+.chosen svg{width:74px;height:auto;flex:none;filter:drop-shadow(0 6px 8px rgba(43,33,25,.16))}
+.chosen .txt{min-width:0}
+.chosen .merk{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.chosen .soort{font-family:Fredoka;font-weight:600;font-size:20px;line-height:1.2}
+.chosen .change{margin-top:4px;background:none;border:none;padding:0;font:inherit;font-size:13px;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
+.hint{color:var(--muted);font-size:13px;margin:8px 0 0}
+.check{display:flex;align-items:flex-start;gap:10px;margin:18px 0 0;cursor:pointer;font-size:14px;user-select:none}
+.check input{appearance:none;width:20px;height:20px;flex:none;margin:1px 0 0;border:1.5px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;transition:.15s}
+.check input:checked{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{content:"✓";display:block;text-align:center;line-height:17px;font-size:13px;color:#2b2119;font-weight:700}
+
+.btn{
+  width:100%;margin-top:20px;font:inherit;font-family:Fredoka;font-weight:600;font-size:17px;
+  background:var(--accent);color:#2b2119;border:none;border-radius:14px;padding:15px;cursor:pointer;
+  box-shadow:0 3px 0 rgba(0,0,0,.14);transition:transform .12s, box-shadow .12s, filter .12s;
+}
+.btn:hover{filter:brightness(1.05)}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0 rgba(0,0,0,.14)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);box-shadow:none;font-size:15px}
+.btn.ghost:active{transform:translateY(1px)}
+.btnrow{display:flex;gap:10px}
+.btnrow .btn{flex:1}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
+.shake{animation:shake .5s}
+
+/* ---------- result ---------- */
+.verdict{text-align:center;padding:6px 0 4px}
+.verdict .face{font-size:58px;line-height:1;animation:pop .5s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes pop{from{transform:scale(.3) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
+.verdict h2{font-size:clamp(26px,7vw,38px);margin:12px 0 6px;line-height:1.1}
+.verdict .days{font-size:15px;color:var(--muted);margin:0}
+.verdict.ok h2{color:var(--ok)}
+.verdict.warn h2{color:var(--warn)}
+.verdict.bad h2{color:var(--bad)}
+
+.resultpack{display:flex;justify-content:center;margin:14px 0 2px}
+.resultpack svg{width:108px;height:auto;filter:drop-shadow(0 10px 14px rgba(43,33,25,.2))}
+.resultpack.rot svg{animation:tumble 1.2s ease-in-out both}
+@keyframes tumble{0%{transform:none}60%{transform:rotate(96deg) translateY(10px)}100%{transform:rotate(90deg) translateY(10px)}}
+
+.meter{margin:22px 0 4px}
+.meter .top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px}
+.meter .track{height:12px;border-radius:999px;background:linear-gradient(90deg,var(--bad),var(--warn) 45%,var(--ok));position:relative;opacity:.28}
+.meter .knob{position:absolute;top:50%;width:20px;height:20px;border-radius:50%;background:var(--card);border:3px solid var(--ink);transform:translate(-50%,-50%);transition:left .9s cubic-bezier(.2,.9,.3,1)}
+.meter .wrapper{position:relative}
+.meter .wrapper .knob{opacity:1}
+.meter .score{text-align:center;font-family:Fredoka;font-weight:600;font-size:14px;margin-top:12px;color:var(--muted)}
+
+.advice{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:9px}
+.advice li{
+  display:flex;gap:10px;align-items:flex-start;font-size:14.5px;
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+}
+.advice li .ic{flex:none;font-size:16px;line-height:1.35}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);
+  background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:500;
+  opacity:0;pointer-events:none;transition:.25s;z-index:60;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.confetti i{position:absolute;top:-24px;width:9px;height:14px;border-radius:2px;opacity:.95;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+
+footer{text-align:center;color:var(--muted);font-size:13px;margin-top:34px;line-height:1.7}
+footer strong{color:var(--ink);font-weight:600}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;background:var(--card);border:1.5px solid var(--line);border-radius:999px;width:38px;height:38px;cursor:pointer;font-size:16px;line-height:1;color:var(--ink)}
+@media (max-width:420px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+  .vla svg{width:70px}
+  .card{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<button class="themetoggle" id="themeBtn" title="Licht / donker" aria-label="Wissel thema">🌙</button>
+
+<div class="wrap">
+  <header>
+    <div class="logo"><span class="blob"></span> Houdbare&nbsp;Vla</div>
+    <p class="tagline">Twijfel je of die vla in de koelkast nog kan? Wij rekenen het voor je uit. Met vla-wetenschap van het allerhoogste niveau.</p>
+    <nav class="steps" aria-label="Stappen">
+      <div class="step on" data-step="1"><span class="dot">1</span> Kies je vla</div>
+      <span class="bar"></span>
+      <div class="step" data-step="2"><span class="dot">2</span> Datum</div>
+      <span class="bar"></span>
+      <div class="step" data-step="3"><span class="dot">3</span> Oordeel</div>
+    </nav>
+  </header>
+
+  <!-- STAP 1 -->
+  <section class="panel active card" id="panel1" aria-labelledby="t1">
+    <h2 class="section" id="t1">Welke vla staat er in je koelkast?</h2>
+    <p class="sub">Zoek op merk of soort, of blader lekker rond.</p>
+
+    <div class="searchrow">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" id="zoek" placeholder="Zoek je vla… (bijv. chocolade)" autocomplete="off" aria-label="Zoek vla">
+    </div>
+
+    <div class="chips" id="chips"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- STAP 2 -->
+  <section class="panel card" id="panel2" aria-labelledby="t2">
+    <div class="chosen" id="chosen"></div>
+    <h2 class="section" id="t2">Wat staat er op het pak?</h2>
+    <p class="sub">Vul de houdbaarheidsdatum in (THT / "te gebruiken tot").</p>
+
+    <label class="fld" for="datum">Houdbaarheidsdatum</label>
+    <input type="date" id="datum" aria-describedby="datumhint">
+    <p class="hint" id="datumhint">Staat meestal op de bovenkant van het pak, in kleine lettertjes waar je een bril voor nodig hebt.</p>
+
+    <label class="check"><input type="checkbox" id="open"> <span>Het pak is al open (en staat er inmiddels… een tijdje)</span></label>
+
+    <button class="btn" id="checkBtn">Bereken mijn vla-status</button>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="btn ghost" id="terug1">← Andere vla kiezen</button>
+    </div>
+  </section>
+
+  <!-- STAP 3 -->
+  <section class="panel card" id="panel3" aria-labelledby="t3">
+    <div class="resultpack" id="resultpack"></div>
+    <div class="verdict" id="verdict">
+      <div class="face" id="face">🍮</div>
+      <h2 id="t3">—</h2>
+      <p class="days" id="days"></p>
+    </div>
+
+    <div class="meter">
+      <div class="top"><span>Onverantwoord</span><span>Kraakvers</span></div>
+      <div class="wrapper">
+        <div class="track"></div>
+        <div class="knob" id="knob" style="left:50%"></div>
+      </div>
+      <div class="score" id="score"></div>
+    </div>
+
+    <ul class="advice" id="advice"></ul>
+
+    <div class="btnrow" style="margin-top:22px">
+      <button class="btn ghost" id="kopieer">Kopieer uitslag</button>
+      <button class="btn" id="opnieuw">Nog een vla</button>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>houdbarevla.nl</strong> — voor de grap gemaakt, niet voor de voedselveiligheid.<br>
+    Bij twijfel: ruiken. Bij sterke twijfel: gootsteen. Bij bruisende vla: rennen.</p>
+    <p style="opacity:.75">Geen enkel zuivelmerk was betrokken bij deze website. De pakken zijn met de hand getekend en lijken alleen maar op vla omdat vla er nu eenmaal zo uitziet.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DE VLA-DATABASE ============ */
+const VLAS = [
+  {merk:'Campina', soort:'Vanillevla',        groep:'Campina',  c1:'#ffe9a8', c2:'#efc043'},
+  {merk:'Campina', soort:'Chocoladevla',      groep:'Campina',  c1:'#8f5c34', c2:'#4b2b17'},
+  {merk:'Campina', soort:'Goudvla',           groep:'Campina',  c1:'#ffd583', c2:'#dd8f0e'},
+  {merk:'Campina', soort:'Hopjesvla',         groep:'Campina',  c1:'#d9a86c', c2:'#8a5c25'},
+  {merk:'Campina', soort:'Dubbelvla',         groep:'Campina',  c1:'#efc043', c2:'#5a3520', split:true},
+  {merk:'Campina', soort:'Roomvla',           groep:'Campina',  c1:'#fff6e2', c2:'#f0dcb4'},
+  {merk:'Campina', soort:'Aardbeienvla',      groep:'Campina',  c1:'#ffb3c0', c2:'#e0556f'},
+  {merk:'Campina', soort:'Bananenvla',        groep:'Campina',  c1:'#fdefa0', c2:'#eccd35'},
+  {merk:'Campina', soort:'Karamelvla',        groep:'Campina',  c1:'#f0bd77', c2:'#c1732a'},
+  {merk:'Campina', soort:'Mokkavla',          groep:'Campina',  c1:'#a07a57', c2:'#5b3d28'},
+  {merk:'Optimel', soort:'Vanille (mager)',   groep:'Optimel',  c1:'#e6f2f7', c2:'#9fd0e4'},
+  {merk:'Optimel', soort:'Chocolade (mager)', groep:'Optimel',  c1:'#cbd9de', c2:'#7c6250'},
+  {merk:'Albert Heijn', soort:'Vanillevla',   groep:'Huismerk', c1:'#ffeeb0', c2:'#2f6fc4'},
+  {merk:'Albert Heijn', soort:'Chocoladevla', groep:'Huismerk', c1:'#7b5335', c2:'#1f4d8f'},
+  {merk:'Jumbo',   soort:'Vanillevla',        groep:'Huismerk', c1:'#ffe9a0', c2:'#d9b428'},
+  {merk:'Melkan',  soort:'Vanillevla',        groep:'Huismerk', c1:'#fff0bd', c2:'#e2b83c'},
+  {merk:'Lidl',    soort:'Chocoladevla',      groep:'Huismerk', c1:'#8b5b38', c2:'#3a2214'},
+  {merk:'Biologisch', soort:'Volle vanillevla',groep:'Huismerk',c1:'#f3ecd4', c2:'#a8b06a'},
+  {merk:'Zelfgemaakt', soort:'Vla van oma',   groep:'Bijzonder',c1:'#ffeec2', c2:'#e0a94e'},
+  {merk:'Vlaflip', soort:'Vla met limonade',  groep:'Bijzonder',c1:'#ffd85e', c2:'#e8467f', split:true},
+  {merk:'Mona',    soort:'Toetje (geen vla)', groep:'Bijzonder',c1:'#f6e7d2', c2:'#b98a5e', nietVla:true},
+  {merk:'Onbekend',soort:'Vla zonder etiket', groep:'Bijzonder',c1:'#d8d2c8', c2:'#8d8478', mysterie:true},
+];
+
+/* ============ PAK TEKENEN ============ */
+let uid = 0;
+function wrap(t, max){
+  const w = t.split(' '); const lines = []; let cur = '';
+  for (const word of w){
+    if ((cur + ' ' + word).trim().length > max && cur){ lines.push(cur); cur = word; }
+    else cur = (cur ? cur + ' ' : '') + word;
+  }
+  if (cur) lines.push(cur);
+  return lines.slice(0,2);
+}
+function pack(v, size){
+  const id = 'g' + (uid++);
+  const stops = v.split
+    ? `<stop offset="50%" stop-color="${v.c1}"/><stop offset="50%" stop-color="${v.c2}"/>`
+    : `<stop offset="0%" stop-color="${v.c1}"/><stop offset="100%" stop-color="${v.c2}"/>`;
+  const lines = wrap(v.soort.replace(/\s*\(.*\)/, ''), 12);
+  const fs = lines.some(l => l.length > 10) ? 7.6 : 8.6;
+  const label = lines.map((l, i) =>
+    `<text x="60" y="${99 + i * 10.5 - (lines.length - 1) * 5}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="${fs}" fill="#33261b">${esc(l)}</text>`
+  ).join('');
+  const mark = v.mysterie
+    ? `<text x="60" y="53" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="22" fill="rgba(255,255,255,.75)">?</text>`
+    : `<ellipse cx="60" cy="52" rx="17" ry="7" fill="rgba(255,255,255,.3)"/><ellipse cx="60" cy="50" rx="11" ry="4.5" fill="rgba(255,255,255,.45)"/>`;
+  return `<svg viewBox="0 0 120 152" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(v.merk)} ${esc(v.soort)}">
+  <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">${stops}</linearGradient></defs>
+  <path d="M22 38 L60 12 L98 38 Z" fill="url(#${id})"/>
+  <path d="M60 12 L98 38 L60 38 Z" fill="rgba(0,0,0,.14)"/>
+  <rect x="52" y="8" width="16" height="7" rx="3" fill="rgba(0,0,0,.22)"/>
+  <path d="M22 37 h76 v100 a7 7 0 0 1 -7 7 h-62 a7 7 0 0 1 -7 -7 Z" fill="url(#${id})"/>
+  <path d="M84 37 h14 v100 a7 7 0 0 1 -7 7 h-7 Z" fill="rgba(0,0,0,.13)"/>
+  <path d="M26 37 h6 v107 h-1 a6 6 0 0 1 -5 -6 Z" fill="rgba(255,255,255,.22)"/>
+  ${mark}
+  <rect x="29" y="68" width="62" height="46" rx="7" fill="#fffaf0" opacity=".94"/>
+  <text x="60" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="6" letter-spacing=".9" fill="#9d8d78">${esc(v.merk.toUpperCase())}</text>
+  ${label}
+  <text x="60" y="109" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="5" letter-spacing=".7" fill="#b7a894">1 LITER</text>
+  <rect x="29" y="122" width="62" height="3" rx="1.5" fill="rgba(255,255,255,.4)"/>
+</svg>`;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ============ STAP 1: GRID ============ */
+const grid = document.getElementById('grid');
+const zoek = document.getElementById('zoek');
+const chipsEl = document.getElementById('chips');
+let filterGroep = 'Alles';
+let gekozen = null;
+
+const groepen = ['Alles', ...[...new Set(VLAS.map(v => v.groep))]];
+chipsEl.innerHTML = groepen.map(g =>
+  `<button class="chip${g === 'Alles' ? ' on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
+chipsEl.addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  filterGroep = b.dataset.g;
+  chipsEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b));
+  render();
+});
+
+function render(){
+  const q = zoek.value.trim().toLowerCase();
+  const list = VLAS.filter(v =>
+    (filterGroep === 'Alles' || v.groep === filterGroep) &&
+    (!q || (v.merk + ' ' + v.soort + ' ' + v.groep).toLowerCase().includes(q))
+  );
+  if (!list.length){
+    grid.innerHTML = `<p class="empty">Geen vla gevonden. 😔<br>Probeer "vanille", "chocolade" — of kies <em>Vla zonder etiket</em> bij Bijzonder.</p>`;
+    return;
+  }
+  grid.innerHTML = list.map(v => `
+    <button class="vla" data-key="${esc(v.merk + '|' + v.soort)}">
+      ${pack(v)}
+      <span>
+        <span class="merk">${esc(v.merk)}</span><br>
+        <span class="soort">${esc(v.soort)}</span>
+      </span>
+    </button>`).join('');
+}
+grid.addEventListener('click', e => {
+  const b = e.target.closest('.vla'); if (!b) return;
+  const [merk, soort] = b.dataset.key.split('|');
+  kies(VLAS.find(v => v.merk === merk && v.soort === soort));
+});
+zoek.addEventListener('input', render);
+zoek.addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ const first = grid.querySelector('.vla'); if (first) first.click(); }
+});
+render();
+
+/* ============ NAVIGATIE ============ */
+function ga(n){
+  document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n - 1));
+  document.querySelectorAll('.step').forEach(s => s.classList.toggle('on', +s.dataset.step <= n));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function kies(v){
+  gekozen = v;
+  document.getElementById('chosen').innerHTML = `
+    ${pack(v)}
+    <div class="txt">
+      <div class="merk">${esc(v.merk)}</div>
+      <div class="soort">${esc(v.soort)}</div>
+      <button class="change" id="changeBtn">verkeerde vla? wijzig</button>
+    </div>`;
+  document.getElementById('changeBtn').onclick = () => ga(1);
+  ga(2);
+  setTimeout(() => document.getElementById('datum').focus(), 300);
+}
+document.getElementById('terug1').onclick = () => ga(1);
+
+/* ============ DE VLA-WETENSCHAP ============ */
+function oordeel(d, open, v){
+  let r;
+  if (d > 30)      r = { k:'ok',   face:'🛡️', titel:'Deze vla overleeft jou',      tekst:'Deze vla is jonger dan de meeste van je plannen.' };
+  else if (d > 7)  r = { k:'ok',   face:'😎', titel:'Kraakvers',                   tekst:'Gewoon drinken. Uit het pak mag ook, wij kijken niet.' };
+  else if (d > 1)  r = { k:'ok',   face:'🙂', titel:'Nog prima houdbaar',          tekst:'Maar de klok tikt zachtjes mee.' };
+  else if (d === 1)r = { k:'warn', face:'⏳', titel:'Morgen is het zover',         tekst:'Dit is je laatste rustige vla-avond.' };
+  else if (d === 0)r = { k:'warn', face:'🚨', titel:'Vandaag. Nu. Meteen.',        tekst:'Vla van vandaag is vla van nu.' };
+  else if (d >= -2)r = { k:'warn', face:'🤨', titel:'Nét over datum',              tekst:'THT is geen alarm, het is een suggestie. Een zeer nadrukkelijke suggestie.' };
+  else if (d >= -7)r = { k:'warn', face:'😬', titel:'Grensgebied',                 tekst:'Ruiken, schudden, en dan een moedig besluit nemen.' };
+  else if (d >= -30)r= { k:'bad',  face:'☠️', titel:'Over datum',                  tekst:'Dit is geen toetje meer, dit is een experiment.' };
+  else             r = { k:'bad',  face:'🧪', titel:'Dit is geen vla meer',        tekst:'Dit is een huisdier. Geef het een naam en laat het gaan.' };
+
+  const tips = [];
+  if (d >= 0){
+    tips.push(['🥛', 'Bewaar bij 4–7 °C. De koelkastdeur is géén koelkast.']);
+    tips.push(['🥄', 'Vlaflip maken mag altijd: vla, yoghurt, een scheut limonadesiroop.']);
+  } else {
+    tips.push(['👃', 'Ruiktest: zuur, gistig of "interessant" = weggooien.']);
+    tips.push(['👀', 'Kijktest: bolle verpakking, klontjes of kleurtjes die er niet horen? Niet openen boven je gezicht.']);
+    if (d < -7) tips.push(['🚮', 'Serieus: bij zuivel zo ver over datum is de gootsteen de beste smaakmaker.']);
+  }
+  if (open) tips.push(['📦', 'Open pak? Dan telt de THT niet meer. Reken op 2–3 dagen na openen, en niet meer dan dat.']);
+  if (v.nietVla) tips.push(['🤨', 'Kleine kanttekening: dit is strikt genomen een toetje, geen vla. Wij beoordelen het toch, want wij zijn ruimdenkend.']);
+  if (v.mysterie) tips.push(['🕵️', 'Een pak zonder etiket is per definitie verdacht. Vla hoort niet anoniem te zijn.']);
+  if (d > 30) tips.push(['🗓️', 'Je hebt ' + d + ' dagen om iets leuks met deze vla te doen. Gebruik ze.']);
+  return { ...r, tips };
+}
+
+document.getElementById('checkBtn').onclick = () => {
+  const inp = document.getElementById('datum');
+  if (!inp.value){
+    inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+    toast('Vul eerst de houdbaarheidsdatum in 📅');
+    inp.focus();
+    return;
+  }
+  const open = document.getElementById('open').checked;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tht = new Date(inp.value + 'T00:00:00');
+  const d = Math.round((tht - today) / 86400000);
+  toon(d, open);
+};
+document.getElementById('datum').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('checkBtn').click();
+});
+
+let laatsteTekst = '';
+function toon(d, open){
+  const v = gekozen;
+  const o = oordeel(d, open, v);
+  let score = d >= 0 ? Math.min(100, 58 + d * 1.6) : Math.max(1, 58 + d * 2.6);
+  if (open) score = Math.max(1, score - 22);
+  score = Math.round(score);
+
+  document.getElementById('resultpack').innerHTML = pack(v);
+  document.getElementById('resultpack').classList.toggle('rot', o.k === 'bad');
+  document.getElementById('face').textContent = o.face;
+  document.getElementById('t3').textContent = o.titel;
+  document.getElementById('verdict').className = 'verdict ' + o.k;
+
+  const dagen = d === 0 ? 'De houdbaarheidsdatum is vandaag.'
+    : d > 0 ? `Nog ${d} ${d === 1 ? 'dag' : 'dagen'} te gaan.`
+    : `${Math.abs(d)} ${Math.abs(d) === 1 ? 'dag' : 'dagen'} over datum.`;
+  document.getElementById('days').textContent = dagen + ' ' + o.tekst;
+
+  setTimeout(() => { document.getElementById('knob').style.left = score + '%'; }, 120);
+  document.getElementById('score').textContent = `Vla-score: ${score}/100${open ? ' (−22 want het pak is al open)' : ''}`;
+  document.getElementById('advice').innerHTML = o.tips
+    .map(t => `<li><span class="ic">${t[0]}</span><span>${esc(t[1])}</span></li>`).join('');
+
+  laatsteTekst = `${v.merk} ${v.soort}: ${o.titel.toUpperCase()} — ${dagen} Vla-score ${score}/100. Gecheckt op houdbarevla.nl`;
+  ga(3);
+  if (o.k === 'ok') confetti(v);
+}
+
+document.getElementById('opnieuw').onclick = () => {
+  document.getElementById('datum').value = '';
+  document.getElementById('open').checked = false;
+  ga(1);
+};
+document.getElementById('kopieer').onclick = async () => {
+  try { await navigator.clipboard.writeText(laatsteTekst); toast('Uitslag gekopieerd 📋'); }
+  catch { toast('Kopiëren lukte niet 🤷'); }
+};
+
+/* ============ EXTRAATJES ============ */
+let toastT;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200);
+}
+function confetti(v){
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  const kleuren = [v.c1, v.c2, '#f2a63b', '#fff3d6'];
+  for (let i = 0; i < 34; i++){
+    const p = document.createElement('i');
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = kleuren[i % kleuren.length];
+    p.style.animationDuration = (1.5 + Math.random() * 1.4) + 's';
+    p.style.animationDelay = (Math.random() * .5) + 's';
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 3600);
+}
+const themeBtn = document.getElementById('themeBtn');
+function pasThemeToe(t){
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const donker = t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches);
+  themeBtn.textContent = donker ? '☀️' : '🌙';
+}
+try { pasThemeToe(localStorage.getItem('vlatheme')); } catch { pasThemeToe(null); }
+themeBtn.onclick = () => {
+  const donker = document.documentElement.dataset.theme
+    ? document.documentElement.dataset.theme === 'dark'
+    : matchMedia('(prefers-color-scheme: dark)').matches;
+  const nieuw = donker ? 'light' : 'dark';
+  pasThemeToe(nieuw);
+  try { localStorage.setItem('vlatheme', nieuw); } catch {}
+};
+</script>
+</body>
+</html>
