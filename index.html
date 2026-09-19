@@ -1148,15 +1148,15 @@ document.getElementById('deelnu').onclick = async () => {
   sluitDeelvenster();
   bereken();                      /* naam en peildatum opnieuw in de uitslag verwerken */
   const url = deelUrl();
-  /* De link zit in de tekst zelf en niet in het losse url-veld: dan bepaalt
-     de telefoon niet hoe de twee aan elkaar geplakt worden, en houden we de
-     witregel ertussen. */
-  const tekst = laatsteTekst + '\n\n' + url;
+  /* De tekst eindigt op "Bekijk:" en de link gaat mee in het losse url-veld.
+     Zo staat de witregel in het deel dat wij bepalen, en houden bestemmingen
+     die alleen een link aannemen -- leeslijsten, bookmark-apps -- er iets aan
+     over. */
   if (navigator.share){
-    try { await navigator.share({ title: 'Houdbare Vla', text: tekst }); return; }
+    try { await navigator.share({ title: 'Houdbare Vla', text: laatsteTekst + '\n\nBekijk:', url }); return; }
     catch (e) { if (e && e.name === 'AbortError') return; }
   }
-  toast(await naarKlembord(tekst) ? 'Link gekopieerd \u{1F4CB}' : 'Delen lukte niet \u{1F937}');
+  toast(await naarKlembord(laatsteTekst + '\n\nBekijk: ' + url) ? 'Link gekopieerd \u{1F4CB}' : 'Delen lukte niet \u{1F937}');
 };
 
 /* ============ DELEN VIA DE URL ============ */
