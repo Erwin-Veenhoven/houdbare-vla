@@ -185,7 +185,8 @@ Op een telefoon vulde een binnenkomende kaart zich zichtbaar van boven naar bene
 - **De pagina zelf scrollt, niet een `div` erin.** Dit was de grote. Een geneste scroller krijgt op iOS veel minder vooruit-geschilderd gebied dan de hoofdpagina, en precies dat zie je terug als tegels die één voor één invullen. `html` draagt nu de `scroll-snap-type`, en `baan` + `kaartHoogte()` zijn de twee plekken in de code die weten wie er scrollt.
 - **Kaarten zijn `100svh`, niet `100dvh`.** Bij documentscrollen schuift de adresbalk weg; met `dvh` zou elke kaart dan van hoogte veranderen en de hele reel opnieuw worden ingedeeld.
 - **Geen `drop-shadow`-filter meer.** Zo'n filter laat de browser het pak eerst apart uittekenen en dan vervagen, elke kaart opnieuw. De schaduw is nu een `radial-gradient` in een `::after`.
-- **Het venster is klein.** Van zestig kaarten naar hooguit twaalf; er staan er altijd minstens twee voor je klaar.
+- **Elk blok inhoud is een eigen compositielaag** (`will-change: transform` op `.binnen`). Die wordt één keer getekend en daarna alleen nog verschoven, dus WebKit hoeft er niets meer aan te rasteren op het moment dat de kaart in beeld schuift. Bewust alleen dat blok en niet de hele kaart: een laag ter grootte van het scherm kost per kaart te veel geheugen.
+- **Het venster is klein.** Van zestig kaarten naar hooguit tien, mede om het aantal lagen te beperken; er staan er altijd minstens twee voor je klaar.
 - **`-webkit-overflow-scrolling: touch` is eruit**, en het verloop op de achtergrond is een vaste laag (`body::before` met `position: fixed`) in plaats van een achtergrond die over de hele documenthoogte wordt uitgesmeerd. `background-attachment: fixed` doet op iOS niet wat je hoopt.
 - **`contain: layout`** op elke kaart, bewust zonder `paint`: dat laatste geeft de browser juist toestemming om buiten beeld niets te schilderen.
 
