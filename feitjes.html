@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Vlafeitjes — Houdbare Vla</title>
+<title>Vlafeitjes · Houdbare Vla</title>
 <meta name="description" content="Blijf scrollen, blijf feitjes over vla krijgen. Bewaar de goede.">
 <link rel="canonical" href="https://houdbarevla.nl/feitjes.html">
 <meta property="og:title" content="Vlafeitjes">
@@ -81,7 +81,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;
      de browser dat er niet nog een keer overheen doen. */
   overflow-anchor:none;
   /* Geen scrollbalk. De kaart vult het hele scherm, en een streepje langs de
-     rand hoort daar niet bij — zeker niet op Windows, waar hij permanent
+     rand hoort daar niet bij, zeker niet op Windows, waar hij permanent
      staat en ook nog eens breedte inneemt. Drie regels voor drie families:
      scrollbar-width is nieuw (Chrome 121+, Safari 18.2+), de ::-webkit-regel
      vangt alles wat ouder is, en -ms- is voor de oude Edge. */
@@ -444,7 +444,7 @@ async function deel(id){
   u.searchParams.set('vla', slug(f.v));
   u.searchParams.set('f', id.split('|')[1]);
   const url = u.toString();
-  const tekst = `Vlafeitje \u2014 ${f.v.merk} ${f.v.soort}\n\n${f.t}`
+  const tekst = `Vlafeitje: ${f.v.merk} ${f.v.soort}\n\n${f.t}`
     + (f.echt ? '\n\nEn dit is er een die echt waar is.' : '');
   if (navigator.share){
     try { await navigator.share({ title: 'Vlafeitjes', text: tekst + '\n\nBekijk:', url }); return; }
@@ -522,7 +522,7 @@ function toonLijst(){
         <span class="mini">${pack(x.v)}</span>
         <span class="tekst">
           <span class="regel">
-            <span class="van">${esc(x.v.merk)} — ${esc(x.v.soort)}</span>
+            <span class="van">${esc(x.v.merk)} · ${esc(x.v.soort)}</span>
             ${x.echt ? '<span class="etiket">echt waar</span>' : ''}
           </span>
           <span class="zin">${esc(x.t)}</span>

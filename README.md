@@ -48,7 +48,7 @@ De hele wetenschappelijke onderbouwing, in één tabel:
 
 Vanaf *Over datum* kantelt het pak op je scherm om. Dat leek ons gepast.
 
-Er zijn nog twee vragen. De eerste: **is het pak al open, en sinds wanneer?** Na openen zegt de THT niets meer — dan telt de dag dat je hem opendeed.
+Er zijn nog twee vragen. De eerste: **is het pak al open, en sinds wanneer?** Na openen zegt de THT niets meer: dan telt de dag dat je hem opendeed.
 
 | Wanneer geopend | Aftrek | Gevolg voor het oordeel |
 |---|---|---|
@@ -60,7 +60,7 @@ Er zijn nog twee vragen. De eerste: **is het pak al open, en sinds wanneer?** Na
 
 Bij sommige vla's hoeven we dat niet te vragen, want dan weten we het al. Een uitgeknepen pak is open, anders was er geen laatste restje; een pan met restjes heeft nooit een dop gehad. Die staan in `vla.js` met `alOpen: true` en krijgen alleen nog de vraag *sinds wanneer*.
 
-En een deel krijgt de vraag helemaal niet. Bij vla van oma, een vlaflip, restjes uit de pan en een vla met een vel vul je namelijk al een moment in — wanneer oma kookte, wanneer jij het pak opendeed — en die telling íís het openen; nog eens aftrekken zou dubbelop zijn. En bij het lege pak met de puzzel erop is het antwoord voor iedereen duidelijk, maar verandert het niets: aan een leeg pak valt niets te bederven.
+En een deel krijgt de vraag helemaal niet. Bij vla van oma, een vlaflip, restjes uit de pan en een vla met een vel vul je namelijk al een moment in (wanneer oma kookte, wanneer jij het pak opendeed), en die telling ís het openen; nog eens aftrekken zou dubbelop zijn. En bij het lege pak met de puzzel erop is het antwoord voor iedereen duidelijk, maar verandert het niets: aan een leeg pak valt niets te bederven.
 
 De tweede: **heeft de vla buiten de koelkast gestaan, en hoe lang?** Een THT geldt namelijk alleen voor vla die netjes koud heeft gestaan.
 
@@ -76,7 +76,7 @@ Een kraakverse vla die een nacht op het aanrecht stond komt zo alsnog uit op *Te
 
 ## De ruiktest
 
-De datum weet alleen wat er op het pak gedrukt staat — en dat wist jij al toen je het pak uit de koelkast pakte. Onder elke uitslag staat daarom *twijfel je nog? doe de ruiktest*: vier vragen die je alleen kunt beantwoorden met het pak in je hand.
+De datum weet alleen wat er op het pak gedrukt staat, en dat wist jij al toen je het pak uit de koelkast pakte. Onder elke uitslag staat daarom *twijfel je nog? doe de ruiktest*: vier vragen die je alleen kunt beantwoorden met het pak in je hand.
 
 | Vraag | Zwaarte | Aftrek |
 |---|---|---|
@@ -91,9 +91,9 @@ Het probleem met zo'n zwaarste-signaal-wint: zodra je één keer ja hebt gezegd 
 
 | Som | Wat er staat |
 |---|---|
-| 1 | de kop van dat ene signaal — *Klontjes* |
+| 1 | de kop van dat ene signaal: *Klontjes* |
 | 2 | *Twee dingen kloppen niet* |
-| 3 | de kop van het zware signaal — *Bolle verpakking* |
+| 3 | de kop van het zware signaal: *Bolle verpakking* |
 | 4–5 | *Een bol pak, en dat is niet alles* |
 | 6–7 | *Bol én een vreemde lucht* |
 | 8 | *Vier van de vier* |
@@ -102,8 +102,8 @@ Alle vijftien combinaties leveren zo een andere kop of een andere tekst op, en d
 
 Het werkt ook de andere kant op. Vier keer nee tilt het oordeel één trede omhoog en levert 12 punten op, zodat een vla van vijf dagen over datum die er onberispelijk uitziet alsnog *Goedgekeurd door je eigen neus* kan worden. Met twee uitzonderingen, allebei waar:
 
-- **meer dan 30 dagen over datum** — dan is je neus niet meer het juiste meetinstrument;
-- **een nacht of langer buiten de koelkast** — wat je ruikt is bederf, en waar je na een nacht op het aanrecht bang voor moet zijn, ruikt nergens naar.
+- **meer dan 30 dagen over datum**: dan is je neus niet meer het juiste meetinstrument;
+- **een nacht of langer buiten de koelkast**: wat je ruikt is bederf, en waar je na een nacht op het aanrecht bang voor moet zijn, ruikt nergens naar.
 
 Elk antwoord rekent meteen opnieuw door; het oordeel bovenaan verandert onder je handen mee, en onder de vragen staat dezelfde uitkomst nog eens kort herhaald. Nog eens op hetzelfde antwoord tikken neemt het terug.
 
@@ -125,7 +125,7 @@ De aftrekpunten zijn het enige onderdeel van deze site dat op waarheid berust: *
 
 ## Je uitslag delen
 
-Elke uitslag past in een link. De knop **Uitslag delen** vraagt eerst even je naam — mag leeg — en gebruikt daarna het deelvenster van je telefoon. Op de desktop, waar dat venster meestal niet bestaat, kopieert hij de tekst plus de link:
+Elke uitslag past in een link. De knop **Uitslag delen** vraagt eerst even je naam (mag leeg) en gebruikt daarna het deelvenster van je telefoon. Op de desktop, waar dat venster meestal niet bestaat, kopieert hij de tekst plus de link:
 
 ```
 De vla van Erwin
@@ -157,9 +157,9 @@ houdbarevla.nl/?vla=campina-dubbelvla&tht=2026-09-06&u=4&op=2026-09-19&naam=Erwi
 | `naam` | van wie de vla is |
 | `dier` | hoe je huisdier heet, als de vla dat geworden is |
 
-De twee keuzelijsten gaan als **nummer** de link in: `1` is de bovenste optie, `2` de tweede, enzovoort. Staat het vinkje uit, dan blijft de parameter gewoon weg — dat is korter dan een nul, en `0` wordt trouwens ook gelezen als "uit". De volgorde komt uit het keuzemenu zelf (`select.options`) en niet uit een tweede lijstje in de code, zodat de nummers niet kunnen gaan afwijken van wat je op het scherm ziet staan.
+De twee keuzelijsten gaan als **nummer** de link in: `1` is de bovenste optie, `2` de tweede, enzovoort. Staat het vinkje uit, dan blijft de parameter gewoon weg, dat is korter dan een nul, en `0` wordt trouwens ook gelezen als "uit". De volgorde komt uit het keuzemenu zelf (`select.options`) en niet uit een tweede lijstje in de code, zodat de nummers niet kunnen gaan afwijken van wat je op het scherm ziet staan.
 
-Die `op` is belangrijker dan hij lijkt. Zonder die datum zou een gedeelde link elke dag een ander antwoord geven: stuur je vandaag "nog 7 dagen te gaan", dan leest je vriend volgende week "over datum" en snapt hij niet waar je het over had. Nu ziet hij de uitslag zoals jij hem zag, met een regel erboven — *doorgerekend op 19 september* — en een knop om alsnog de stand van nu te bekijken.
+Die `op` is belangrijker dan hij lijkt. Zonder die datum zou een gedeelde link elke dag een ander antwoord geven: stuur je vandaag "nog 7 dagen te gaan", dan leest je vriend volgende week "over datum" en snapt hij niet waar je het over had. Nu ziet hij de uitslag zoals jij hem zag, met een regel erboven (*doorgerekend op 19 september*) en een knop om alsnog de stand van nu te bekijken.
 
 De adresbalk wordt meteen bijgewerkt zodra je een vla doorrekent, dus kopiëren wat daar staat werkt net zo goed.
 
@@ -169,7 +169,7 @@ Oudere links blijven gewoon werken. Er zijn er drie generaties:
 |---|---|
 | `o=4&u=4` | de huidige vorm |
 | `open=week&uit=nacht` | dezelfde keuzes, voluit geschreven |
-| `open=1` | *2 tot 3 dagen geleden* — toen zei de link alleen dát het pak open was |
+| `open=1` | *2 tot 3 dagen geleden*, want toen zei de link alleen dát het pak open was |
 
 Die laatste krijgt precies de aftrek die hij destijds ook kreeg, dus een link van voor de openingsdatum levert nog dezelfde score op. Open je zo'n oude link, dan staat in je adresbalk meteen de korte vorm: kopiëren wat daar staat geeft je de nieuwe link.
 
@@ -183,7 +183,7 @@ Dat is het. Geen `npm install`, geen build, geen dev server, geen framework dat 
 
 ## Vla's zonder etiket
 
-Op acht vla's staat helemaal geen houdbaarheidsdatum — oma's vla, restjes uit de pan, dat pak achterin de koelkast. Daar draait de tweede stap de vraag om: niet *wat staat er op het pak*, maar *wanneer is hij gemaakt*. De site telt er zelf een houdbaarheid bij op.
+Op acht vla's staat helemaal geen houdbaarheidsdatum: oma's vla, restjes uit de pan, dat pak achterin de koelkast. Daar draait de tweede stap de vraag om: niet *wat staat er op het pak*, maar *wanneer is hij gemaakt*. De site telt er zelf een houdbaarheid bij op.
 
 | Vla | Vraag | Rekent erbij |
 |---|---|---|
@@ -212,18 +212,18 @@ Het slaat de **datum** op en niet het oordeel, zodat de lijst vanzelf meeloopt m
 
 Een open pak veroudert mee. "Gisteren geopend" is een week later niet meer waar, dus naast de keuze bewaart hij ook de dag waarop je hem invulde en schuift hij de keuze op als de tijd verstrijkt. De antwoorden van de ruiktest gaan juist **niet** mee: die gaan over hoe het pak er op dat moment uitzag, en dat zegt volgende week niets meer.
 
-Daarnaast staat er *zet in mijn agenda*, en die geeft je twee routes. Een website mag namelijk niet zelf in je agenda schrijven — geen enkele, dat bestaat niet als browserfunctie. Het enige wat kan is het agendapunt helemaal invullen en aan je agenda-app geven.
+Daarnaast staat er *zet in mijn agenda*, en die geeft je twee routes. Een website mag namelijk niet zelf in je agenda schrijven, geen enkele; dat bestaat niet als browserfunctie. Het enige wat kan is het agendapunt helemaal invullen en aan je agenda-app geven.
 
 - **Google Agenda** krijgt een `render?action=TEMPLATE`-link: het agendapunt opent ingevuld en jij tikt op opslaan. Een herinnering vooraf past niet in zo'n link, dus daar gelden je eigen standaardinstellingen. Er gaat niets naar Google tot je die knop indrukt.
-- **De rest** krijgt een `.ics` met een hele dag op de vervaldatum en een herinnering een dag van tevoren. Kan je telefoon bestanden delen (`navigator.canShare({files})`), dan gaat het bestand naar het deelvenster en staat Agenda gewoon tussen de opties. Anders wordt het een download die je zelf moet openen — dat is waar het eerder op vastliep, en de melding beweerde bovendien dat er een agendapunt gemaakt was.
+- **De rest** krijgt een `.ics` met een hele dag op de vervaldatum en een herinnering een dag van tevoren. Kan je telefoon bestanden delen (`navigator.canShare({files})`), dan gaat het bestand naar het deelvenster en staat Agenda gewoon tussen de opties. Anders wordt het een download die je zelf moet openen, en dat is waar het eerder op vastliep, en de melding beweerde bovendien dat er een agendapunt gemaakt was.
 
 ## De quiz
 
 `quiz.html` beantwoordt de enige vraag die deze site nog niet beantwoordde: welke vla ben jij. Vier vragen van vier antwoorden, en alle 61 vla's zijn te worden.
 
-Het werkt niet met losse punten per vla — dat is geprobeerd en het viel om. Hoe scherper je scoort, hoe vaker dezelfde paar vla's winnen: van de 59 waren er eerst 55 bereikbaar, en na *betere* eigenschappen nog maar 48. Volledigheid en scherpte vechten met elkaar.
+Het werkt niet met losse punten per vla; dat is geprobeerd en het viel om. Hoe scherper je scoort, hoe vaker dezelfde paar vla's winnen: van de 59 waren er eerst 55 bereikbaar, en na *betere* eigenschappen nog maar 48. Volledigheid en scherpte vechten met elkaar.
 
-Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen — karakter, temperament en bekendheid. Beide kanten worden in dezelfde volgorde gelegd, en elke vla krijgt een even groot stuk van de antwoordruimte. Naast elkaar liggende antwoorden geven dus naast elkaar liggende vla's, en elke vla is gegarandeerd bereikbaar. Alle 256 combinaties samen dekken alle 61, elk 3 à 5 keer.
+Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen: karakter, temperament en bekendheid. Beide kanten worden in dezelfde volgorde gelegd, en elke vla krijgt een even groot stuk van de antwoordruimte. Naast elkaar liggende antwoorden geven dus naast elkaar liggende vla's, en elke vla is gegarandeerd bereikbaar. Alle 256 combinaties samen dekken alle 61, elk 3 à 5 keer.
 
 Deel je je uitslag, dan krijgt de link jouw vla en je naam mee: `quiz.html?vla=campina-stroopwafelvla&naam=Erwin`. Wie hem opent ziet jouw pak met jouw naam op het etiket, en een knop om zelf te beginnen. De omschrijving eronder blijft dan weg, want die spreekt jou aan en niet de kijker.
 
@@ -231,7 +231,7 @@ Vragen staan bovenaan `quiz.html` in een lijst die je kunt herschrijven zonder d
 
 ## De feitjes
 
-`feitjes.html` is een eindeloze scroller: één feitje per scherm, een pak erbij, en scrollen geeft de volgende. Er zijn er **331** — vijf verzonnen per vla, plus zesentwintig die echt waar zijn — en ze staan in `feitjes.js`, gescheiden van de pagina zodat je ze kunt bijschrijven zonder aan de scroller te komen.
+`feitjes.html` is een eindeloze scroller: één feitje per scherm, een pak erbij, en scrollen geeft de volgende. Er zijn er **331**: vijf verzonnen per vla, plus zesentwintig die echt waar zijn. Ze staan in `feitjes.js`, gescheiden van de pagina zodat je ze kunt bijschrijven zonder aan de scroller te komen.
 
 Ze komen niet los-random voorbij. Alle feitjes gaan één keer geschud in een bak, en je krijgt ze in die volgorde: je ziet dus niets dubbel tot je alle 331 gehad hebt. Daarna wordt er opnieuw geschud. Ligt hetzelfde pak twee keer achter elkaar, dan ruilt hij die twee om, want dat voelt als een fout.
 
@@ -241,9 +241,9 @@ Onder elk feitje staan drie knopjes: **bewaren**, **delen** en **checken** (die 
 
 Delen geeft een link naar dat ene feitje: `feitjes.html?vla=campina-hopjesvla&f=5`. Wie hem opent krijgt dat feitje als eerste kaart en scrollt daarna gewoon door. Staat er geen geldige `vla`/`f` in, dan begin je bij een willekeurige.
 
-Wat je bewaart staat in je eigen browser (`vlafeitjes`) en is terug te vinden achter de teller bovenin. Elk bewaard feitje krijgt daar zijn eigen kaartje met het pak erbij, zodat het lijstje er net zo uitziet als de rest van de site, met een regel eronder die telt hoeveel er echt waar zijn. Klik je op zo'n kaartje, dan wordt dat feitje als volgende kaart in de scroller gezet en schuift hij ernaartoe — je ziet hem dus gewoon in het grote scherm en scrollt van daaraf verder. Is er niets bewaard, dan staat er het lege pak.
+Wat je bewaart staat in je eigen browser (`vlafeitjes`) en is terug te vinden achter de teller bovenin. Elk bewaard feitje krijgt daar zijn eigen kaartje met het pak erbij, zodat het lijstje er net zo uitziet als de rest van de site, met een regel eronder die telt hoeveel er echt waar zijn. Klik je op zo'n kaartje, dan wordt dat feitje als volgende kaart in de scroller gezet en schuift hij ernaartoe, zodat je hem gewoon in het grote scherm en scrollt van daaraf verder. Is er niets bewaard, dan staat er het lege pak.
 
-De scroller houdt hooguit twaalf kaarten in het document: hij vult er drie bij zodra het einde in zicht komt, en ruimt de oudste vier op als je ver genoeg bent. Met `scroll-snap-stop: always` schuif je toch maar één kaart per veeg op, dus meer dan een paar vooruit heeft geen zin. Opruimen gebeurt pas als je even stilstaat, want het verzetten van de scrollpositie breekt anders een uitrollend veegje of een vloeiende pijltjes-scroll af. Die scrollpositie zetten we zelf terug, dus `overflow-anchor` staat uit — anders corrigeren de browser en de pagina allebei en spring je tien kaarten terug.
+De scroller houdt hooguit twaalf kaarten in het document: hij vult er drie bij zodra het einde in zicht komt, en ruimt de oudste vier op als je ver genoeg bent. Met `scroll-snap-stop: always` schuif je toch maar één kaart per veeg op, dus meer dan een paar vooruit heeft geen zin. Opruimen gebeurt pas als je even stilstaat, want het verzetten van de scrollpositie breekt anders een uitrollend veegje of een vloeiende pijltjes-scroll af. Die scrollpositie zetten we zelf terug, dus `overflow-anchor` staat uit, want anders corrigeren de browser en de pagina allebei en spring je tien kaarten terug.
 
 Een vla zonder eigen feitjes valt terug op `ALGEMEEN` en blijft gewoon meedoen.
 
@@ -251,7 +251,7 @@ Een vla zonder eigen feitjes valt terug op `ALGEMEEN` en blijft gewoon meedoen.
 
 Op een telefoon vulde een binnenkomende kaart zich zichtbaar van boven naar beneden: eerst het pak, dan de tekst en de knoppen, en soms een horizontale snee dwars door het pak. Dat zijn geen missende elementen maar rastertegels die te laat komen.
 
-Te meten viel dat niet: het paneel van de simulator ontbreekt in deze Xcode, en zelfs mét paneel draait die op de GPU van een Mac en zegt hij niets over een telefoon. Wat via `simctl openurl` plus een meetpagina wél te controleren viel — op echte WebKit — is dat elke snap exact landt, dat een kaart altijd precies één plek opschuift en dat de reel niet uit zichzelf doorscrolt.
+Te meten viel dat niet: het paneel van de simulator ontbreekt in deze Xcode, en zelfs mét paneel draait die op de GPU van een Mac en zegt hij niets over een telefoon. Wat via `simctl openurl` plus een meetpagina wél te controleren viel, op echte WebKit, is dat elke snap exact landt, dat een kaart altijd precies één plek opschuift en dat de reel niet uit zichzelf doorscrolt.
 
 - **De reel scrollt zelf, niet de pagina.** Dat is een keer omgedraaid, op de gedachte dat iOS een geneste scroller minder vooruit schildert. Het hielp niet en het kostte twee dingen: de browser haalde zijn onderste balk weg zodra het document scrollde, waardoor een kaart niet meer gecentreerd stond, en de reel begon soms uit zichzelf door te scrollen. Teruggedraaid. `baan` en `kaartHoogte()` zijn de twee plekken die weten wie er scrollt, dus omdraaien is een kleine ingreep als iemand het nog eens wil proberen.
 - **Geen `drop-shadow`-filter meer.** Zo'n filter laat de browser het pak eerst apart uittekenen en dan vervagen, elke kaart opnieuw. De schaduw is nu een `radial-gradient` in een `::after`.
@@ -259,16 +259,16 @@ Te meten viel dat niet: het paneel van de simulator ontbreekt in deze Xcode, en 
 - **Het venster is klein.** Van zestig kaarten naar hooguit tien, mede om het aantal lagen te beperken; er staan er altijd minstens twee voor je klaar.
 - **`-webkit-overflow-scrolling: touch` is eruit**, en het verloop op de achtergrond is een vaste laag (`body::before` met `position: fixed`).
 - **`contain: layout`** op elke kaart, bewust zonder `paint`: dat laatste geeft de browser juist toestemming om buiten beeld niets te schilderen.
-- **Geen scrollbalk.** Een kaart vult het hele scherm en een streepje langs de rand hoort daar niet bij — zeker niet op Windows, waar hij permanent staat en ook nog breedte inneemt. Drie regels, want elke browserfamilie doet het anders: `scrollbar-width: none` is nieuw (Chrome 121+, Safari 18.2+), `::-webkit-scrollbar { display: none }` vangt alles wat ouder is, en `-ms-overflow-style` is voor de oude Edge. De lijst met bewaarde feitjes houdt zijn balk wél: daar vertelt hij je dat er meer onder staat.
+- **Geen scrollbalk.** Een kaart vult het hele scherm en een streepje langs de rand hoort daar niet bij, zeker niet op Windows, waar hij permanent staat en ook nog breedte inneemt. Drie regels, want elke browserfamilie doet het anders: `scrollbar-width: none` is nieuw (Chrome 121+, Safari 18.2+), `::-webkit-scrollbar { display: none }` vangt alles wat ouder is, en `-ms-overflow-style` is voor de oude Edge. De lijst met bewaarde feitjes houdt zijn balk wél: daar vertelt hij je dat er meer onder staat.
 
 
 ### Echt waar
 
 Een feitje is een gewone regel tekst, of `{ t: '...', echt: true }`. Die tweede krijgt een oranje **echt waar** op de kaart, en dat is precies de grap: op een pagina waar verder alles verzonnen is, valt een nagetrokken feitje op.
 
-Dus alleen zetten als het klopt. De zesentwintig die er nu staan zijn stuk voor stuk nagezocht — zie [bronnen](#bronnen-van-de-echte-feitjes). Zesentwintig op 331 is ongeveer één op de 13, verdeeld over 23 van de 61 vla's.
+Dus alleen zetten als het klopt. De zesentwintig die er nu staan zijn stuk voor stuk nagezocht, zie [bronnen](#bronnen-van-de-echte-feitjes). Zesentwintig op 331 is ongeveer één op de 13, verdeeld over 23 van de 61 vla's.
 
-De andere 305 zijn verzonnen, maar niet willekeurig: ze hangen elk aan iets herkenbaars aan die vla — de kleur van het pak, de prijs, wie hem koopt, hoe hij smaakt, wat ermee gebeurt. Een grap die nergens op slaat hoort hier niet, want dan is het ruis tussen de feitjes door.
+De andere 305 zijn verzonnen, maar niet willekeurig: ze hangen elk aan iets herkenbaars aan die vla: de kleur van het pak, de prijs, wie hem koopt, hoe hij smaakt, wat ermee gebeurt. Een grap die nergens op slaat hoort hier niet, want dan is het ruis tussen de feitjes door.
 
 Zet nieuwe feitjes **onderaan** een lijstje. Wat iemand bewaard heeft staat op volgnummer, dus er eentje tussenvoegen verschuift andermans favorieten naar een ander feitje.
 
@@ -299,7 +299,7 @@ Zet nieuwe feitjes **onderaan** een lijstje. Wat iemand bewaard heeft staat op v
 | Kwark is verse kaas, met stremsel | [KRO-NCRV](https://kro-ncrv.nl/programmas/best-bites/het-verschil-tussen-bekende-zuur-smakende-zuivelproducten) |
 | Twee uur, en de gevarenzone 5–60 °C | [Voedingscentrum](https://www.voedingscentrum.nl/nl/veilig-eten-voedselinfectie-voorkomen/hoe-snel-groeien-bacterien.aspx) |
 
-De overige drie — het vel, de koelkastdeur en THT versus TGT — staan in de [disclaimer](#disclaimer) en zijn algemeen bekende voedselkennis.
+De overige drie (het vel, de koelkastdeur en THT versus TGT) staan in de [disclaimer](#disclaimer) en zijn algemeen bekende voedselkennis.
 
 ## Kleinigheden
 
@@ -310,7 +310,7 @@ De overige drie — het vel, de koelkastdeur en THT versus TGT — staan in de [
 
 ## Een vla toevoegen
 
-Mis je jouw vla? Voeg een regel toe aan de `VLAS`-array in `vla.js`. Dat bestand wordt door zowel de checker als de quiz gebruikt, dus één regel is genoeg — het pak wordt automatisch getekend in de kleuren die je opgeeft, en hij doet meteen mee in de quiz:
+Mis je jouw vla? Voeg een regel toe aan de `VLAS`-array in `vla.js`. Dat bestand wordt door zowel de checker als de quiz gebruikt, dus één regel is genoeg: het pak wordt automatisch getekend in de kleuren die je opgeeft, en hij doet meteen mee in de quiz:
 
 ```js
 { merk: 'Campina', soort: 'Kaneelvla', groep: 'Campina', c1: '#e8c89a', c2: '#a8763c' },
@@ -339,7 +339,7 @@ Pull requests met nieuwe vlasoorten zijn welkom. Yoghurt staat er inmiddels ook 
 
 ## Vindbaarheid
 
-`sitemap.xml` noemt de drie pagina's die er echt zijn — de voorpagina, de quiz en de feitjes — en `robots.txt` wijst ernaar. Dat is alles wat Google Search Console nodig heeft.
+`sitemap.xml` noemt de drie pagina's die er echt zijn (de voorpagina, de quiz en de feitjes), en `robots.txt` wijst ernaar. Dat is alles wat Google Search Console nodig heeft.
 
 Wat er bewust **niet** in staat: de deellinks met parameters (`?vla=…`, `?naam=…`, `?f=…`). Daar zijn er duizenden van en ze zijn allemaal dezelfde pagina met andere inhoud. Elke pagina heeft daarom een `<link rel="canonical">` naar zijn eigen adres zonder parameters, zodat een gedeelde uitslag geen tweede zoekresultaat wordt. `404.html` staat op `noindex`.
 
@@ -351,12 +351,12 @@ Vijf bestanden: `index.html` (de checker), `quiz.html`, `feitjes.html`, `vla.js`
 
 Dit is een grap. Het is **geen voedselveiligheidsadvies**.
 
-Echte regels, kort: een **THT** ("ten minste houdbaar tot") is een kwaliteitsdatum, geen veiligheidsdatum — een dag eroverheen is meestal prima. Een **TGT** ("te gebruiken tot") is dat wél, en die negeer je niet. En bij alles geldt: bij twijfel ruiken, bij sterke twijfel gootsteen, bij bruisende vla rennen.
+Echte regels, kort: een **THT** ("ten minste houdbaar tot") is een kwaliteitsdatum, geen veiligheidsdatum: een dag eroverheen is meestal prima. Een **TGT** ("te gebruiken tot") is dat wél, en die negeer je niet. En bij alles geldt: bij twijfel ruiken, bij sterke twijfel gootsteen, bij bruisende vla rennen.
 
 ## Merken
 
-Alle pakken op deze site zijn zelfgetekend. Er zijn geen logo's, huisstijlen of verpakkingsontwerpen overgenomen — ze lijken alleen op vla omdat vla er nu eenmaal zo uitziet. Merknamen staan er puur om je te helpen jouw vla terug te vinden. Geen enkel zuivelmerk was hierbij betrokken, en dat weten ze zelf waarschijnlijk ook niet.
+Alle pakken op deze site zijn zelfgetekend. Er zijn geen logo's, huisstijlen of verpakkingsontwerpen overgenomen; ze lijken alleen op vla omdat vla er nu eenmaal zo uitziet. Merknamen staan er puur om je te helpen jouw vla terug te vinden. Geen enkel zuivelmerk was hierbij betrokken, en dat weten ze zelf waarschijnlijk ook niet.
 
 ## Licentie
 
-[MIT](LICENSE) — doe ermee wat je wilt. Bouw je eigen vla-checker, voeg je huismerk toe, maak er een yoghurt-variant van als je dat per se moet. Laat alleen de copyrightregel staan.
+[MIT](LICENSE). Doe ermee wat je wilt. Bouw je eigen vla-checker, voeg je huismerk toe, maak er een yoghurt-variant van als je dat per se moet. Laat alleen de copyrightregel staan.

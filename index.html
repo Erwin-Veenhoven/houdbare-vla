@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Houdbare Vla — is jouw vla nog goed?</title>
+<title>Houdbare Vla: is jouw vla nog goed?</title>
 <meta name="description" content="Kies je vla, vul de houdbaarheidsdatum in en ontdek of je 'm nog kunt drinken. Wetenschappelijk onverantwoord.">
 <link rel="canonical" href="https://houdbarevla.nl/">
 <meta property="og:title" content="Houdbare Vla">
@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://houdbarevla.nl/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Houdbare Vla — is jouw vla nog goed?">
+<meta property="og:image:alt" content="Houdbare Vla: is jouw vla nog goed?">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f2a63b">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -532,7 +532,7 @@ footer strong{color:var(--ink);font-weight:600}
   <div class="overlay" id="agendavenster" hidden>
     <div class="dialoog card" role="dialog" aria-modal="true" aria-labelledby="agendatitel">
       <h3 id="agendatitel">Waar moet hij in?</h3>
-      <p class="sub">Een website mag niet zelf in je agenda schrijven — geen enkele. Wat we wél kunnen: het agendapunt helemaal invullen en aan je agenda geven. Jij tikt alleen nog op bewaren.</p>
+      <p class="sub">Een website mag niet zelf in je agenda schrijven, geen enkele. Wat we wél kunnen: het agendapunt helemaal invullen en aan je agenda geven. Jij tikt alleen nog op bewaren.</p>
 
       <button type="button" class="agendakeuze" id="agendaGoogle">
         <span class="wat">Google Agenda</span>
@@ -559,7 +559,7 @@ footer strong{color:var(--ink);font-weight:600}
     <div class="resultpack" id="resultpack"></div>
     <div class="verdict" id="verdict">
       <div class="face" id="face">🍮</div>
-      <h2 id="t3">—</h2>
+      <h2 id="t3">…</h2>
       <p class="days" id="days"></p>
       <p class="klok" id="klok" hidden></p>
     </div>
@@ -583,7 +583,7 @@ footer strong{color:var(--ink);font-weight:600}
         <span class="pijl" aria-hidden="true">›</span>
       </button>
       <div class="rtbody" id="rtbody" hidden>
-        <p class="rtintro">Vier vragen die je alleen kunt beantwoorden met het pak in je hand. Ze mogen de datum overrulen — allebei de kanten op.</p>
+        <p class="rtintro">Vier vragen die je alleen kunt beantwoorden met het pak in je hand. Ze mogen de datum overrulen, allebei de kanten op.</p>
         <div id="rtvragen"></div>
         <p class="rtuit" id="rtuit" hidden></p>
         <button type="button" class="rtwis" id="rtwis" hidden>wis de ruiktest</button>
@@ -613,7 +613,7 @@ footer strong{color:var(--ink);font-weight:600}
   </div>
 
   <footer>
-    <p><strong>houdbarevla.nl</strong> — voor de grap gemaakt, niet voor de voedselveiligheid.<br>
+    <p><strong>houdbarevla.nl</strong> is voor de grap gemaakt, niet voor de voedselveiligheid.<br>
     Bij twijfel: ruiken. Bij sterke twijfel: gootsteen. Bij bruisende vla: rennen.</p>
     <p style="opacity:.75">Geen enkel zuivelmerk was betrokken bij deze website. De pakken zijn met de hand getekend en lijken alleen maar op vla omdat vla er nu eenmaal zo uitziet.</p>
   </footer>
@@ -650,7 +650,7 @@ function render(){
     (!q || (v.merk + ' ' + v.soort + ' ' + v.groep).toLowerCase().includes(q))
   );
   if (!list.length){
-    grid.innerHTML = `<p class="empty">Geen vla gevonden. 😔<br>Probeer "vanille", "chocolade" — of kies <em>Vla zonder etiket</em> bij Bijzonder.</p>`;
+    grid.innerHTML = `<p class="empty">Geen vla gevonden. 😔<br>Probeer "vanille", "chocolade", of kies <em>Vla zonder etiket</em> bij Bijzonder.</p>`;
     return;
   }
   grid.innerHTML = list.map(v => `
@@ -704,7 +704,7 @@ function stelVraag(v){
 
 /* Sommige vla's zitten per definitie in een open pak: een uitgeknepen pak, een
    pan met restjes, een vla met een vel erop. Dan hoef je niet te vertellen dat
-   het pak open is — dat zien we zelf ook wel.
+   het pak open is; dat zien we zelf ook wel.
 
    Heeft zo'n vla ook een eigen dagentelling (`zelf`), dan is de datum die je
    invult het moment dat hij openging, en zit het openen dus al in die telling
@@ -757,7 +757,7 @@ function koelkastSchrijf(l){
 }
 /* Een open pak veroudert ook in je koelkastlijst: "gisteren geopend" is een week
    later niet meer waar. Daarom bewaren we ook de dag waarop je het invulde, en
-   schuift de keuze mee met de tijd — net zoals de houdbaarheidsdatum dat doet. */
+   schuift de keuze mee met de tijd, net zoals de houdbaarheidsdatum dat doet. */
 function koelkastOpen(item){
   if (item.open === true) return 'paar';                /* uit een oudere versie */
   if (!OPEN[item.open]) return '';
@@ -878,7 +878,7 @@ function ics(){
 }
 /* Google doet het met een link: hij opent het agendapunt al ingevuld en jij
    hoeft alleen nog op opslaan te tikken. Een herinnering vooraf kan er niet in
-   — dat kan die link niet — dus daar gelden jouw eigen standaardinstellingen. */
+   (dat kan die link niet), dus daar gelden jouw eigen standaardinstellingen. */
 function googleAgendaUrl(){
   const v = gekozen;
   const eind = effectieveTht(v, document.getElementById('datum').value);
@@ -914,7 +914,7 @@ async function agendaBestand(){
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  toast('Bestand opgeslagen \u2014 open het om het toe te voegen \u{1F4C5}');
+  toast('Bestand opgeslagen. Open het om het toe te voegen \u{1F4C5}');
 }
 
 const agendavenster = document.getElementById('agendavenster');
@@ -1050,7 +1050,7 @@ const ZINTUIGEN = [
     uit:{ face:'\u{1F443}', titel:'Je neus heeft gesproken', tekst:'Hier valt niets meer tegenin te brengen. Wat de datum ook zegt: dit is klaar.' } },
   { id:'klont', gewicht:1, straf:22, kort:'klontjes',
     vraag:'Zitten er klontjes in, of is het geschift?',
-    hulp:'Schenk een bodempje uit. Een vel bovenop telt niet — dat is gewoon eiwit.',
+    hulp:'Schenk een bodempje uit. Een vel bovenop telt niet, dat is gewoon eiwit.',
     zin:'er zaten klontjes in', bon:'Er zaten klontjes in',
     uit:{ face:'\u{1F944}', titel:'Klontjes', tekst:'Vla hoort één gladde massa te zijn. Klontjes betekenen dat het eiwit is gaan schiften.' } },
   { id:'kleur', gewicht:1, straf:20, kort:'een kleur die niet klopt',
@@ -1370,7 +1370,7 @@ function bonnetje(d, open, uit, v){
     const l = BUITEN[uit].zin;
     aftrek(l[0].toUpperCase() + l.slice(1) + ' buiten de koelkast', BUITEN[uit].straf);
   }
-  /* De ruiktest rekent mee zodra je hem gedaan hebt — omlaag per rood vlaggetje,
+  /* De ruiktest rekent mee zodra je hem gedaan hebt: omlaag per rood vlaggetje,
      en omhoog als er niets aan te merken viel. */
   const z = zintuigOordeel(zint);
   if (z){
@@ -1433,7 +1433,7 @@ function toon(d, open, uit, opt){
   toonZintuigen();
   const zn = Object.keys(zint).length;
   document.getElementById('rtkop').textContent = zn
-    ? `De ruiktest \u2014 ${zn} van de ${ZINTUIGEN.length} beantwoord`
+    ? `De ruiktest: ${zn} van de ${ZINTUIGEN.length} beantwoord`
     : 'Twijfel je nog? Doe de ruiktest';
   const rtuit = document.getElementById('rtuit');
   rtuit.hidden = !zn;
@@ -1653,7 +1653,7 @@ function zintCode(){
   return /[jn]/.test(c) ? c : '';
 }
 /* De twee keuzelijsten gaan als nummer de link in: 1 is de eerste optie, 2 de
-   tweede. Staat het vinkje uit, dan blijft de parameter gewoon weg — korter dan
+   tweede. Staat het vinkje uit, dan blijft de parameter gewoon weg, korter dan
    een nul. De volgorde lezen we uit het keuzemenu zelf, zodat de nummers niet
    kunnen gaan afwijken van wat je op het scherm ziet staan. */
 function opties(id){

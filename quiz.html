@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Welke vla ben jij? — Houdbare Vla</title>
+<title>Welke vla ben jij? · Houdbare Vla</title>
 <meta name="description" content="Vier vragen, en je weet welke vla je bent.">
 <link rel="canonical" href="https://houdbarevla.nl/quiz.html">
 <meta property="og:title" content="Welke vla ben jij?">
@@ -362,7 +362,7 @@ function toonPak(v, van){
     u.searchParams.set('vla', slug(v));
     if (n) u.searchParams.set('naam', n);
     const url = u.toString();
-    const tekst = `Welke vla ben jij?\n\nIk ben ${v.merk} \u2014 ${v.soort}.`;
+    const tekst = `Welke vla ben jij?\n\nIk ben ${v.merk} ${v.soort}.`;
     if (navigator.share){
       try { await navigator.share({ title: 'Welke vla ben jij?', text: tekst + '\n\nBekijk:', url }); return; }
       catch (e) { if (e && e.name === 'AbortError') return; }
