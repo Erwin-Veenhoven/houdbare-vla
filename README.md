@@ -256,6 +256,7 @@ Te meten viel dat niet: het paneel van de simulator ontbreekt in deze Xcode, en 
 - **Het venster is klein.** Van zestig kaarten naar hooguit tien, mede om het aantal lagen te beperken; er staan er altijd minstens twee voor je klaar.
 - **`-webkit-overflow-scrolling: touch` is eruit**, en het verloop op de achtergrond is een vaste laag (`body::before` met `position: fixed`).
 - **`contain: layout`** op elke kaart, bewust zonder `paint`: dat laatste geeft de browser juist toestemming om buiten beeld niets te schilderen.
+- **Geen scrollbalk.** Een kaart vult het hele scherm en een streepje langs de rand hoort daar niet bij — zeker niet op Windows, waar hij permanent staat en ook nog breedte inneemt. Drie regels, want elke browserfamilie doet het anders: `scrollbar-width: none` is nieuw (Chrome 121+, Safari 18.2+), `::-webkit-scrollbar { display: none }` vangt alles wat ouder is, en `-ms-overflow-style` is voor de oude Edge. De lijst met bewaarde feitjes houdt zijn balk wél: daar vertelt hij je dat er meer onder staat.
 
 
 ### Echt waar

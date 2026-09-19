@@ -80,7 +80,15 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;
   /* Wij corrigeren de scrollpositie zelf als we oude kaarten opruimen. Laat
      de browser dat er niet nog een keer overheen doen. */
   overflow-anchor:none;
+  /* Geen scrollbalk. De kaart vult het hele scherm, en een streepje langs de
+     rand hoort daar niet bij — zeker niet op Windows, waar hij permanent
+     staat en ook nog eens breedte inneemt. Drie regels voor drie families:
+     scrollbar-width is nieuw (Chrome 121+, Safari 18.2+), de ::-webkit-regel
+     vangt alles wat ouder is, en -ms- is voor de oude Edge. */
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
+.reel::-webkit-scrollbar{display:none}
 .kaart{
   position:relative;
   /* Alleen layout-isolatie: een kaart kan de rest van de reel niet
