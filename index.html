@@ -83,7 +83,7 @@ h1,h2,h3,.display{font-family:Fredoka,Inter,sans-serif;font-weight:600;letter-sp
 
 /* ---------- header ---------- */
 header{padding:34px 0 18px;text-align:center}
-.logo{display:inline-flex;align-items:center;gap:10px;font-family:Fredoka;font-weight:700;font-size:clamp(28px,6vw,44px);line-height:1.05}
+.logo{display:inline-flex;align-items:center;gap:10px;font-family:Fredoka;font-weight:700;font-size:clamp(28px,6vw,44px);line-height:1.05;color:inherit;text-decoration:none}
 .logo .blob{
   width:1.1em;height:1.1em;border-radius:46% 54% 52% 48%/48% 44% 56% 52%;
   background:linear-gradient(160deg,#ffe193,var(--accent));
@@ -203,7 +203,8 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .bon .nr{flex:none;font-weight:600;color:var(--ink)}
 .bon .tot{margin-top:9px;padding-top:9px;border-top:1.5px solid var(--line);color:var(--ink);font-weight:600}
 .bon .klem{margin-top:8px;font-size:12px;font-style:italic}
-.quizkaart{display:block;margin:26px auto 0;max-width:420px;padding:16px 18px;border-radius:var(--radius);
+.kaartjes{display:grid;gap:12px;margin:26px auto 0;max-width:660px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.quizkaart{display:flex;flex-direction:column;justify-content:center;padding:16px 18px;border-radius:var(--radius);
   border:1.5px dashed var(--line);background:linear-gradient(180deg,var(--bg2),transparent);
   text-align:center;text-decoration:none;color:inherit;transition:.15s}
 .quizkaart:hover{border-color:var(--accent);transform:translateY(-1px)}
@@ -240,12 +241,21 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .kleineknoppen button:hover{border-color:var(--accent);transform:translateY(-1px)}
 .kleineknoppen button[hidden]{display:none}
 .kleineknoppen svg{flex:none}
-.hero{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin:0 0 20px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--bg2),transparent);cursor:pointer;font:inherit;color:inherit;transition:.15s}
+/* Vla van de dag en feitje van de dag: naast elkaar als het past, anders
+   onder elkaar. Zelfde kaartje, zodat het bovenin één ding blijft. */
+.vandaag{display:grid;gap:12px;margin:0 0 20px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.hero{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin:0;padding:12px 14px;border:1.5px dashed var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--bg2),transparent);cursor:pointer;font:inherit;color:inherit;transition:.15s}
 .hero:hover{border-color:var(--accent);transform:translateY(-1px)}
 .hero svg{width:44px;height:56px;flex:none}
 .hero .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--accent)}
 .hero .nm{font-family:Fredoka;font-weight:600;font-size:16px;line-height:1.25}
 .hero .sub2{font-size:12.5px;color:var(--muted);margin-top:2px}
+.hero.feitje{text-decoration:none;align-items:flex-start}
+.hero.feitje svg{margin-top:2px}
+.hero.feitje .nm{font-weight:500;font-size:14px;line-height:1.35;margin-top:1px}
+.hero .waar{display:inline-block;margin-left:5px;padding:1px 7px;border-radius:999px;
+  background:var(--accent);color:var(--accent-ink);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.08em;font-weight:700;vertical-align:1px}
 .snel{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 0}
 .snel button{font:inherit;font-size:13px;color:var(--muted);background:transparent;border:1.5px solid var(--line);border-radius:999px;padding:5px 11px;cursor:pointer;transition:.15s}
 .snel button:hover{border-color:var(--accent);color:var(--ink)}
@@ -351,7 +361,7 @@ footer strong{color:var(--ink);font-weight:600}
 
 <div class="wrap">
   <header>
-    <div class="logo"><span class="blob"></span> Houdbare&nbsp;Vla</div>
+    <a class="logo" href="/"><span class="blob"></span> Houdbare&nbsp;Vla</a>
     <p class="tagline">Het is 23:41. Je staat voor de open koelkast met een pak vla in je hand. Kan je hem nog drinken… of eten?</p>
     <nav class="steps" aria-label="Stappen">
       <div class="step on" data-step="1"><span class="dot">1</span> Kies je vla</div>
@@ -372,7 +382,10 @@ footer strong{color:var(--ink);font-weight:600}
       <ul id="koelkastLijst"></ul>
     </section>
 
-    <button class="hero" id="hero" type="button"></button>
+    <div class="vandaag">
+      <button class="hero" id="hero" type="button"></button>
+      <a class="hero feitje" id="feitkaart" href="feitjes.html"></a>
+    </div>
 
     <h2 class="section" id="t1">Welke vla staat er in je koelkast?</h2>
     <p class="sub">Zoek op merk of soort, of blader lekker rond.</p>
@@ -488,10 +501,16 @@ footer strong{color:var(--ink);font-weight:600}
     </div>
   </section>
 
-  <a class="quizkaart" href="quiz.html">
-    <span class="q">Welke vla ben jij?</span>
-    <span class="a">Vier vragen, en je weet het. Doe de quiz →</span>
-  </a>
+  <div class="kaartjes">
+    <a class="quizkaart" href="quiz.html">
+      <span class="q">Welke vla ben jij?</span>
+      <span class="a">Vier vragen, en je weet het. Doe de quiz →</span>
+    </a>
+    <a class="quizkaart" href="feitjes.html">
+      <span class="q">Vlafeitjes</span>
+      <span class="a">Blijf scrollen, blijf feitjes krijgen →</span>
+    </a>
+  </div>
 
   <footer>
     <p><strong>houdbarevla.nl</strong> — voor de grap gemaakt, niet voor de voedselveiligheid.<br>
@@ -503,6 +522,7 @@ footer strong{color:var(--ink);font-weight:600}
 <div class="toast" id="toast"></div>
 
 <script src="vla.js"></script>
+<script src="feitjes.js"></script>
 <script>
 /* ============ DE VLA-DATABASE ============ */
 
@@ -1243,6 +1263,22 @@ themeBtn.onclick = () => {
   pasThemeToe(nieuw);
   try { localStorage.setItem('vlatheme', nieuw); } catch {}
 };
+/* ---------- feitje van de dag ---------- */
+/* Vast aan de kalenderdag, net als de vla van de dag. Staat ernaast bovenin
+   en linkt naar precies dat feitje in de scroller. */
+(function feitKaart(){
+  const kaart = document.getElementById('feitkaart');
+  const f = feitjeVanDeDag();
+  if (!kaart || !f) return;
+  kaart.innerHTML = pack(f.v) +
+    `<div><div class="lbl">Feitje van de dag</div>`
+    + `<div class="nm">${esc(f.t)}</div>`
+    + `<div class="sub2">${esc(f.v.merk)} ${esc(f.v.soort)}`
+    + (f.echt ? '<span class="waar">echt waar</span>' : '')
+    + ' \u2192</div></div>';
+  kaart.href = `feitjes.html?vla=${encodeURIComponent(slug(f.v))}&f=${f.i}`;
+})();
+
 </script>
 </body>
 </html>

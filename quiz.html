@@ -41,7 +41,7 @@
 :root[data-theme="light"]{ color-scheme: light; }
 *{box-sizing:border-box}
 body{
-  margin:0;padding:24px 16px 48px;background:linear-gradient(180deg,var(--bg2),var(--bg) 320px);
+  margin:0;padding:64px 16px 48px;background:linear-gradient(180deg,var(--bg2),var(--bg) 320px);
   color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.55;
   min-height:100vh;
 }
@@ -80,6 +80,12 @@ h2{font-family:Fredoka;font-weight:600;font-size:20px;line-height:1.3;margin:0 0
 footer{text-align:center;color:var(--muted);font-size:13px;margin-top:26px}
 footer a{color:var(--ink)}
 .themetoggle{position:fixed;top:14px;right:14px;z-index:20;background:var(--card);border:1.5px solid var(--line);border-radius:999px;width:38px;height:38px;cursor:pointer;font-size:16px;line-height:1;color:var(--ink)}
+/* Terug naar de hoofdpagina, links van de themeknop. */
+.merkpil{position:fixed;top:14px;left:14px;z-index:20;display:inline-flex;align-items:center;gap:7px;
+  font-family:Fredoka;font-weight:600;font-size:14.5px;line-height:1;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow)}
+.merkpil .blob{width:17px;height:17px;flex:none;border-radius:46% 54% 52% 48%/48% 44% 56% 52%;
+  background:linear-gradient(160deg,#ffe193,var(--accent))}
 #deel{display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(43,33,25,.45);backdrop-filter:blur(2px)}
 .overlay[hidden]{display:none}
@@ -94,6 +100,7 @@ footer a{color:var(--ink)}
 </style>
 </head>
 <body>
+<a class="merkpil" href="/"><span class="blob"></span> Houdbare&nbsp;Vla</a>
 <button class="themetoggle" id="themeBtn" title="Licht / donker" aria-label="Wissel thema">🌙</button>
 
 <div class="wrap">
@@ -105,7 +112,7 @@ footer a{color:var(--ink)}
   <main class="card" id="paneel"></main>
 
   <footer>
-    <a href="/">← Naar de vla-checker</a>
+    <a href="/">← Naar de vla-checker</a> &nbsp;·&nbsp; <a href="feitjes.html">Vlafeitjes</a>
   </footer>
 </div>
 <div class="overlay" id="deelvenster" hidden>
