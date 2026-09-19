@@ -227,6 +227,8 @@ Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde dri
 
 Deel je je uitslag, dan krijgt de link jouw vla en je naam mee: `quiz.html?vla=campina-stroopwafelvla&naam=Erwin`. Wie hem opent ziet jouw pak met jouw naam op het etiket, en een knop om zelf te beginnen. De omschrijving eronder blijft dan weg, want die spreekt jou aan en niet de kijker.
 
+Na de vierde vraag staat de uitslag al vast, maar hij komt niet meteen: er loopt eerst 1,3 seconde een balkje langs vier stappen. Die stappen zijn geen toneel, het is precies wat er gebeurt (antwoorden inlezen, alle 61 vla's langslopen, de drie assen wegen, uitslag vaststellen), en daar staat dan in kleine letters onder: *dit had ook meteen gekund*. Wie `prefers-reduced-motion` aan heeft staan krijgt de uitslag zonder omweg.
+
 Vragen staan bovenaan `quiz.html` in een lijst die je kunt herschrijven zonder de rest aan te raken. De eigenschappen worden afgeleid uit de vla zelf, dus een nieuwe vla in `vla.js` doet automatisch mee.
 
 ## De feitjes

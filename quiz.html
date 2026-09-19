@@ -54,6 +54,12 @@ h1{font-family:Fredoka;font-weight:700;font-size:clamp(26px,7vw,36px);margin:0 0
 .balk{display:flex;gap:6px;margin-bottom:20px}
 .balk i{flex:1;height:5px;border-radius:99px;background:var(--line)}
 .balk i.on{background:var(--accent)}
+.rekenen{text-align:center;padding:26px 0 18px}
+.rekenbalk{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.rekenbalk i{display:block;height:100%;width:0;border-radius:99px;background:var(--accent);animation:vullen 1.3s linear forwards}
+@keyframes vullen{from{width:0}to{width:100%}}
+.rekenstap{font-family:Fredoka;font-weight:600;font-size:16px;margin:18px 0 0}
+.rekenvoet{font-size:13px;color:var(--muted);margin:6px 0 0}
 h2{font-family:Fredoka;font-weight:600;font-size:20px;line-height:1.3;margin:0 0 18px}
 .opties{display:flex;flex-direction:column;gap:9px}
 .opties button{
@@ -120,7 +126,7 @@ footer a{color:var(--ink)}
   <div class="dialoog card" role="dialog" aria-modal="true" aria-labelledby="deeltitel">
     <h3 id="deeltitel">Zet je naam op het pak</h3>
     <p>Dan staat jouw naam op het etiket in plaats van het merk. Mag ook leeg.</p>
-    <input class="naamveld" id="naam" maxlength="14" placeholder="Je naam (optioneel)" autocomplete="name">
+    <input class="naamveld" id="naam" maxlength="14" placeholder="Je naam (of niet)" autocomplete="name">
     <div class="knoppen" style="justify-content:flex-end">
       <button class="btn ghost" id="deelannuleer">Annuleren</button>
       <button class="btn" id="deelnu">Delen</button>
@@ -299,7 +305,33 @@ function toonVraag(){
   const t = document.getElementById('terug');
   if (t) t.onclick = () => { keuzes.pop(); toonVraag(); };
 }
-function toonUitslag(){ toonPak(bepaal(keuzes), null); }
+/* De uitslag staat na de vierde vraag al vast, maar een antwoord dat er
+   onmiddellijk uit rolt voelt alsof er niet over nagedacht is. Dus rekenen we
+   even, en wat er voorbijkomt is precies wat er ook echt gebeurt. */
+const REKENSTAPPEN = [
+  'Antwoorden inlezen',
+  'Alle 61 vla\u2019s langslopen',
+  'Karakter, temperament en bekendheid wegen',
+  'Uitslag vaststellen',
+];
+const REKENTIJD = 1300;
+function toonUitslag(){
+  const v = bepaal(keuzes);
+  /* Wie beweging liever overslaat, krijgt hem meteen. */
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return toonPak(v, null);
+  paneel.innerHTML = balk(VRAGEN.length) + `
+    <div class="rekenen">
+      <div class="rekenbalk"><i></i></div>
+      <p class="rekenstap" id="rekenstap">${esc(REKENSTAPPEN[0])}</p>
+      <p class="rekenvoet">Dit had ook meteen gekund.</p>
+    </div>`;
+  const stap = document.getElementById('rekenstap');
+  REKENSTAPPEN.forEach((t, i) => {
+    if (i) setTimeout(() => { if (stap.isConnected) stap.textContent = t; },
+                      REKENTIJD * i / REKENSTAPPEN.length);
+  });
+  setTimeout(() => toonPak(v, null), REKENTIJD);
+}
 
 /* van = de naam van wie hem deelde. Is die gezet, dan kijk je naar andermans
    uitslag en hoort er een knop bij om zelf te beginnen. */

@@ -516,7 +516,7 @@ footer strong{color:var(--ink);font-weight:600}
     <div class="dialoog card" role="dialog" aria-modal="true" aria-labelledby="deeltitel">
       <h3 id="deeltitel">Van wie is deze vla?</h3>
       <p class="sub">Vul je naam in, dan weet de ontvanger wiens koelkast hier beoordeeld wordt. Mag ook leeg.</p>
-      <input type="text" id="naam" maxlength="24" placeholder="Je naam (optioneel)" autocomplete="name">
+      <input type="text" id="naam" maxlength="24" placeholder="Je naam (of niet)" autocomplete="name">
 
       <div id="diervak" hidden>
         <p class="sub" style="margin:16px 0 0">Deze vla is inmiddels een huisdier. Hoe heet hij?</p>
@@ -844,7 +844,7 @@ document.getElementById('koelkastLijst').addEventListener('click', e => {
 document.getElementById('koelkastLeeg').onclick = () => {
   koelkastSchrijf([]);
   toonKoelkast();
-  toast('Koelkast leeggehaald \u{1F9F9}');
+  toast('Koelkast leeg, perfect moment om hem schoon te maken! \u{1F9F9}');
 };
 document.getElementById('bewaar').onclick = koelkastBewaar;
 
