@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welke vla ben jij? — Houdbare Vla</title>
+<meta name="description" content="Vier vragen, en je weet welke vla je bent. Er zijn er 59 om te worden.">
+<meta property="og:title" content="Welke vla ben jij?">
+<meta property="og:description" content="Vier vragen, en je weet het. Er zijn er 59 om te worden.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://houdbarevla.nl/quiz.html">
+<meta property="og:image" content="https://houdbarevla.nl/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2a63b">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7e9; --bg2:#ffeccd; --card:#fff; --ink:#2b2119; --muted:#8b7a66;
+  --accent:#f2a63b; --accent-ink:#2b2119; --line:rgba(43,33,25,.10);
+  --shadow:0 2px 0 rgba(43,33,25,.06), 0 12px 28px -12px rgba(43,33,25,.25);
+  --radius:18px; color-scheme: light;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#16120e; --bg2:#1e1812; --card:#241d16; --ink:#f6eee2; --muted:#a3927c;
+    --line:rgba(246,238,226,.12);
+    --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16120e; --bg2:#1e1812; --card:#241d16; --ink:#f6eee2; --muted:#a3927c;
+  --line:rgba(246,238,226,.12);
+  --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-theme="light"]{ color-scheme: light; }
+*{box-sizing:border-box}
+body{
+  margin:0;padding:24px 16px 48px;background:linear-gradient(180deg,var(--bg2),var(--bg) 320px);
+  color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.55;
+  min-height:100vh;
+}
+.wrap{max-width:560px;margin:0 auto}
+header{text-align:center;margin-bottom:22px}
+h1{font-family:Fredoka;font-weight:700;font-size:clamp(26px,7vw,36px);margin:0 0 6px}
+.lead{color:var(--muted);margin:0}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
+.balk{display:flex;gap:6px;margin-bottom:20px}
+.balk i{flex:1;height:5px;border-radius:99px;background:var(--line)}
+.balk i.on{background:var(--accent)}
+h2{font-family:Fredoka;font-weight:600;font-size:20px;line-height:1.3;margin:0 0 18px}
+.opties{display:flex;flex-direction:column;gap:9px}
+.opties button{
+  font:inherit;font-size:15px;text-align:left;color:inherit;background:var(--bg);
+  border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;transition:.15s;
+}
+.opties button:hover{border-color:var(--accent);transform:translateY(-1px)}
+.terug{margin-top:16px;font:inherit;font-size:13.5px;color:var(--muted);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.uitslag{text-align:center}
+#pakhier svg{width:132px;height:167px}   /* alleen het pak, niet het deelicoontje */
+.kop{font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--accent);margin:10px 0 2px}
+.merknaam{font-size:13px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted);margin:0}
+.naam{font-family:Fredoka;font-weight:600;font-size:26px;line-height:1.2;margin:2px 0 10px}
+.uitleg{color:var(--muted);margin:0 auto 20px;max-width:40ch}
+.knoppen{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn{
+  font:inherit;font-family:Fredoka;font-weight:600;font-size:15px;
+  background:var(--accent);color:var(--accent-ink);border:0;border-radius:14px;
+  padding:13px 20px;cursor:pointer;box-shadow:var(--shadow);
+}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.naamveld{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--bg);
+  border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin:0 0 16px;text-align:center}
+.naamveld:focus{outline:2px solid var(--accent);outline-offset:1px}
+footer{text-align:center;color:var(--muted);font-size:13px;margin-top:26px}
+footer a{color:var(--ink)}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;background:var(--card);border:1.5px solid var(--line);border-radius:999px;width:38px;height:38px;cursor:pointer;font-size:16px;line-height:1;color:var(--ink)}
+#deel{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(43,33,25,.45);backdrop-filter:blur(2px)}
+.overlay[hidden]{display:none}
+.dialoog{max-width:380px;width:100%;padding:22px;text-align:left}
+.dialoog h3{font-family:Fredoka;font-weight:600;font-size:19px;margin:0 0 6px}
+.dialoog p{color:var(--muted);font-size:14px;margin:0}
+.dialoog .naamveld{margin-top:18px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+  background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:11px 20px;
+  box-shadow:var(--shadow);font-size:14px;transition:.25s;pointer-events:none;z-index:9}
+.toast.on{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<button class="themetoggle" id="themeBtn" title="Licht / donker" aria-label="Wissel thema">🌙</button>
+
+<div class="wrap">
+  <header>
+    <h1>Welke vla ben jij?</h1>
+    <p class="lead">Vier vragen. Er zijn er 59 om te worden.</p>
+  </header>
+
+  <main class="card" id="paneel"></main>
+
+  <footer>
+    <a href="/">← Naar de vla-checker</a>
+  </footer>
+</div>
+<div class="overlay" id="deelvenster" hidden>
+  <div class="dialoog card" role="dialog" aria-modal="true" aria-labelledby="deeltitel">
+    <h3 id="deeltitel">Zet je naam op het pak</h3>
+    <p>Dan staat jouw naam op het etiket in plaats van het merk. Mag ook leeg.</p>
+    <input class="naamveld" id="naam" maxlength="14" placeholder="Je naam (optioneel)" autocomplete="name">
+    <div class="knoppen" style="justify-content:flex-end">
+      <button class="btn ghost" id="deelannuleer">Annuleren</button>
+      <button class="btn" id="deelnu">Delen</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="vla.js"></script>
+<script>
+/* =====================================================================
+   DE VRAGEN
+   Een vraag toevoegen of herschrijven kan hier, zonder de rest aan te raken.
+   Vraag 1 kiest de tak; de andere vragen delen punten uit aan eigenschappen.
+   ===================================================================== */
+const VRAGEN = [
+  {
+    vraag: 'Het is kwart voor twaalf ’s avonds. Je staat voor de open koelkast. Wat zoek je?',
+    antwoorden: [
+      { tekst: 'Gewoon vla. Wat ik altijd heb.',           tak: 'Campina'   },
+      { tekst: 'Iets wat niet te veel gekost heeft.',      tak: 'Huismerk'  },
+      { tekst: 'Iets waar ik me niet schuldig over voel.', tak: 'bewust'    },
+      { tekst: 'Geen idee. Ik kijk wel wat er staat.',     tak: 'Bijzonder' },
+    ],
+  },
+  {
+    vraag: 'Hoe sta jij tegenover een houdbaarheidsdatum?',
+    antwoorden: [
+      { tekst: 'Het is een datum. Die is heilig.',       punten: { netjes: 2 } },
+      { tekst: 'Een suggestie. Ik ruik wel even.',       punten: { netjes: 1 } },
+      { tekst: 'Ik kijk pas als het al te laat is.',     punten: { chaos: 1 }  },
+      { tekst: 'Welke datum?',                           punten: { chaos: 2 }  },
+    ],
+  },
+  {
+    vraag: 'Wat zegt het meest over jou?',
+    antwoorden: [
+      { tekst: 'Ik ben voorspelbaar, en dat bevalt prima.', punten: { licht: 2 } },
+      { tekst: 'Ik ben zwaarder dan ik lijk.',              punten: { zwaar: 2 } },
+      { tekst: 'Ik ben zoet, maar niet simpel.',            punten: { zoet: 2 }  },
+      { tekst: 'Ik ben moeilijk te plaatsen.',              punten: { raar: 2 }  },
+    ],
+  },
+  {
+    vraag: 'Je komt binnen op een feest waar je niemand kent. Wat doe je?',
+    antwoorden: [
+      { tekst: 'Binnen tien minuten ken ik iedereen.',  punten: { vertrouwd: 2 } },
+      { tekst: 'Ik zoek de keuken op.',                 punten: { vertrouwd: 1 } },
+      { tekst: 'Ik ga met de hond praten.',             punten: { obscuur: 1 }   },
+      { tekst: 'Ik was al weg voor je het merkte.',     punten: { obscuur: 2 }   },
+    ],
+  },
+];
+
+/* De takken van vraag 1. 'bewust' bundelt de drie kleine groepen. */
+const TAKKEN = {
+  Campina:   v => v.groep === 'Campina',
+  Huismerk:  v => v.groep === 'Huismerk',
+  bewust:    v => ['Optimel', 'Merken', 'Plantaardig'].includes(v.groep),
+  Bijzonder: v => v.groep === 'Bijzonder',
+};
+
+/* =====================================================================
+   EIGENSCHAPPEN
+   Worden afgeleid uit de vla zelf, zodat een nieuwe vla in vla.js meteen
+   meedoet zonder dat je hier iets hoeft bij te werken.
+   ===================================================================== */
+const VERTROUWD = ['Campina','Albert Heijn','Jumbo','Optimel','Alpro','Mona','Chocomel','Fristi','Melkunie','Lidl'];
+function eigenschappen(v){
+  const s = (v.merk + ' ' + v.soort).toLowerCase();
+  const e = {};
+  const bij = (k, n) => { e[k] = (e[k] || 0) + n; };
+
+  /* karakter */
+  if (/chocolade/.test(s))      { bij('zwaar', 2); }
+  if (/mokka/.test(s))          { bij('zwaar', 2); bij('netjes', 1); }
+  if (/hopjes/.test(s))         { bij('zwaar', 2); bij('zoet', 1); }
+  if (/karamel|toffee/.test(s)) { bij('zoet', 2); }
+  if (/stroopwafel/.test(s))    { bij('zoet', 2); bij('raar', 1); }
+  if (/advocaat/.test(s))       { bij('zoet', 2); bij('zwaar', 1); }
+  if (/banan|aardbei/.test(s))  { bij('zoet', 2); bij('licht', 1); }
+  if (/limonade/.test(s))       { bij('zoet', 2); bij('chaos', 1); }
+  if (/vanille/.test(s))        { bij('licht', 2); }
+  if (/slagroom|roomvla/.test(s)){ bij('licht', 2); bij('zoet', 1); }
+  if (/griesmeel/.test(s))      { bij('licht', 2); bij('raar', 1); }
+  if (/goud/.test(s))           { bij('licht', 1); bij('zoet', 1); bij('vertrouwd', 1); }
+  if (/volle|boeren/.test(s))   { bij('licht', 2); bij('zwaar', 1); }
+  if (/mager/.test(s))          { bij('licht', 2); bij('netjes', 1); }
+
+  /* de vreemde eenden */
+  if (v.split)                  { bij('raar', 2); bij('zwaar', 1); }
+  if (v.nietVla)                { bij('raar', 2); }
+  if (v.mysterie)               { bij('raar', 3); }
+  if (/custard/.test(s))        { bij('raar', 2); bij('netjes', 1); }
+  if (/vel/.test(s))            { bij('raar', 2); bij('licht', 1); }
+  if (/pan|restjes/.test(s))    { bij('raar', 2); bij('zwaar', 1); }
+  if (/kantine/.test(s))        { bij('raar', 2); bij('obscuur', 1); }
+  if (/ziekenhuis|dienblad/.test(s)) { bij('raar', 2); bij('netjes', 2); }
+  if (/camping|koelbox/.test(s)){ bij('raar', 2); bij('chaos', 1); }
+  if (/drinken|chocomel|fristi/.test(s)) { bij('raar', 1); bij('zoet', 2); }
+  if (/yoghurt|kwark/.test(s))  { bij('netjes', 2); }
+  if (/etiket|achterin/.test(s)){ bij('chaos', 1); }
+
+  if (!e.zwaar && !e.zoet && !e.licht && !e.raar) bij('licht', 1);
+
+  /* temperament */
+  if (v.nietVla || v.mysterie || v.zelf) bij('chaos', 2); else bij('netjes', 1);
+  if (v.groep === 'Optimel' || v.groep === 'Plantaardig' || /ekoplaza|weerribben|biologisch/.test(s)) bij('netjes', 2);
+
+  /* bekendheid */
+  bij(VERTROUWD.includes(v.merk) ? 'vertrouwd' : 'obscuur', 2);
+  return e;
+}
+
+/* =====================================================================
+   DE UITSLAG
+
+   Zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen:
+   karakter (vraag 3), temperament (vraag 2) en bekendheid (vraag 4). Beide
+   kanten worden in dezelfde volgorde gelegd, en daarna krijgt elke vla een
+   even groot stuk van de antwoordruimte.
+
+   Dat levert twee dingen op die met los scoren niet lukten: je antwoorden
+   sturen de uitslag echt (naast elkaar liggende antwoorden geven naast
+   elkaar liggende vla's), en elke vla is gegarandeerd bereikbaar.
+   ===================================================================== */
+const KARAKTER = ['licht', 'zwaar', 'zoet', 'raar'];   /* volgorde van vraag 3 */
+
+function plek(v){
+  const e = eigenschappen(v);
+  let k = 0, hoogste = -1;
+  KARAKTER.forEach((naam, i) => { if ((e[naam] || 0) > hoogste){ hoogste = e[naam] || 0; k = i; } });
+
+  const chaos = e.chaos || 0, netjes = e.netjes || 0;
+  const t = chaos >= 2 ? 3 : chaos === 1 ? 2 : netjes >= 2 ? 0 : 1;
+
+  const vert = e.vertrouwd || 0, obsc = e.obscuur || 0;
+  const b = vert >= 3 ? 0 : vert > 0 ? 1 : obsc >= 3 ? 3 : 2;
+
+  return k * 16 + t * 4 + b;                     /* 0 t/m 63 */
+}
+function bepaal(keuzes){
+  const tak = VRAGEN[0].antwoorden[keuzes[0]].tak;
+  const kandidaten = VLAS.filter(TAKKEN[tak])
+    .map(v => ({ v, p: plek(v) }))
+    .sort((a, b) => a.p - b.p || slug(a.v).localeCompare(slug(b.v)))
+    .map(x => x.v);
+
+  /* Hetzelfde assenstelsel, maar dan voor de antwoorden. */
+  const antwoordPlek = keuzes[2] * 16 + keuzes[1] * 4 + keuzes[3];
+  const index = Math.floor(antwoordPlek * kandidaten.length / 64);
+  return kandidaten[Math.min(index, kandidaten.length - 1)];
+}
+
+/* ============ SCHERM ============ */
+const paneel = document.getElementById('paneel');
+let keuzes = [];
+
+function balk(n){
+  return '<div class="balk">' + VRAGEN.map((_, i) =>
+    `<i class="${i < n ? 'on' : ''}"></i>`).join('') + '</div>';
+}
+function toonVraag(){
+  const i = keuzes.length;
+  const q = VRAGEN[i];
+  paneel.innerHTML = balk(i) +
+    `<h2>${esc(q.vraag)}</h2><div class="opties">` +
+    q.antwoorden.map((a, j) => `<button type="button" data-j="${j}">${esc(a.tekst)}</button>`).join('') +
+    '</div>' + (i > 0 ? '<button class="terug" id="terug">← vorige vraag</button>' : '');
+  paneel.querySelector('.opties').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    keuzes.push(Number(b.dataset.j));
+    keuzes.length === VRAGEN.length ? toonUitslag() : toonVraag();
+  };
+  const t = document.getElementById('terug');
+  if (t) t.onclick = () => { keuzes.pop(); toonVraag(); };
+}
+function toonUitslag(){
+  const v = bepaal(keuzes);
+  let naam = '';
+  try { naam = localStorage.getItem('vlanaam') || ''; } catch {}
+  paneel.innerHTML = `
+    <div class="uitslag">
+      <div id="pakhier">${pack(naam ? { ...v, merk: naam } : v)}</div>
+      <p class="kop">Jij bent</p>
+      <p class="merknaam">${esc(v.merk)}</p>
+      <h2 class="naam">${esc(v.soort)}</h2>
+      <p class="uitleg">${esc(uitleg(v))}</p>
+      <div class="knoppen">
+        <button class="btn ghost" id="deel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4"/><path d="M15.4 17.4l-6.8-4"/></svg> Delen</button>
+        <button class="btn ghost" id="opnieuw">Opnieuw</button>
+        <a class="btn" href="/?vla=${encodeURIComponent(slug(v))}">Check deze vla</a>
+      </div>
+    </div>`;
+  document.getElementById('opnieuw').onclick = () => { keuzes = []; toonVraag(); };
+
+  /* Delen vraagt eerst om je naam, net als op de hoofdpagina. */
+  const venster = document.getElementById('deelvenster');
+  const inp = document.getElementById('naam');
+  const sluit = () => { venster.hidden = true; };
+  document.getElementById('deel').onclick = () => {
+    try { inp.value = localStorage.getItem('vlanaam') || ''; } catch { inp.value = ''; }
+    venster.hidden = false;
+    setTimeout(() => inp.focus(), 50);
+  };
+  document.getElementById('deelannuleer').onclick = sluit;
+  venster.onclick = e => { if (e.target === venster) sluit(); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !venster.hidden) sluit(); });
+  inp.onkeydown = e => { if (e.key === 'Enter') document.getElementById('deelnu').click(); };
+  document.getElementById('deelnu').onclick = async () => {
+    const n = inp.value.trim().slice(0, 14);
+    try { localStorage.setItem('vlanaam', n); } catch {}
+    document.getElementById('pakhier').innerHTML = pack(n ? { ...v, merk: n } : v);
+    sluit();
+    const tekst = `Welke vla ben jij?\n\nIk ben ${v.merk} \u2014 ${v.soort}.`;
+    const url = location.origin + location.pathname;
+    if (navigator.share){
+      try { await navigator.share({ title: 'Welke vla ben jij?', text: tekst, url }); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    toast(await naarKlembord(tekst + '\n\n' + url) ? 'Gekopieerd \u{1F4CB}' : 'Kopiëren lukte niet \u{1F937}');
+  };
+}
+function uitleg(v){
+  if (v.nietVla)  return 'Streng genomen ben je geen vla. Dat heeft je nog nooit tegengehouden.';
+  if (v.mysterie) return 'Niemand weet precies wat je bent, inclusief jijzelf. Het bevalt prima zo.';
+  if (v.zelf)     return 'Op jou staat geen datum. Mensen moeten zelf inschatten hoe lang je nog goed bent.';
+  if (v.split)    return 'Je bent twee dingen tegelijk, en je weigert te kiezen.';
+  return 'Degelijk, herkenbaar, en op het juiste moment precies wat iemand nodig heeft.';
+}
+
+/* Zelfde klembordtruc als op de hoofdpagina: navigator.clipboard bestaat
+   alleen op https, dus daaronder ligt de ouderwetse weg. */
+async function naarKlembord(tekst){
+  try {
+    if (navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(tekst); return true; }
+  } catch {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = tekst; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, tekst.length);
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
+  } catch { return false; }
+}
+let toastT;
+function toast(m){
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+/* ============ LICHT / DONKER ============ */
+/* Deelt de voorkeur met de hoofdpagina, dus je kiest het maar één keer. */
+const themeBtn = document.getElementById('themeBtn');
+function pasThemeToe(t){
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const donker = t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches);
+  themeBtn.textContent = donker ? '\u2600\uFE0F' : '\u{1F319}';
+}
+try { pasThemeToe(localStorage.getItem('vlatheme')); } catch { pasThemeToe(null); }
+themeBtn.onclick = () => {
+  const donker = document.documentElement.dataset.theme
+    ? document.documentElement.dataset.theme === 'dark'
+    : matchMedia('(prefers-color-scheme: dark)').matches;
+  const nieuw = donker ? 'light' : 'dark';
+  pasThemeToe(nieuw);
+  try { localStorage.setItem('vlatheme', nieuw); } catch {}
+};
+
+toonVraag();
+</script>
+</body>
+</html>

@@ -137,6 +137,24 @@ Wil je zelf zo'n vla toevoegen, geef hem dan een `zelf`-veld:
 zelf: { vraag: 'Wanneer heb je hem gemaakt?', hint: '…', dagen: 3 }
 ```
 
+## Jouw koelkast
+
+Onder een uitslag staat *bewaar in mijn koelkast*. Wat je bewaart verschijnt bovenaan de eerste stap, op volgorde van urgentie, met rood, oranje en groen. Klik op een rij en hij rekent 'm opnieuw door, inclusief het open pak en de koelkasttijd die je destijds invulde.
+
+Het slaat de **datum** op en niet het oordeel, zodat de lijst vanzelf meeloopt met de tijd: wat vandaag "nog 1 dag" is, staat er morgen als "vandaag". Alles blijft in je eigen browser. Is de lijst leeg, dan is hij onzichtbaar.
+
+Daarnaast staat er *zet in mijn agenda*: een `.ics` met een hele dag op de vervaldatum en een herinnering een dag van tevoren.
+
+## De quiz
+
+`quiz.html` beantwoordt de enige vraag die deze site nog niet beantwoordde: welke vla ben jij. Vier vragen van vier antwoorden, en alle 59 vla's zijn te worden.
+
+Het werkt niet met losse punten per vla — dat is geprobeerd en het viel om. Hoe scherper je scoort, hoe vaker dezelfde paar vla's winnen: van de 59 waren er eerst 55 bereikbaar, en na *betere* eigenschappen nog maar 48. Volledigheid en scherpte vechten met elkaar.
+
+Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen — karakter, temperament en bekendheid. Beide kanten worden in dezelfde volgorde gelegd, en elke vla krijgt een even groot stuk van de antwoordruimte. Naast elkaar liggende antwoorden geven dus naast elkaar liggende vla's, en elke vla is gegarandeerd bereikbaar. Alle 256 combinaties samen dekken alle 59, elk 4 à 5 keer.
+
+Vragen staan bovenaan `quiz.html` in een lijst die je kunt herschrijven zonder de rest aan te raken. De eigenschappen worden afgeleid uit de vla zelf, dus een nieuwe vla in `vla.js` doet automatisch mee.
+
 ## Kleinigheden
 
 - **Vla van de dag.** Bovenaan staat elke dag een andere vla, vast gekoppeld aan de kalenderdag. Iedereen ziet dus dezelfde. Eén klik en hij staat klaar om door te rekenen.
@@ -145,7 +163,7 @@ zelf: { vraag: 'Wanneer heb je hem gemaakt?', hint: '…', dagen: 3 }
 
 ## Een vla toevoegen
 
-Mis je jouw vla? Voeg een regel toe aan de `VLAS`-array in `index.html`. Het pak wordt automatisch getekend in de kleuren die je opgeeft:
+Mis je jouw vla? Voeg een regel toe aan de `VLAS`-array in `vla.js`. Dat bestand wordt door zowel de checker als de quiz gebruikt, dus één regel is genoeg — het pak wordt automatisch getekend in de kleuren die je opgeeft, en hij doet meteen mee in de quiz:
 
 ```js
 { merk: 'Campina', soort: 'Kaneelvla', groep: 'Campina', c1: '#e8c89a', c2: '#a8763c' },
@@ -170,7 +188,7 @@ Pull requests met nieuwe vlasoorten zijn welkom. Yoghurt staat er inmiddels ook 
 
 ## Techniek
 
-Eén `index.html` van zo'n 57 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
+Drie bestanden: `index.html` (de checker), `quiz.html` en `vla.js` met de gedeelde vlalijst en de paktekening. Samen zo'n 92 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
 
 ## Disclaimer
 
