@@ -73,6 +73,7 @@ const VLAS = [
   {merk:'Fristi',  soort:'Ook geen vla',      groep:'Bijzonder',c1:'#f2b8cf', c2:'#c0326b', nietVla:true},
   {merk:'Mona',    soort:'Toetje (geen vla)', groep:'Bijzonder',c1:'#f6e7d2', c2:'#b98a5e', nietVla:true},
   {merk:'Koelkast',soort:'Achterin gevonden', groep:'Bijzonder',c1:'#cfd6cd', c2:'#6f7a6b', mysterie:true, zelf:{vraag:'Wanneer zag je hem voor het eerst?', hint:'Achterin de koelkast bestaat geen tijd. Gok gerust, wij rekenen er twee dagen bij.', dagen:2}},
+  {merk:'Uitgeknepen', soort:'Laatste restje', groep:'Bijzonder',c1:'#f6e9cd', c2:'#c9a961', geknepen:true},
   {merk:'Onbekend',soort:'Vla zonder etiket', groep:'Bijzonder',c1:'#d8d2c8', c2:'#8d8478', mysterie:true, zelf:{vraag:'Wanneer kwam dit pak in huis?', hint:'Zonder etiket is elke datum een schatting. Wij rekenen er vier dagen bij en hopen er het beste van.', dagen:4}},
 ];
 
@@ -92,31 +93,53 @@ function pack(v, size){
   const stops = v.split
     ? `<stop offset="50%" stop-color="${v.c1}"/><stop offset="50%" stop-color="${v.c2}"/>`
     : `<stop offset="0%" stop-color="${v.c1}"/><stop offset="100%" stop-color="${v.c2}"/>`;
+  /* Een uitgeknepen pak is smaller in het midden, dus het etiket schuift
+     omhoog en de onderkant krijgt kreukels in plaats van een rechte rand. */
+  const kn = !!v.geknepen;
+  const dy = kn ? -15 : 0;
   const lines = wrap(v.soort.replace(/\s*\(.*\)/, ''), 12);
   const fs = lines.some(l => l.length > 10) ? 7.6 : 8.6;
   const label = lines.map((l, i) =>
-    `<text x="60" y="${99 + i * 10.5 - (lines.length - 1) * 5}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="${fs}" fill="#33261b">${esc(l)}</text>`
+    `<text x="60" y="${99 + dy + i * 10.5 - (lines.length - 1) * 5}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="${fs}" fill="#33261b">${esc(l)}</text>`
   ).join('');
   const mLen = v.merk.length;
   const mfs = mLen > 13 ? 4.6 : mLen > 10 ? 5.3 : 6;
   const mls = mLen > 13 ? .2 : mLen > 10 ? .5 : .9;
   const mark = v.mysterie
     ? `<text x="60" y="53" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="22" fill="rgba(255,255,255,.75)">?</text>`
+    : kn
+    ? `<ellipse cx="60" cy="46" rx="8" ry="3" fill="rgba(255,255,255,.28)"/>`
     : `<ellipse cx="60" cy="52" rx="17" ry="7" fill="rgba(255,255,255,.3)"/><ellipse cx="60" cy="50" rx="11" ry="4.5" fill="rgba(255,255,255,.45)"/>`;
+
+  /* Links en rechts deuken verschillend in: een uitgeknepen pak is gekreukt,
+     niet op een draaibank gemaakt. */
+  const lijf = kn
+    ? 'M22 37 h76 v64 C98 110 80 112 82 120 C84 128 74 132 78 140 L76 146 L40 146 L36 138 C32 130 44 126 42 118 C40 110 22 109 22 101 Z'
+    : 'M22 37 h76 v100 a7 7 0 0 1 -7 7 h-62 a7 7 0 0 1 -7 -7 Z';
+  const schaduw = kn
+    ? 'M84 37 h14 v64 C98 110 80 112 82 120 C84 128 74 132 78 140 L76 146 L64 146 L66 138 C62 130 70 126 68 118 C66 110 84 109 84 101 Z'
+    : 'M84 37 h14 v100 a7 7 0 0 1 -7 7 h-7 Z';
+  const glans = kn
+    ? '<path d="M27 37 h6 v64 C33 108 47 110 45 118 C43 126 33 130 37 138 L39 146 L40 146 L36 138 C32 130 44 126 42 118 C40 110 22 109 22 101 Z" fill="rgba(255,255,255,.18)"/>'
+    : '<path d="M26 37 h6 v107 h-1 a6 6 0 0 1 -5 -6 Z" fill="rgba(255,255,255,.22)"/>';
+  const kreuk = kn
+    ? `<path d="M26 103 L44 111 M94 103 L80 111 M45 122 L79 119 M42 133 L77 136"
+         stroke="rgba(0,0,0,.15)" stroke-width="1.4" fill="none" stroke-linecap="round"/>`
+    : `<rect x="29" y="122" width="62" height="3" rx="1.5" fill="rgba(255,255,255,.4)"/>`;
   return `<svg viewBox="0 0 120 152" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(v.merk)} ${esc(v.soort)}">
   <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">${stops}</linearGradient></defs>
   <path d="M22 38 L60 12 L98 38 Z" fill="url(#${id})"/>
   <path d="M60 12 L98 38 L60 38 Z" fill="rgba(0,0,0,.14)"/>
   <rect x="52" y="8" width="16" height="7" rx="3" fill="rgba(0,0,0,.22)"/>
-  <path d="M22 37 h76 v100 a7 7 0 0 1 -7 7 h-62 a7 7 0 0 1 -7 -7 Z" fill="url(#${id})"/>
-  <path d="M84 37 h14 v100 a7 7 0 0 1 -7 7 h-7 Z" fill="rgba(0,0,0,.13)"/>
-  <path d="M26 37 h6 v107 h-1 a6 6 0 0 1 -5 -6 Z" fill="rgba(255,255,255,.22)"/>
+  <path d="${lijf}" fill="url(#${id})"/>
+  <path d="${schaduw}" fill="rgba(0,0,0,.13)"/>
+  ${glans}
   ${mark}
-  <rect x="29" y="68" width="62" height="46" rx="7" fill="#fffaf0" opacity=".94"/>
-  <text x="60" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="${mfs}" letter-spacing="${mls}" fill="#9d8d78">${esc(v.merk.toUpperCase())}</text>
+  <rect x="29" y="${68 + dy}" width="62" height="46" rx="7" fill="#fffaf0" opacity=".94"/>
+  <text x="60" y="${80 + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="${mfs}" letter-spacing="${mls}" fill="#9d8d78">${esc(v.merk.toUpperCase())}</text>
   ${label}
-  <text x="60" y="109" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="5" letter-spacing=".7" fill="#b7a894">1 LITER</text>
-  <rect x="29" y="122" width="62" height="3" rx="1.5" fill="rgba(255,255,255,.4)"/>
+  <text x="60" y="${(lines.length > 1 ? 112.5 : 109) + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="5" letter-spacing=".7" fill="#b7a894">${kn ? 'BIJNA LEEG' : '1 LITER'}</text>
+  ${kreuk}
 </svg>`;
 }
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }

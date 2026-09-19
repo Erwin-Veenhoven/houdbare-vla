@@ -334,7 +334,7 @@ footer strong{color:var(--ink);font-weight:600}
 <div class="wrap">
   <header>
     <div class="logo"><span class="blob"></span> Houdbare&nbsp;Vla</div>
-    <p class="tagline">Twijfel je of die vla in de koelkast nog kan? Wij rekenen het voor je uit. Met vla-wetenschap van het allerhoogste niveau.</p>
+    <p class="tagline">Het is 23:41. Je staat voor de open koelkast met een pak vla in je hand. Wij rekenen uit of hij nog kan.</p>
     <nav class="steps" aria-label="Stappen">
       <div class="step on" data-step="1"><span class="dot">1</span> Kies je vla</div>
       <span class="bar"></span>
@@ -386,6 +386,7 @@ footer strong{color:var(--ink);font-weight:600}
       <button type="button" data-d="-7">vorige week</button>
       <button type="button" data-d="-1">gisteren</button>
       <button type="button" data-d="0">vandaag</button>
+      <button type="button" data-d="1">morgen</button>
       <button type="button" data-d="7">volgende week</button>
       <button type="button" data-d="30">volgende maand</button>
     </div>
@@ -751,6 +752,7 @@ const OPMERKINGEN = [
   [v => v.soort === 'Dubbelvla',   '\u{1F944}', 'Bij dubbelvla gaat de ene helft altijd eerder dan de andere. Kies een kant.'],
   [v => v.merk === 'Vlaflip',      '\u{1F379}', 'Een vlaflip verbergt van alles. Ook dingen die je liever had geweten.'],
   [v => v.merk === 'Zelfgemaakt',  '\u{1F475}', 'Zelfgemaakte vla heeft geen THT. Oma ook niet. Reken op een dag of drie.'],
+  [v => v.geknepen,               '\u{1F91C}', 'Er zit altijd nog \u00e9\u00e9n lepel in. Knijpen, kantelen, geduld: dat is de heilige drie-eenheid.'],
   [v => v.merk === 'Eigen pan',    '\u{1F372}', 'Restjes uit de pan: afdekken, koelen, en binnen twee dagen opmaken.'],
   [v => v.merk === 'Met vel',      '\u{1FAE7}', 'Dat vel is gewoon eiwit. Volstrekt eetbaar, en niemand dwingt je.'],
   [v => v.merk === 'Kantine',      '\u{1F3E2}', 'Kantinevla staat daar mogelijk al sinds de vorige reorganisatie.'],

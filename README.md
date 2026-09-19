@@ -14,7 +14,7 @@
 
 Eén HTML-bestand dat drie dingen doet:
 
-1. **Je kiest je vla.** 59 soorten, van Campina Vanillevla tot *Vla zonder etiket*. Met plaatjes, want niemand herkent zijn vla aan een tekstlijstje.
+1. **Je kiest je vla.** 60 soorten, van Campina Vanillevla tot *Vla zonder etiket*. Met plaatjes, want niemand herkent zijn vla aan een tekstlijstje.
 2. **Je vult de houdbaarheidsdatum in.** Die kleine lettertjes op de bovenkant van het pak waar je een bril voor nodig hebt.
 3. **Je krijgt een oordeel.** Geen genuanceerd advies. Een oordeel.
 
@@ -147,11 +147,11 @@ Daarnaast staat er *zet in mijn agenda*: een `.ics` met een hele dag op de verva
 
 ## De quiz
 
-`quiz.html` beantwoordt de enige vraag die deze site nog niet beantwoordde: welke vla ben jij. Vier vragen van vier antwoorden, en alle 59 vla's zijn te worden.
+`quiz.html` beantwoordt de enige vraag die deze site nog niet beantwoordde: welke vla ben jij. Vier vragen van vier antwoorden, en alle 60 vla's zijn te worden.
 
 Het werkt niet met losse punten per vla — dat is geprobeerd en het viel om. Hoe scherper je scoort, hoe vaker dezelfde paar vla's winnen: van de 59 waren er eerst 55 bereikbaar, en na *betere* eigenschappen nog maar 48. Volledigheid en scherpte vechten met elkaar.
 
-Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen — karakter, temperament en bekendheid. Beide kanten worden in dezelfde volgorde gelegd, en elke vla krijgt een even groot stuk van de antwoordruimte. Naast elkaar liggende antwoorden geven dus naast elkaar liggende vla's, en elke vla is gegarandeerd bereikbaar. Alle 256 combinaties samen dekken alle 59, elk 4 à 5 keer.
+Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen — karakter, temperament en bekendheid. Beide kanten worden in dezelfde volgorde gelegd, en elke vla krijgt een even groot stuk van de antwoordruimte. Naast elkaar liggende antwoorden geven dus naast elkaar liggende vla's, en elke vla is gegarandeerd bereikbaar. Alle 256 combinaties samen dekken alle 60, elk 3 à 5 keer.
 
 Vragen staan bovenaan `quiz.html` in een lijst die je kunt herschrijven zonder de rest aan te raken. De eigenschappen worden afgeleid uit de vla zelf, dus een nieuwe vla in `vla.js` doet automatisch mee.
 
