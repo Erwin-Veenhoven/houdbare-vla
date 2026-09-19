@@ -130,6 +130,11 @@ input[type="date"]{padding-left:14px;font-family:Fredoka;font-size:18px;text-ali
    inhoud: 126px in een kaart van 361. appearance:none haalt het native uiterlijk
    weg, en dan gedraagt het zich als een gewoon veld dat wél meeschaalt. */
 input[type="date"]{-webkit-appearance:none;appearance:none;min-width:0;max-width:100%;display:block}
+/* Een leeg datumveld heeft op iOS niets om hoog van te worden en klapt in tot
+   28px, terwijl een gevuld veld 56px is. Deze ondergrens is precies de hoogte
+   die Chrome sowieso al aanhoudt: 13px padding en 1,5px rand boven en onder,
+   plus een tekstregel van 29px. Daar verandert dus niets. */
+input[type="date"]{min-height:58px}
 input[type="date"]::-webkit-date-and-time-value{width:100%;text-align:center;margin:0;padding:0}
 input[type="date"]::-webkit-calendar-picker-indicator{flex:none;margin:0 0 0 4px}
 .datumveld{position:relative}
