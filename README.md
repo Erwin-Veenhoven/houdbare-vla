@@ -180,13 +180,16 @@ Een vla zonder eigen feitjes valt terug op `ALGEMEEN` en blijft gewoon meedoen.
 
 ### Soepel scrollen
 
-Op een telefoon werd elke kaart pas geschilderd als hij in beeld kwam, en dan zag je hem een halve seconde half staan. Wat daaraan gedaan is:
+Op een telefoon vulde een binnenkomende kaart zich zichtbaar van boven naar beneden: eerst het pak, dan de tekst en de knoppen, en soms een horizontale snee dwars door het pak. Dat zijn geen missende elementen maar rastertegels die te laat komen.
 
-- **Geen `drop-shadow`-filter meer.** Zo'n filter laat de browser het hele pak eerst apart uittekenen en dan vervagen, elke keer opnieuw. De schaduw onder het pak is nu een `radial-gradient` in een `::after`, en dat kost vrijwel niets.
+- **De pagina zelf scrollt, niet een `div` erin.** Dit was de grote. Een geneste scroller krijgt op iOS veel minder vooruit-geschilderd gebied dan de hoofdpagina, en precies dat zie je terug als tegels die één voor één invullen. `html` draagt nu de `scroll-snap-type`, en `baan` + `kaartHoogte()` zijn de twee plekken in de code die weten wie er scrollt.
+- **Kaarten zijn `100svh`, niet `100dvh`.** Bij documentscrollen schuift de adresbalk weg; met `dvh` zou elke kaart dan van hoogte veranderen en de hele reel opnieuw worden ingedeeld.
+- **Geen `drop-shadow`-filter meer.** Zo'n filter laat de browser het pak eerst apart uittekenen en dan vervagen, elke kaart opnieuw. De schaduw is nu een `radial-gradient` in een `::after`.
 - **Het venster is klein.** Van zestig kaarten naar hooguit twaalf; er staan er altijd minstens twee voor je klaar.
-- **`-webkit-overflow-scrolling: touch` is eruit.** Dat is op moderne iOS overbodig en stond bekend om precies dit soort half geschilderde inhoud.
-- **De achtergrond staat op `body`** in plaats van op de scroller zelf, zodat hij niet meescrollt.
+- **`-webkit-overflow-scrolling: touch` is eruit**, en het verloop op de achtergrond is een vaste laag (`body::before` met `position: fixed`) in plaats van een achtergrond die over de hele documenthoogte wordt uitgesmeerd. `background-attachment: fixed` doet op iOS niet wat je hoopt.
 - **`contain: layout`** op elke kaart, bewust zonder `paint`: dat laatste geeft de browser juist toestemming om buiten beeld niets te schilderen.
+
+Omdat de pagina nu zelf scrollt, staat hij stil (`body.vast`) zolang het bewaarde lijstje eroverheen ligt.
 
 ### Echt waar
 
