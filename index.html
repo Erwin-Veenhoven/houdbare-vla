@@ -284,6 +284,14 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .dialoog input{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:14px}
 .dialoog input:focus{outline:2px solid var(--accent);outline-offset:1px}
 #delen{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.agendakeuze{
+  display:block;width:100%;margin-top:10px;padding:13px 15px;text-align:left;
+  font:inherit;color:var(--ink);background:var(--bg);
+  border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;
+}
+.agendakeuze:hover{border-color:var(--accent);transform:translateY(-1px)}
+.agendakeuze .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
+.agendakeuze .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
 .subveld{margin:10px 0 0 30px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
 .subveld[hidden]{display:none}
 .subveld select{font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
@@ -516,6 +524,27 @@ footer strong{color:var(--ink);font-weight:600}
       <div class="btnrow" style="margin-top:16px">
         <button class="btn ghost" id="deelannuleer">Annuleren</button>
         <button class="btn" id="deelnu">Delen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDAVENSTER -->
+  <div class="overlay" id="agendavenster" hidden>
+    <div class="dialoog card" role="dialog" aria-modal="true" aria-labelledby="agendatitel">
+      <h3 id="agendatitel">Waar moet hij in?</h3>
+      <p class="sub">Een website mag niet zelf in je agenda schrijven — geen enkele. Wat we wél kunnen: het agendapunt helemaal invullen en aan je agenda geven. Jij tikt alleen nog op bewaren.</p>
+
+      <button type="button" class="agendakeuze" id="agendaGoogle">
+        <span class="wat">Google Agenda</span>
+        <span class="hoe">opent het agendapunt, ingevuld en wel</span>
+      </button>
+      <button type="button" class="agendakeuze" id="agendaIcs">
+        <span class="wat">Apple Agenda, Outlook, de rest</span>
+        <span class="hoe">geeft je een .ics-bestand door</span>
+      </button>
+
+      <div class="btnrow" style="margin-top:16px">
+        <button class="btn ghost" id="agendaAnnuleer">Annuleren</button>
       </div>
     </div>
   </div>
@@ -847,17 +876,64 @@ function ics(){
   ];
   return regels.join('\r\n');
 }
-document.getElementById('agenda').onclick = () => {
-  if (!gekozen || !document.getElementById('datum').value){ toast('Bereken eerst een vla \u{1F4C5}'); return; }
-  const blob = new Blob([ics()], { type: 'text/calendar;charset=utf-8' });
+/* Google doet het met een link: hij opent het agendapunt al ingevuld en jij
+   hoeft alleen nog op opslaan te tikken. Een herinnering vooraf kan er niet in
+   — dat kan die link niet — dus daar gelden jouw eigen standaardinstellingen. */
+function googleAgendaUrl(){
+  const v = gekozen;
+  const eind = effectieveTht(v, document.getElementById('datum').value);
+  const volgend = new Date(eind); volgend.setDate(volgend.getDate() + 1);
+  const kaal = d => isoDag(d).replace(/-/g, '');
+  const u = new URL('https://calendar.google.com/calendar/render');
+  u.searchParams.set('action', 'TEMPLATE');
+  u.searchParams.set('text', 'Vla opmaken: ' + v.merk + ' ' + v.soort);
+  u.searchParams.set('dates', kaal(eind) + '/' + kaal(volgend));
+  u.searchParams.set('details', 'Vandaag verloopt je ' + v.merk + ' ' + v.soort + '. Gecheckt op houdbarevla.nl');
+  return u.toString();
+}
+
+/* De rest van de wereld werkt met een .ics-bestand. Kan de telefoon het
+   deelvenster met bestanden aan, dan geven we het bestand daaraan door: dan
+   staat "Agenda" gewoon tussen de opties en hoef je niet via je downloads.
+   Anders valt hij terug op downloaden, en dan moet je het zelf openen. */
+async function agendaBestand(){
+  const naam = 'vla-' + slug(gekozen) + '.ics';
+  const tekst = ics();
+  try {
+    const bestand = new File([tekst], naam, { type: 'text/calendar' });
+    if (navigator.canShare && navigator.canShare({ files: [bestand] })){
+      await navigator.share({ files: [bestand], title: 'Vla opmaken' });
+      return;
+    }
+  } catch (e){ if (e && e.name === 'AbortError') return; }
+  const blob = new Blob([tekst], { type: 'text/calendar;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'vla-' + slug(gekozen) + '.ics';
+  a.download = naam;
   document.body.appendChild(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  toast('Agendapunt gemaakt \u{1F4C5}');
+  toast('Bestand opgeslagen \u2014 open het om het toe te voegen \u{1F4C5}');
+}
+
+const agendavenster = document.getElementById('agendavenster');
+function sluitAgendavenster(){ agendavenster.hidden = true; }
+document.getElementById('agenda').onclick = () => {
+  if (!gekozen || !document.getElementById('datum').value){ toast('Bereken eerst een vla \u{1F4C5}'); return; }
+  agendavenster.hidden = false;
+};
+document.getElementById('agendaAnnuleer').onclick = sluitAgendavenster;
+agendavenster.onclick = e => { if (e.target === agendavenster) sluitAgendavenster(); };
+document.getElementById('agendaGoogle').onclick = () => {
+  sluitAgendavenster();
+  window.open(googleAgendaUrl(), '_blank', 'noopener');
+};
+/* navigator.share moet binnen de klik zelf gebeuren, dus het venster gaat pas
+   daarna dicht. */
+document.getElementById('agendaIcs').onclick = () => {
+  agendaBestand();
+  sluitAgendavenster();
 };
 
 /* ============ VLA VAN DE DAG ============ */
@@ -1541,7 +1617,9 @@ document.getElementById('delen').onclick = () => {
 document.getElementById('deelannuleer').onclick = sluitDeelvenster;
 deelvenster.onclick = e => { if (e.target === deelvenster) sluitDeelvenster(); };
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !deelvenster.hidden) sluitDeelvenster();
+  if (e.key !== 'Escape') return;
+  if (!deelvenster.hidden) sluitDeelvenster();
+  else if (!document.getElementById('agendavenster').hidden) document.getElementById('agendavenster').hidden = true;
 });
 document.getElementById('naam').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('deelnu').click();

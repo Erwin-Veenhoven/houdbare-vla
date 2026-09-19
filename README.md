@@ -212,7 +212,10 @@ Het slaat de **datum** op en niet het oordeel, zodat de lijst vanzelf meeloopt m
 
 Een open pak veroudert mee. "Gisteren geopend" is een week later niet meer waar, dus naast de keuze bewaart hij ook de dag waarop je hem invulde en schuift hij de keuze op als de tijd verstrijkt. De antwoorden van de ruiktest gaan juist **niet** mee: die gaan over hoe het pak er op dat moment uitzag, en dat zegt volgende week niets meer.
 
-Daarnaast staat er *zet in mijn agenda*: een `.ics` met een hele dag op de vervaldatum en een herinnering een dag van tevoren.
+Daarnaast staat er *zet in mijn agenda*, en die geeft je twee routes. Een website mag namelijk niet zelf in je agenda schrijven — geen enkele, dat bestaat niet als browserfunctie. Het enige wat kan is het agendapunt helemaal invullen en aan je agenda-app geven.
+
+- **Google Agenda** krijgt een `render?action=TEMPLATE`-link: het agendapunt opent ingevuld en jij tikt op opslaan. Een herinnering vooraf past niet in zo'n link, dus daar gelden je eigen standaardinstellingen. Er gaat niets naar Google tot je die knop indrukt.
+- **De rest** krijgt een `.ics` met een hele dag op de vervaldatum en een herinnering een dag van tevoren. Kan je telefoon bestanden delen (`navigator.canShare({files})`), dan gaat het bestand naar het deelvenster en staat Agenda gewoon tussen de opties. Anders wordt het een download die je zelf moet openen — dat is waar het eerder op vastliep, en de melding beweerde bovendien dat er een agendapunt gemaakt was.
 
 ## De quiz
 
