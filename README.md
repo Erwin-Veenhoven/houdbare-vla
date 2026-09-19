@@ -101,6 +101,7 @@ houdbarevla.nl/?vla=campina-dubbelvla&tht=2026-09-06&op=2026-09-19&uit=nacht&naa
 | `open` | `1` als het pak al open was |
 | `uit` | hoe lang hij buiten de koelkast stond |
 | `naam` | van wie de vla is |
+| `dier` | hoe je huisdier heet, als de vla dat geworden is |
 
 Die `op` is belangrijker dan hij lijkt. Zonder die datum zou een gedeelde link elke dag een ander antwoord geven: stuur je vandaag "nog 7 dagen te gaan", dan leest je vriend volgende week "over datum" en snapt hij niet waar je het over had. Nu ziet hij de uitslag zoals jij hem zag, met een regel erboven — *doorgerekend op 19 september* — en een knop om alsnog de stand van nu te bekijken.
 

@@ -436,6 +436,12 @@ footer strong{color:var(--ink);font-weight:600}
       <h3 id="deeltitel">Van wie is deze vla?</h3>
       <p class="sub">Vul je naam in, dan weet de ontvanger wiens koelkast hier beoordeeld wordt. Mag ook leeg.</p>
       <input type="text" id="naam" maxlength="24" placeholder="Je naam (optioneel)" autocomplete="name">
+
+      <div id="diervak" hidden>
+        <p class="sub" style="margin:16px 0 0">Deze vla is inmiddels een huisdier. Hoe heet hij?</p>
+        <input type="text" id="dier" maxlength="16" placeholder="Bijvoorbeeld Kevin">
+      </div>
+
       <div class="btnrow" style="margin-top:16px">
         <button class="btn ghost" id="deelannuleer">Annuleren</button>
         <button class="btn" id="deelnu">Delen</button>
@@ -843,7 +849,7 @@ function oordeel(d, open, uit, v){
   else if (d >= -7)  r = { k:'warn',face:'\u{1F62C}', titel:'Grensgebied',              tekst:'Ruiken, schudden, en dan een moedig besluit nemen.' };
   else if (d >= -14) r = { k:'warn',face:'\u{1F9D0}', titel:'Twijfelgeval',             tekst:'Twee weken. Je neus krijgt nu het laatste woord.' };
   else if (d >= -30) r = { k:'bad', face:'\u{2620}\uFE0F', titel:'Over datum',         tekst:'Dit is geen toetje meer, dit is een experiment.' };
-  else if (d >= -90) r = { k:'bad', face:'\u{1F9EA}', titel:'Dit is geen vla meer',     tekst:'Dit is een huisdier. Geef het een naam en laat het gaan.' };
+  else if (d >= -90) r = { k:'bad', face:'\u{1F9EA}', titel:'Dit is geen vla meer',     tekst:'Dit is een huisdier. Geef het een naam en laat het gaan.', huisdier:true };
   else if (d >= -365)r = { k:'bad', face:'\u{26B0}\uFE0F', titel:'Vla-archeologie',    tekst:'Maanden over datum. Open dit pak niet binnenshuis.' };
   else               r = { k:'bad', face:'\u{1F3DB}\uFE0F', titel:'Historisch materiaal', tekst:'Dit hoort in een museum, achter dik glas.' };
 
@@ -916,6 +922,8 @@ let laatsteTekst = '';
 let peildatum = null;      /* null = vandaag; anders de dag waarop gedeeld werd */
 let laatstePeil = '';
 let deelNaam = '';
+let dierNaam = '';      /* de naam die je je bedorven vla hebt gegeven */
+let laatsteOordeelHuisdier = false;
 let naamUitLink = false;   /* een naam uit een gedeelde link is van de afzender, niet van jou */
 let klokTimer = null;
 
@@ -981,7 +989,14 @@ function toon(d, open, uit){
     : d > 0 ? `Nog ${d} ${d === 1 ? 'dag' : 'dagen'} te gaan.`
     : `${Math.abs(d)} ${Math.abs(d) === 1 ? 'dag' : 'dagen'} over datum.`;
   /* Bij een leeg pak zeggen we niet hoeveel dagen het nog heeft. */
-  document.getElementById('days').textContent = v.puzzel ? o.tekst : dagen + ' ' + o.tekst;
+  /* Heeft het huisdier een naam gekregen, dan gebruiken we die. Is het geen
+     huisdier meer (andere datum, andere vla), dan vergeten we de naam. */
+  laatsteOordeelHuisdier = !!o.huisdier;
+  if (!o.huisdier) dierNaam = '';
+  const uitleg = o.huisdier && dierNaam
+    ? `Dit is geen vla meer, dit is ${dierNaam}. Laat hem gaan.`
+    : o.tekst;
+  document.getElementById('days').textContent = v.puzzel ? uitleg : dagen + ' ' + uitleg;
 
   /* Een leeg pak verloopt niet, dus valt er ook niets te herinneren. */
   document.getElementById('agenda').hidden = !!v.puzzel;
@@ -1029,6 +1044,7 @@ function toon(d, open, uit){
   regels.push(v.puzzel ? 'Er zit niets meer in.' : dagen);
   if (open) regels.push('Het pak was al open.');
   if (BUITEN[uit]) regels.push(`Stond ${BUITEN[uit].zin} buiten de koelkast.`);
+  if (o.huisdier && dierNaam) regels.push(`Hij heet ${dierNaam}.`);
   regels.push(`Vla-score: ${score}/100`);
   laatsteTekst = regels.join('\n');
   try { history.replaceState(null, '', deelUrl()); } catch {}
@@ -1111,6 +1127,8 @@ document.getElementById('delen').onclick = () => {
   const inp = document.getElementById('naam');
   const eigen = naamUitLink ? '' : deelNaam;
   try { inp.value = eigen || localStorage.getItem('vlanaam') || ''; } catch { inp.value = eigen; }
+  document.getElementById('diervak').hidden = !laatsteOordeelHuisdier;
+  document.getElementById('dier').value = dierNaam;
   deelvenster.hidden = false;
   setTimeout(() => inp.focus(), 50);
 };
@@ -1125,6 +1143,7 @@ document.getElementById('naam').addEventListener('keydown', e => {
 document.getElementById('deelnu').onclick = async () => {
   deelNaam = document.getElementById('naam').value.trim().slice(0, 24);
   naamUitLink = false;
+  dierNaam = document.getElementById('dier').value.trim().slice(0, 16);
   try { localStorage.setItem('vlanaam', deelNaam); } catch {}
   sluitDeelvenster();
   bereken();                      /* naam en peildatum opnieuw in de uitslag verwerken */
@@ -1148,6 +1167,7 @@ function deelUrl(){
   if (document.getElementById('warm').checked) u.searchParams.set('uit', document.getElementById('uit').value);
   if (laatstePeil) u.searchParams.set('op', laatstePeil);
   if (deelNaam) u.searchParams.set('naam', deelNaam);
+  if (dierNaam) u.searchParams.set('dier', dierNaam);
   return u.toString();
 }
 function uitUrl(){
@@ -1174,6 +1194,7 @@ function uitUrl(){
   const op = p.get('op');
   peildatum = /^\d{4}-\d{2}-\d{2}$/.test(op || '') ? new Date(op + 'T00:00:00') : null;
   deelNaam = (p.get('naam') || '').slice(0, 24);
+  dierNaam = (p.get('dier') || '').slice(0, 16);
   naamUitLink = !!deelNaam;
   bereken();
   return true;
