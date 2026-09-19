@@ -137,6 +137,8 @@ Omdat een plaatje de link niet kan meenemen, staat het adres op de kaart zelf.
 
 Een canvas van 1080 bij 1350, met het pak, het oordeel, de vla-score en `houdbarevla.nl` eronder. Ligt je vla op de site om, dan ligt hij op het plaatje ook om.
 
+Alle drie de pagina's kunnen dit, elk met een eigen ontwerp: een uitslag met de meter erop, een quizvla met jouw naam op het etiket, en een feitje waarbij de tekst de hoofdzaak is en zichzelf kleiner maakt tot hij past. Het gereedschap staat in `kaart.js`, de indeling staat per pagina.
+
 Het pak komt als SVG binnen, maar zonder de etiketteksten. Een SVG die je als `<img>` inlaadt mag namelijk geen webfont ophalen, en dan zou *Vanillevla* op het etiket in een systeemletter staan in plaats van in Fredoka. `pack(v, { zonderTekst: true })` laat het etiket dus leeg, en `pakTekst(v)` geeft dezelfde drie regels terug met hun maten en posities, die daarna op het canvas worden gezet. Beide komen uit dezelfde berekening, dus ze kunnen niet uit elkaar gaan lopen.
 
 Het tekenen gebeurt zonder `await`. `navigator.share` wil in dezelfde tik als je klik aangeroepen worden en een wachtmoment ertussen breekt dat op iOS, dus het pak en de letters worden al geladen op het moment dat het deelvenster opengaat, en `toDataURL` (synchroon) doet het werk dat `toBlob` (niet synchroon) niet mag doen.
@@ -369,7 +371,7 @@ Wat er bewust **niet** in staat: de deellinks met parameters (`?vla=…`, `?naam
 
 ## Techniek
 
-Vijf bestanden: `index.html` (de checker), `quiz.html`, `feitjes.html`, `vla.js` met de gedeelde vlalijst en de paktekening, en `feitjes.js` met de feitjes. Samen zo'n 150 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
+Zes bestanden: `index.html` (de checker), `quiz.html`, `feitjes.html`, `vla.js` met de gedeelde vlalijst en de paktekening, `feitjes.js` met de feitjes, en `kaart.js` dat van een uitslag een deelbaar plaatje maakt. Samen zo'n 165 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
 
 ## Disclaimer
 

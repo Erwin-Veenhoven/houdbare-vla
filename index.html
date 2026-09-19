@@ -635,6 +635,7 @@ footer strong{color:var(--ink);font-weight:600}
 
 <script src="vla.js"></script>
 <script src="feitjes.js"></script>
+<script src="kaart.js"></script>
 <script>
 /* ============ DE VLA-DATABASE ============ */
 
@@ -1690,74 +1691,18 @@ document.getElementById('deelplaatje').onclick = () => {
 };
 
 /* ============ HET DEELPLAATJE ============ */
-/* Een uitslag als plaatje van 1080 bij 1350, zodat hij in een story of een
-   appgesprek past. Een telefoon kan een bestand en een link niet samen in het
-   deelvenster stoppen (op iOS gaat dat mis zodra er meer dan `files` in zit),
-   dus het adres staat onderaan op de kaart zelf.
-
-   Het pak komt als SVG binnen, maar zonder de etiketteksten: een SVG die je
-   als <img> inlaadt mag geen webfont ophalen, en dan zou het etiket in een
-   systeemletter komen te staan. Die drie regels zetten we hieronder zelf, met
-   de maten die pakTekst() teruggeeft. */
-const KAART_B = 1080, KAART_H = 1350;
-const KAART_KLEUR = { ok:'#2e9e5b', warn:'#e08a1e', bad:'#d94a3d' };
-let pakBeeld = null, pakBeeldVan = '';
-
-function laadPakBeeld(v){
-  if (pakBeeld && pakBeeldVan === slug(v)) return Promise.resolve(pakBeeld);
-  return new Promise((klaar, mis) => {
-    const img = new Image();
-    img.onload = () => { pakBeeld = img; pakBeeldVan = slug(v); klaar(img); };
-    img.onerror = mis;
-    img.src = 'data:image/svg+xml;charset=utf-8,' +
-      encodeURIComponent(pack(v, { zonderTekst: true }));
-  });
-}
-function lettersKlaar(){
-  if (!document.fonts) return Promise.resolve();
-  return Promise.all(['600 74px Fredoka', '600 32px Fredoka', '700 25px Inter', '400 30px Inter']
-    .map(f => document.fonts.load(f).catch(() => {})));
-}
-/* Een kop die niet past, over twee regels verdelen. */
-function kaartRegels(x, tekst, max){
-  const woorden = tekst.split(' '), uit = [];
-  let r = '';
-  for (const w of woorden){
-    const poging = r ? r + ' ' + w : w;
-    if (x.measureText(poging).width > max && r){ uit.push(r); r = w; } else r = poging;
-  }
-  if (r) uit.push(r);
-  return uit;
-}
-/* Met de streepjes die canvas tussen letters zet loopt gecentreerde tekst een
-   halve spatie naar rechts. Die halen we er weer af. */
-function zetTekst(x, tekst, mx, y, sp){
-  x.letterSpacing = sp ? sp.toFixed(2) + 'px' : '0px';
-  x.fillText(tekst, mx - (sp || 0) / 2, y);
-  x.letterSpacing = '0px';
-}
-
-/* Tekent in één keer, zonder await: navigator.share wil in dezelfde tik als je
-   klik aangeroepen worden, en daar past geen wachten tussen. Het pak en de
-   letters zijn daarom al geladen voordat het venster openging. */
+/* Het gereedschap staat in kaart.js; hier staat alleen hoe een uitslag
+   eruitziet. Onderaan ligt de indeling vast: meter, score en adres staan
+   altijd op dezelfde hoogte. Daarboven groeit de kop naar boven als hij twee
+   regels nodig heeft, en schuiven de emoji en de merkregel mee. Deden ze dat
+   niet, dan liep een lange kop dwars door de emoji heen. */
 function tekenKaart(){
   const v = gekozen, o = laatsteOordeel;
-  const c = document.createElement('canvas');
-  c.width = KAART_B; c.height = KAART_H;
-  const x = c.getContext('2d');
+  const { c, x } = kaartCanvas();
 
-  const g = x.createLinearGradient(0, 0, 0, KAART_H);
-  g.addColorStop(0, '#ffeccd'); g.addColorStop(.5, '#fff7e9'); g.addColorStop(1, '#fff7e9');
-  x.fillStyle = g; x.fillRect(0, 0, KAART_B, KAART_H);
-
-  x.textAlign = 'center';
   x.font = '600 74px Fredoka, sans-serif';
   const kop = kaartRegels(x, o.titel, 900);
   const breed = kop.length > 1;
-
-  /* De onderkant ligt vast. Daarboven groeit de kop naar boven, en de emoji en
-     de merkregel schuiven mee; anders loopt een kop van twee regels dwars door
-     de emoji heen. */
   const REGEL = 76, kopOnder = 1078;
   const kopBoven = kopOnder - REGEL * (kop.length - 1);
   const emojiY = kopBoven - 100, merkY = emojiY - 112;
@@ -1767,31 +1712,17 @@ function tekenKaart(){
     zetTekst(x, ('De vla van ' + deelNaam).toUpperCase(), KAART_B / 2, 140, 3);
   }
 
-  /* het pak, en bij een afgekeurde vla ligt het net als op de site op zijn kant */
-  const ph = breed ? 405 : 470, pw = ph * (120 / 152), schaal = ph / 152;
-  x.save();
-  x.translate(KAART_B / 2, (breed ? 250 : 272) + ph / 2);
-  if (o.k === 'bad') x.rotate(Math.PI / 2);
-  x.shadowColor = 'rgba(43,33,25,.24)'; x.shadowBlur = 44; x.shadowOffsetY = 20;
-  x.drawImage(pakBeeld, -pw / 2, -ph / 2, pw, ph);
-  x.shadowColor = 'transparent';
-  for (const r of pakTekst(v)){
-    x.fillStyle = r.kleur;
-    x.font = `${r.dik} ${(r.fs * schaal).toFixed(1)}px ${r.fam}, sans-serif`;
-    zetTekst(x, r.t, 0, -ph / 2 + r.y * schaal, r.sp * schaal);
-  }
-  x.restore();
+  const ph = breed ? 405 : 470;
+  tekenPak(x, v, (breed ? 250 : 272) + ph / 2, ph, o.k === 'bad');
+  tekenMerkregel(x, v, merkY);
 
-  x.fillStyle = '#8b7a66'; x.font = '700 25px Inter, sans-serif';
-  zetTekst(x, v.merk.toUpperCase() + '   ·   ' + v.soort.toUpperCase(), KAART_B / 2, merkY, 2);
-
-  x.fillStyle = '#2b2119'; x.font = '400 88px sans-serif';
+  x.fillStyle = KAART_INKT; x.font = '400 88px sans-serif';
   x.fillText(o.face, KAART_B / 2, emojiY);
 
   x.fillStyle = KAART_KLEUR[o.k]; x.font = '600 74px Fredoka, sans-serif';
   kop.forEach((r, i) => x.fillText(r, KAART_B / 2, kopBoven + i * REGEL));
 
-  x.fillStyle = '#8b7a66'; x.font = '400 30px Inter, sans-serif';
+  x.fillStyle = KAART_GRIJS; x.font = '400 30px Inter, sans-serif';
   x.fillText(laatsteDagen, KAART_B / 2, 1134);
 
   /* de vla-meter, met het bolletje op jouw score */
@@ -1801,44 +1732,22 @@ function tekenKaart(){
   x.globalAlpha = .3; x.fillStyle = mg;
   x.beginPath(); x.roundRect(mx, my, mw, 14, 99); x.fill();
   x.globalAlpha = 1;
-  x.fillStyle = '#fff7e9'; x.strokeStyle = '#2b2119'; x.lineWidth = 5;
+  x.fillStyle = '#fff7e9'; x.strokeStyle = KAART_INKT; x.lineWidth = 5;
   x.beginPath(); x.arc(mx + mw * laatsteScore / 100, my + 7, 15, 0, Math.PI * 2); x.fill(); x.stroke();
 
-  x.fillStyle = '#2b2119'; x.font = '600 32px Fredoka, sans-serif';
+  x.fillStyle = KAART_INKT; x.font = '600 32px Fredoka, sans-serif';
   x.fillText('Vla-score: ' + laatsteScore + '/100', KAART_B / 2, 1248);
-  x.fillStyle = '#b3a38e'; x.font = '700 23px Inter, sans-serif';
-  zetTekst(x, 'HOUDBAREVLA.NL', KAART_B / 2, 1306, 7);
+  tekenAdres(x);
   return c;
-}
-
-/* toDataURL is synchroon, toBlob niet. Dat scheelt hier: zo blijft de klik
-   die het deelvenster opent geldig. */
-function kaartBestand(c){
-  const bytes = atob(c.toDataURL('image/png').split(',')[1]);
-  const arr = new Uint8Array(bytes.length);
-  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-  return new File([arr], 'vla-' + slug(gekozen) + '.png', { type: 'image/png' });
 }
 
 async function deelPlaatje(){
   if (!gekozen || !laatsteOordeel){ toast('Bereken eerst een vla \u{1F4C5}'); return; }
   try { await laadPakBeeld(gekozen); } catch { toast('Het pak wilde niet mee \u{1F937}'); return; }
   let bestand;
-  try { bestand = kaartBestand(tekenKaart()); }
+  try { bestand = kaartBestand(tekenKaart(), 'vla-' + slug(gekozen)); }
   catch { toast('Tekenen lukte niet \u{1F937}'); return; }
-
-  if (navigator.canShare && navigator.canShare({ files: [bestand] })){
-    /* Alleen `files`, verder niets. Zet je er een titel of een link bij, dan
-       laat iOS het bestand soms vallen. */
-    try { await navigator.share({ files: [bestand] }); return; }
-    catch (e) { if (e && e.name === 'AbortError') return; }
-  }
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(bestand);
-  a.download = bestand.name;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  toast('Plaatje opgeslagen \u{1F5BC}\uFE0F');
+  deelKaartBestand(bestand, () => toast('Plaatje opgeslagen \u{1F5BC}\uFE0F'));
 }
 
 /* ============ DELEN VIA DE URL ============ */

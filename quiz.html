@@ -105,6 +105,15 @@ footer a{color:var(--ink)}
 .dialoog h3{font-family:Fredoka;font-weight:600;font-size:19px;margin:0 0 6px}
 .dialoog p{color:var(--muted);font-size:14px;margin:0}
 .dialoog .naamveld{margin-top:18px}
+.keuzeknop{
+  display:block;width:100%;margin-top:10px;padding:13px 15px;text-align:left;
+  font:inherit;color:var(--ink);background:var(--bg);
+  border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;
+}
+.keuzeknop:hover{border-color:var(--accent);transform:translateY(-1px)}
+.keuzeknop .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
+.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.deelnoot{margin:12px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
   background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:11px 20px;
   box-shadow:var(--shadow);font-size:14px;transition:.25s;pointer-events:none;z-index:9}
@@ -132,9 +141,17 @@ footer a{color:var(--ink)}
     <h3 id="deeltitel">Zet je naam op het pak</h3>
     <p>Dan staat jouw naam op het etiket in plaats van het merk. Mag ook leeg.</p>
     <input class="naamveld" id="naam" maxlength="14" placeholder="Je naam (of niet)" autocomplete="name">
-    <div class="knoppen" style="justify-content:flex-end">
+    <button type="button" class="keuzeknop" id="deelplaatje">
+      <span class="wat">Deel als plaatje</span>
+      <span class="hoe">een kaartje voor je story of een appje</span>
+    </button>
+    <button type="button" class="keuzeknop" id="deellink">
+      <span class="wat">Deel als link</span>
+      <span class="hoe">tekst met een link naar jouw vla</span>
+    </button>
+    <p class="deelnoot">Het moet er één van de twee zijn: een telefoon kan een plaatje en een link niet in hetzelfde deelvenster stoppen.</p>
+    <div class="knoppen" style="justify-content:flex-end;margin-top:14px">
       <button class="btn ghost" id="deelannuleer">Annuleren</button>
-      <button class="btn" id="deelnu">Delen</button>
     </div>
   </div>
 </div>
@@ -142,6 +159,7 @@ footer a{color:var(--ink)}
 <div class="toast" id="toast"></div>
 
 <script src="vla.js"></script>
+<script src="kaart.js"></script>
 <script>
 /* =====================================================================
    DE VRAGEN
@@ -394,11 +412,17 @@ function toonPak(v, van){
   document.getElementById('deelannuleer').onclick = sluit;
   venster.onclick = e => { if (e.target === venster) sluit(); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !venster.hidden) sluit(); });
-  inp.onkeydown = e => { if (e.key === 'Enter') document.getElementById('deelnu').click(); };
-  document.getElementById('deelnu').onclick = async () => {
+  inp.onkeydown = e => { if (e.key === 'Enter') document.getElementById('deellink').click(); };
+
+  /* De naam komt op het etiket, dus die moet binnen zijn voordat we tekenen. */
+  const naamOver = () => {
     const n = inp.value.trim().slice(0, 14);
     try { localStorage.setItem('vlanaam', n); } catch {}
     document.getElementById('pakhier').innerHTML = pack(n ? { ...v, merk: n } : v);
+    return n;
+  };
+  document.getElementById('deellink').onclick = async () => {
+    const n = naamOver();
     sluit();
     /* De link toont jouw uitslag, met je naam op het etiket. */
     const u = new URL(location.origin + location.pathname);
@@ -412,6 +436,55 @@ function toonPak(v, van){
     }
     toast(await naarKlembord(tekst + '\n\nBekijk: ' + url) ? 'Gekopieerd \u{1F4CB}' : 'Kopiëren lukte niet \u{1F937}');
   };
+  document.getElementById('deelplaatje').onclick = async () => {
+    const n = naamOver();
+    sluit();
+    const opPak = n ? { ...v, merk: n } : v;
+    try { await laadPakBeeld(opPak); } catch { toast('Het pak wilde niet mee \u{1F937}'); return; }
+    let bestand;
+    try { bestand = kaartBestand(quizKaart(v, opPak, n), 'vla-' + slug(v)); }
+    catch { toast('Tekenen lukte niet \u{1F937}'); return; }
+    deelKaartBestand(bestand, () => toast('Plaatje opgeslagen \u{1F5BC}\uFE0F'));
+  };
+}
+
+/* ============ HET DEELPLAATJE ============ */
+/* Het gereedschap staat in kaart.js; hier staat alleen hoe een quizuitslag
+   eruitziet. Het pak staat bovenaan met jouw naam op het etiket, en wat
+   eronder komt wordt als blok gecentreerd in de ruimte die overblijft. Zo
+   blijft het kloppen of de soortnaam nu op één regel past of op twee. */
+function quizKaart(v, opPak, naam){
+  const { c, x } = kaartCanvas();
+
+  x.fillStyle = '#c08a3a'; x.font = '700 26px Inter, sans-serif';
+  zetTekst(x, (naam ? naam + ' is' : 'Jij bent').toUpperCase(), KAART_B / 2, 140, 3);
+
+  const ph = 560;
+  tekenPak(x, opPak, 175 + ph / 2, ph, false);
+
+  const soort = pasTekst(x, v.soort, 900, [70, 60, 52], 2, { fam:'Fredoka', dik:600 });
+  x.font = '400 30px Inter, sans-serif';
+  const zin = kaartRegels(x, uitleg(v), 820).slice(0, 3);
+
+  /* alles tussen de onderkant van het pak en het adres netjes in het midden */
+  const SOORTREGEL = soort.fs * 1.18, ZINREGEL = 42;
+  const hoogte = 30 + 44 + SOORTREGEL * soort.regels.length + 46 + ZINREGEL * zin.length;
+  let y = 740 + (1250 - 740 - hoogte) / 2 + 24;
+
+  x.fillStyle = KAART_GRIJS; x.font = '700 25px Inter, sans-serif';
+  zetTekst(x, v.merk.toUpperCase(), KAART_B / 2, y, 3);
+  y += 44 + SOORTREGEL;
+
+  x.fillStyle = KAART_INKT;
+  x.font = `600 ${soort.fs}px Fredoka, sans-serif`;
+  soort.regels.forEach((r, i) => x.fillText(r, KAART_B / 2, y + i * SOORTREGEL));
+  y += SOORTREGEL * (soort.regels.length - 1) + 46 + ZINREGEL;
+
+  x.fillStyle = KAART_GRIJS; x.font = '400 30px Inter, sans-serif';
+  zin.forEach((r, i) => x.fillText(r, KAART_B / 2, y + i * ZINREGEL));
+
+  tekenAdres(x);
+  return c;
 }
 function uitleg(v){
   if (v.nietVla)  return 'Streng genomen ben je geen vla. Dat heeft je nog nooit tegengehouden.';
