@@ -759,11 +759,11 @@ document.getElementById('terug1').onclick = () => ga(1);
 /* ============ BUITEN DE KOELKAST ============ */
 /* stap = hoeveel treden het oordeel zakt (ok → warn → bad) */
 const BUITEN = {
-  kort:  { label:'korter dan 2 uur',     straf:  0, stap: 0, tip:'Korter dan twee uur buiten de koelkast is precies binnen de regels. Niets aan de hand.' },
-  paar:  { label:'2 tot 4 uur',          straf: 20, stap: 1, tip:'Twee tot vier uur is over de grens. Niet dramatisch, wel reden om vandaag nog te beslissen.' },
-  halve: { label:'een halve dag',        straf: 35, stap: 1, tip:'Een halve dag op kamertemperatuur is een middag gratis broedtijd. Ruik extra goed.' },
-  nacht: { label:'de hele nacht',        straf: 50, stap: 2, tip:'Een nacht buiten de koelkast maakt de houdbaarheidsdatum volledig betekenisloos.' },
-  lang:  { label:'langer, of geen idee', straf: 60, stap: 2, tip:'“Geen idee” is bij zuivel het verkeerde antwoord. Als je het niet weet, weet je het eigenlijk wel.' },
+  kort:  { label:'korter dan 2 uur',     zin:'korter dan twee uur', straf:  0, stap: 0, tip:'Korter dan twee uur buiten de koelkast is precies binnen de regels. Niets aan de hand.' },
+  paar:  { label:'2 tot 4 uur',          zin:'twee tot vier uur',   straf: 20, stap: 1, tip:'Twee tot vier uur is over de grens. Niet dramatisch, wel reden om vandaag nog te beslissen.' },
+  halve: { label:'een halve dag',        zin:'een halve dag',       straf: 35, stap: 1, tip:'Een halve dag op kamertemperatuur is een middag gratis broedtijd. Ruik extra goed.' },
+  nacht: { label:'de hele nacht',        zin:'de hele nacht',       straf: 50, stap: 2, tip:'Een nacht buiten de koelkast maakt de houdbaarheidsdatum volledig betekenisloos.' },
+  lang:  { label:'langer, of geen idee', zin:'heel lang',           straf: 60, stap: 2, tip:'“Geen idee” is bij zuivel het verkeerde antwoord. Als je het niet weet, weet je het eigenlijk wel.' },
 };
 
 /* ============ VLA-SPECIFIEKE OPMERKINGEN ============ */
@@ -951,7 +951,7 @@ function bonnetje(d, open, uit, v){
   };
   if (open) aftrek('Het pak was al open', 22);
   if (BUITEN[uit] && BUITEN[uit].straf){
-    const l = BUITEN[uit].label;
+    const l = BUITEN[uit].zin;
     aftrek(l[0].toUpperCase() + l.slice(1) + ' buiten de koelkast', BUITEN[uit].straf);
   }
   return { rijen, totaal: Math.round(score), geknepen };
@@ -1028,7 +1028,7 @@ function toon(d, open, uit){
   regels.push('');
   regels.push(v.puzzel ? 'Er zit niets meer in.' : dagen);
   if (open) regels.push('Het pak was al open.');
-  if (BUITEN[uit]) regels.push(`Stond ${BUITEN[uit].label} buiten de koelkast.`);
+  if (BUITEN[uit]) regels.push(`Stond ${BUITEN[uit].zin} buiten de koelkast.`);
   regels.push(`Vla-score: ${score}/100`);
   laatsteTekst = regels.join('\n');
   try { history.replaceState(null, '', deelUrl()); } catch {}
