@@ -143,7 +143,7 @@ body{
 .wenk[hidden]{display:none}
 .wenk b{font-size:17px;font-weight:600;animation:wip 1.5s ease-in-out infinite}
 @keyframes wip{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
-body.weg .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
+body.gescrold .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
 
 /* ---------- bewaarde feitjes ---------- */
 .overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;
@@ -161,19 +161,24 @@ body.weg .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
 .blad .wis{font:inherit;font-size:13px;color:var(--muted);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
 .subkop{color:var(--muted);font-size:13px;margin:0 0 14px}
 .lijst{overflow-y:auto;margin:0;padding:1px;list-style:none;-webkit-overflow-scrolling:touch}
-/* Elk bewaard feitje krijgt zijn eigen pak mee, anders is het een tekstlijstje. */
-.lijst li{display:flex;align-items:center;gap:12px;padding:11px 12px;
-  border:1.5px solid var(--line);border-radius:14px;background:var(--bg)}
+/* Elk bewaard feitje krijgt zijn eigen pak mee, anders is het een tekstlijstje.
+   De rij zelf is een knop die het feitje in de reel opent. */
+.lijst li{display:flex;align-items:center;gap:4px;
+  border:1.5px solid var(--line);border-radius:14px;background:var(--bg);transition:.15s}
 .lijst li + li{margin-top:9px}
+.lijst li:hover{border-color:var(--accent)}
+.lijst .open{flex:1;min-width:0;display:flex;align-items:center;gap:12px;
+  padding:11px 0 11px 12px;font:inherit;color:inherit;text-align:left;
+  background:none;border:0;cursor:pointer}
 .mini{flex:none}
 .mini svg{width:40px;height:51px;display:block}
 .lijst .tekst{flex:1;min-width:0}
 .lijst .regel{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .lijst .van{font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--muted)}
 .lijst .etiket{margin:0;padding:3px 8px;font-size:9.5px;letter-spacing:.08em}
-.lijst .tekst p{margin:3px 0 0;font-family:Fredoka;font-weight:500;font-size:14.5px;line-height:1.35}
-.lijst .weg{flex:none;align-self:flex-start;font:inherit;font-size:15px;line-height:1;color:var(--muted);
-  background:none;border:0;padding:4px 5px;border-radius:8px;cursor:pointer}
+.lijst .zin{display:block;margin:3px 0 0;font-family:Fredoka;font-weight:500;font-size:14.5px;line-height:1.35}
+.lijst .weg{flex:none;align-self:flex-start;margin:11px 8px 0 0;font:inherit;font-size:15px;line-height:1;
+  color:var(--muted);background:none;border:0;padding:4px 5px;border-radius:8px;cursor:pointer}
 .lijst .weg:hover{color:var(--ink);background:var(--line)}
 .leeg{text-align:center;color:var(--muted);padding:12px 0 4px}
 .leeg p{margin:12px 0 0;font-size:14px;line-height:1.5}
@@ -259,9 +264,11 @@ const SLEUTEL = 'vlafeitjes';
 let bewaard = [];
 try { bewaard = JSON.parse(localStorage.getItem(SLEUTEL)) || []; } catch {}
 if (!Array.isArray(bewaard)) bewaard = [];
+bewaard = bewaard.filter(x => typeof x === 'string');
 
 const sleutelVan = (v, i) => slug(v) + '|' + i;
 function zoek(id){
+  if (typeof id !== 'string') return null;
   const [s, i] = id.split('|');
   const v = VLAS.find(x => slug(x) === s);
   if (!v) return null;
@@ -273,6 +280,7 @@ function opslaan(){
   document.getElementById('favTel').textContent = bewaard.length;
 }
 function wissel(id){
+  if (typeof id !== 'string') return;
   const i = bewaard.indexOf(id);
   if (i < 0){ bewaard.push(id); toast('Bewaard ❤️'); } else { bewaard.splice(i, 1); }
   opslaan();
@@ -323,7 +331,7 @@ let uitgelegd = false;
 function wenkWeg(){
   if (uitgelegd) return;
   uitgelegd = true;
-  document.body.classList.add('weg');
+  document.body.classList.add('gescrold');
   setTimeout(() => { wenk.hidden = true; }, 400);
 }
 
@@ -467,14 +475,16 @@ function toonLijst(){
      bestaat de kruisjes eronder niet laat verschuiven. */
   const f = bewaard.map(id => ({ id, ...zoek(id) })).filter(x => x.t);
   lijst.innerHTML = f.map(x => `<li>
-      <span class="mini">${pack(x.v)}</span>
-      <span class="tekst">
-        <span class="regel">
-          <span class="van">${esc(x.v.merk)} — ${esc(x.v.soort)}</span>
-          ${x.echt ? '<span class="etiket">echt waar</span>' : ''}
+      <button class="open" data-id="${x.id}">
+        <span class="mini">${pack(x.v)}</span>
+        <span class="tekst">
+          <span class="regel">
+            <span class="van">${esc(x.v.merk)} — ${esc(x.v.soort)}</span>
+            ${x.echt ? '<span class="etiket">echt waar</span>' : ''}
+          </span>
+          <span class="zin">${esc(x.t)}</span>
         </span>
-        <p>${esc(x.t)}</p>
-      </span>
+      </button>
       <button class="weg" data-id="${x.id}" aria-label="Verwijderen">✕</button>
     </li>`).join('');
   document.getElementById('favSub').textContent = f.length ? telregel(f.length, f.filter(x => x.echt).length) : '';
@@ -497,10 +507,24 @@ document.addEventListener('keydown', e => {
 });
 lijst.onclick = e => {
   const b = e.target.closest('.weg');
-  if (!b) return;
-  wissel(b.dataset.id);
-  toonLijst();
+  if (b){ wissel(b.dataset.id); toonLijst(); return; }
+  const o = e.target.closest('.open');
+  if (o) openFeitje(o.dataset.id);
 };
+
+/* Een bewaard feitje aanklikken zet hem als volgende kaart in de reel en
+   schuift ernaartoe, zodat je hem gewoon in het grote scherm ziet en van
+   daaraf verder kunt scrollen. */
+function openFeitje(id){
+  const f = zoek(id);
+  const h = reel.clientHeight;
+  const hier = Math.round(reel.scrollTop / h);
+  const nu = reel.children[hier];
+  if (!f || !nu) return;
+  venster.hidden = true;
+  nu.insertAdjacentHTML('afterend', kaartje({ v: f.v, i: Number(id.split('|')[1]), t: f.t, echt: f.echt }));
+  reel.scrollTo({ top: (hier + 1) * h, behavior: 'smooth' });
+}
 document.getElementById('favWis').onclick = () => {
   bewaard = []; opslaan(); toonLijst();
   reel.querySelectorAll('.hart').forEach(b => {

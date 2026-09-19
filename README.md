@@ -172,7 +172,7 @@ Onder elk feitje staan drie knopjes: **bewaren**, **delen** en **checken** (die 
 
 Delen geeft een link naar dat ene feitje: `feitjes.html?vla=campina-hopjesvla&f=5`. Wie hem opent krijgt dat feitje als eerste kaart en scrollt daarna gewoon door. Staat er geen geldige `vla`/`f` in, dan begin je bij een willekeurige.
 
-Wat je bewaart staat in je eigen browser (`vlafeitjes`) en is terug te vinden achter de teller bovenin. Elk bewaard feitje krijgt daar zijn eigen kaartje met het pak erbij, zodat het lijstje er net zo uitziet als de rest van de site, met een regel eronder die telt hoeveel er echt waar zijn. Is er niets bewaard, dan staat er het lege pak.
+Wat je bewaart staat in je eigen browser (`vlafeitjes`) en is terug te vinden achter de teller bovenin. Elk bewaard feitje krijgt daar zijn eigen kaartje met het pak erbij, zodat het lijstje er net zo uitziet als de rest van de site, met een regel eronder die telt hoeveel er echt waar zijn. Klik je op zo'n kaartje, dan wordt dat feitje als volgende kaart in de scroller gezet en schuift hij ernaartoe — je ziet hem dus gewoon in het grote scherm en scrollt van daaraf verder. Is er niets bewaard, dan staat er het lege pak.
 
 De scroller houdt hooguit zestig kaarten in het document: hij vult vijf nieuwe bij zodra het einde in zicht komt, en ruimt de oudste tien op als je ver genoeg bent. Opruimen gebeurt pas als je even stilstaat, want het verzetten van de scrollpositie breekt anders een uitrollend veegje of een vloeiende pijltjes-scroll af. Die scrollpositie zetten we zelf terug, dus `overflow-anchor` staat uit — anders corrigeren de browser en de pagina allebei en spring je tien kaarten terug.
 
