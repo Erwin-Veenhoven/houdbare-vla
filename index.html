@@ -189,6 +189,20 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .check{display:flex;align-items:flex-start;gap:10px;margin:18px 0 0;cursor:pointer;font-size:14px;user-select:none}
 .check input{appearance:none;width:20px;height:20px;flex:none;margin:1px 0 0;border:1.5px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;transition:.15s}
 .check input:checked{background:var(--accent);border-color:var(--accent)}
+.bonknop{display:block;margin:6px auto 0;font:inherit;font-size:12.5px;color:var(--muted);background:none;border:0;padding:2px 4px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.bonknop:hover{color:var(--ink)}
+.bon{max-width:340px;margin:12px auto 0;padding:12px 14px;border:1.5px dashed var(--line);border-radius:12px;
+  font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.bon[hidden]{display:none}
+/* flex-end, zodat bij een naam over twee regels de stippellijn en het getal
+   bij de ondersté regel staan en niet bij de eerste. */
+.bon .r{display:flex;align-items:flex-end;gap:8px}
+.bon .r + .r{margin-top:5px}
+.bon .wat{flex:1;min-width:0}
+.bon .punt{flex:1;border-bottom:1px dotted var(--line);margin-bottom:4px}
+.bon .nr{flex:none;font-weight:600;color:var(--ink)}
+.bon .tot{margin-top:9px;padding-top:9px;border-top:1.5px solid var(--line);color:var(--ink);font-weight:600}
+.bon .klem{margin-top:8px;font-size:12px;font-style:italic}
 .quizkaart{display:block;margin:26px auto 0;max-width:420px;padding:16px 18px;border-radius:var(--radius);
   border:1.5px dashed var(--line);background:linear-gradient(180deg,var(--bg2),transparent);
   text-align:center;text-decoration:none;color:inherit;transition:.15s}
@@ -334,7 +348,7 @@ footer strong{color:var(--ink);font-weight:600}
 <div class="wrap">
   <header>
     <div class="logo"><span class="blob"></span> Houdbare&nbsp;Vla</div>
-    <p class="tagline">Het is 23:41. Je staat voor de open koelkast met een pak vla in je hand. Wij rekenen uit of hij nog kan.</p>
+    <p class="tagline">Het is 23:41. Je staat voor de open koelkast met een pak vla in je hand. Kan je hem nog drinken… of eten?</p>
     <nav class="steps" aria-label="Stappen">
       <div class="step on" data-step="1"><span class="dot">1</span> Kies je vla</div>
       <span class="bar"></span>
@@ -447,6 +461,8 @@ footer strong{color:var(--ink);font-weight:600}
         <div class="knob" id="knob" style="left:50%"></div>
       </div>
       <div class="score" id="score"></div>
+      <button type="button" class="bonknop" id="bonknop" aria-expanded="false" aria-controls="bon">hoe komen we hieraan?</button>
+      <div class="bon" id="bon" hidden></div>
     </div>
 
     <ul class="advice" id="advice"></ul>
@@ -752,6 +768,7 @@ const OPMERKINGEN = [
   [v => v.soort === 'Dubbelvla',   '\u{1F944}', 'Bij dubbelvla gaat de ene helft altijd eerder dan de andere. Kies een kant.'],
   [v => v.merk === 'Vlaflip',      '\u{1F379}', 'Een vlaflip verbergt van alles. Ook dingen die je liever had geweten.'],
   [v => v.merk === 'Zelfgemaakt',  '\u{1F475}', 'Zelfgemaakte vla heeft geen THT. Oma ook niet. Reken op een dag of drie.'],
+  [v => v.puzzel,                 '\u{1F9E9}', 'Dit pak is al leeg. Je bewaart het voor de puzzel op de zijkant, en dat is een volstrekt geldige reden.'],
   [v => v.geknepen,               '\u{1F91C}', 'Er zit altijd nog \u00e9\u00e9n lepel in. Knijpen, kantelen, geduld: dat is de heilige drie-eenheid.'],
   [v => v.merk === 'Eigen pan',    '\u{1F372}', 'Restjes uit de pan: afdekken, koelen, en binnen twee dagen opmaken.'],
   [v => v.merk === 'Met vel',      '\u{1FAE7}', 'Dat vel is gewoon eiwit. Volstrekt eetbaar, en niemand dwingt je.'],
@@ -822,7 +839,9 @@ function oordeel(d, open, uit, v){
     else if (na === 2 && rang === 0)
       r = { k:'bad', face:'\u{1F9A0}', titel:'Te lang warm geweest', tekst:'De datum klopt nog prima. Daar heb je nu alleen niets meer aan.' };
     else if (na === 2 && rang === 1)
-      r = { k:'bad', face:'\u{2623}\uFE0F', titel:'Absoluut niet', tekst:'Over datum én te lang warm. Twee keer nee is nog steeds nee.' };
+      r = { k:'bad', face:'\u{2623}\uFE0F', titel:'Absoluut niet', tekst: d < 0
+        ? 'Over datum én te lang warm. Twee keer nee is nog steeds nee.'
+        : 'De datum redt het nog net. De behandeling niet, en die weegt zwaarder.' };
   }
 
   /* Belangrijkste eerst. De bovengrens is ruim; hij is er alleen zodat
@@ -891,13 +910,47 @@ function schrijfDatum(iso){
   const dt = new Date(iso + 'T00:00:00');
   return dt.getDate() + ' ' + m[dt.getMonth()];
 }
+/* ============ HET BONNETJE ============ */
+/* De score in stappen, zodat de uitsplitsing altijd optelt tot het getal dat
+   erboven staat. De ondergrens van 1 kan een aftrek afknijpen; dan tonen we
+   wat het werkelijk kostte, niet wat het op papier had moeten kosten. */
+function bonnetje(d, open, uit){
+  const rijen = [];
+  let score = d >= 0 ? Math.min(100, 58 + d * 1.6) : Math.max(1, 58 + d * 2.6);
+  rijen.push({
+    wat: d === 0 ? 'De datum is vandaag'
+       : d > 0 ? `Nog ${d} ${d === 1 ? 'dag' : 'dagen'} te gaan`
+       : `${-d} ${-d === 1 ? 'dag' : 'dagen'} over datum`,
+    nr: Math.round(score),
+  });
+  let geknepen = false;
+  const aftrek = (wat, straf) => {
+    const na = Math.max(1, score - straf);
+    if (na !== score - straf) geknepen = true;
+    rijen.push({ wat, nr: Math.round(na - score) });
+    score = na;
+  };
+  if (open) aftrek('Het pak was al open', 22);
+  if (BUITEN[uit] && BUITEN[uit].straf){
+    const l = BUITEN[uit].label;
+    aftrek(l[0].toUpperCase() + l.slice(1) + ' buiten de koelkast', BUITEN[uit].straf);
+  }
+  return { rijen, totaal: Math.round(score), geknepen };
+}
+function toonBon(bon){
+  const el = document.getElementById('bon');
+  el.innerHTML = bon.rijen.map(r =>
+    `<div class="r"><span class="wat">${esc(r.wat)}</span><span class="punt"></span><span class="nr">${r.nr > 0 ? r.nr : r.nr === 0 ? '0' : '\u2212' + Math.abs(r.nr)}</span></div>`
+  ).join('') +
+  `<div class="r tot"><span class="wat">Vla-score</span><span class="punt"></span><span class="nr">${bon.totaal}</span></div>` +
+  (bon.geknepen ? '<p class="klem">Lager dan 1 bestaat niet. De aftrek kon dus niet volledig aankomen.</p>' : '');
+}
+
 function toon(d, open, uit){
   const v = gekozen;
   const o = oordeel(d, open, uit, v);
-  let score = d >= 0 ? Math.min(100, 58 + d * 1.6) : Math.max(1, 58 + d * 2.6);
-  if (open) score = Math.max(1, score - 22);
-  if (BUITEN[uit]) score = Math.max(1, score - BUITEN[uit].straf);
-  score = Math.round(score);
+  const bon = bonnetje(d, open, uit);
+  const score = bon.totaal;
 
   document.getElementById('resultpack').innerHTML = pack(v);
   document.getElementById('resultpack').classList.toggle('rot', o.k === 'bad');
@@ -910,8 +963,11 @@ function toon(d, open, uit){
     : `${Math.abs(d)} ${Math.abs(d) === 1 ? 'dag' : 'dagen'} over datum.`;
   document.getElementById('days').textContent = dagen + ' ' + o.tekst;
 
+  toonBon(bon);
+  document.getElementById('bon').hidden = true;
+  document.getElementById('bonknop').setAttribute('aria-expanded', 'false');
   setTimeout(() => { document.getElementById('knob').style.left = score + '%'; }, 120);
-  document.getElementById('score').textContent = `Vla-score: ${score}/100${open ? ' (−22 open pak)' : ''}${BUITEN[uit] && BUITEN[uit].straf ? ` (−${BUITEN[uit].straf} ${BUITEN[uit].label} buiten de koelkast)` : ''}`;
+  document.getElementById('score').textContent = `Vla-score: ${score}/100`;
   document.getElementById('advice').innerHTML = o.tips
     .map(t => `<li><span class="ic">${t[0]}</span><span>${esc(t[1])}</span></li>`).join('');
 
@@ -980,6 +1036,12 @@ function startKlok(thtISO){
   klokTimer = setInterval(tik, 1000);
 }
 
+document.getElementById('bonknop').onclick = e => {
+  const bon = document.getElementById('bon');
+  bon.hidden = !bon.hidden;
+  e.target.setAttribute('aria-expanded', String(!bon.hidden));
+  e.target.textContent = bon.hidden ? 'hoe komen we hieraan?' : 'laat maar dicht';
+};
 document.getElementById('opnieuw').onclick = () => {
   document.getElementById('datum').value = '';
   datumBij();

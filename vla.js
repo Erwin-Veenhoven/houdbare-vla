@@ -73,6 +73,7 @@ const VLAS = [
   {merk:'Fristi',  soort:'Ook geen vla',      groep:'Bijzonder',c1:'#f2b8cf', c2:'#c0326b', nietVla:true},
   {merk:'Mona',    soort:'Toetje (geen vla)', groep:'Bijzonder',c1:'#f6e7d2', c2:'#b98a5e', nietVla:true},
   {merk:'Koelkast',soort:'Achterin gevonden', groep:'Bijzonder',c1:'#cfd6cd', c2:'#6f7a6b', mysterie:true, zelf:{vraag:'Wanneer zag je hem voor het eerst?', hint:'Achterin de koelkast bestaat geen tijd. Gok gerust, wij rekenen er twee dagen bij.', dagen:2}},
+  {merk:'Leeg pak', soort:'Puzzel erop',      groep:'Bijzonder',c1:'#f4f1e8', c2:'#cfc7b4', puzzel:true},
   {merk:'Uitgeknepen', soort:'Laatste restje', groep:'Bijzonder',c1:'#f6e9cd', c2:'#c9a961', geknepen:true},
   {merk:'Onbekend',soort:'Vla zonder etiket', groep:'Bijzonder',c1:'#d8d2c8', c2:'#8d8478', mysterie:true, zelf:{vraag:'Wanneer kwam dit pak in huis?', hint:'Zonder etiket is elke datum een schatting. Wij rekenen er vier dagen bij en hopen er het beste van.', dagen:4}},
 ];
@@ -105,7 +106,14 @@ function pack(v, size){
   const mLen = v.merk.length;
   const mfs = mLen > 13 ? 4.6 : mLen > 10 ? 5.3 : 6;
   const mls = mLen > 13 ? .2 : mLen > 10 ? .5 : .9;
-  const mark = v.mysterie
+  /* Een leeg pak dat je bewaart om de puzzel op de zijkant. */
+  const zwart = (x, y) => `<rect x="${x}" y="${y}" width="5" height="5" fill="rgba(51,38,27,.6)"/>`;
+  const puzzel = `<rect x="47.5" y="37" width="25" height="20" rx="1" fill="rgba(255,255,255,.85)"/>`
+    + zwart(47.5, 37) + zwart(62.5, 37) + zwart(57.5, 42) + zwart(67.5, 47) + zwart(52.5, 52)
+    + `<path d="M52.5 37v20M57.5 37v20M62.5 37v20M67.5 37v20M47.5 42h25M47.5 47h25M47.5 52h25"
+         stroke="rgba(51,38,27,.32)" stroke-width=".5" fill="none"/>`;
+
+  const mark = v.puzzel ? puzzel : v.mysterie
     ? `<text x="60" y="53" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="22" fill="rgba(255,255,255,.75)">?</text>`
     : kn
     ? `<ellipse cx="60" cy="46" rx="8" ry="3" fill="rgba(255,255,255,.28)"/>`
@@ -138,7 +146,7 @@ function pack(v, size){
   <rect x="29" y="${68 + dy}" width="62" height="46" rx="7" fill="#fffaf0" opacity=".94"/>
   <text x="60" y="${80 + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="${mfs}" letter-spacing="${mls}" fill="#9d8d78">${esc(v.merk.toUpperCase())}</text>
   ${label}
-  <text x="60" y="${(lines.length > 1 ? 112.5 : 109) + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="5" letter-spacing=".7" fill="#b7a894">${kn ? 'BIJNA LEEG' : '1 LITER'}</text>
+  <text x="60" y="${(lines.length > 1 ? 112.5 : 109) + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="5" letter-spacing=".7" fill="#b7a894">${kn ? 'BIJNA LEEG' : v.puzzel ? 'LEEG' : '1 LITER'}</text>
   ${kreuk}
 </svg>`;
 }
