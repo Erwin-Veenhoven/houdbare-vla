@@ -201,7 +201,18 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .snel button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 .toen{margin:0 0 14px;padding:9px 12px;border-radius:12px;background:var(--bg2);color:var(--muted);font-size:13px;text-align:center}
 .toen button{font:inherit;font-size:13px;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
-.vanwie{margin:0 0 2px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.vanwie{
+  display:flex;align-items:center;gap:10px;width:fit-content;max-width:100%;
+  margin:0 auto 16px;padding:7px 16px 7px 7px;border-radius:999px;
+  background:var(--bg2);border:1.5px solid var(--line);
+  font-family:Fredoka;font-weight:600;font-size:15.5px;color:var(--ink);
+}
+.vanwie[hidden]{display:none}
+.vanwie .initiaal{
+  display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:14px;font-weight:700;
+}
+.vanwie span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .klok{margin:8px 0 0;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .klok b{color:var(--ink);font-weight:600}
 .overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(43,33,25,.45);backdrop-filter:blur(2px)}
@@ -374,11 +385,14 @@ footer strong{color:var(--ink);font-weight:600}
 
   <!-- STAP 3 -->
   <section class="panel card" id="panel3" aria-labelledby="t3">
+    <div class="vanwie" id="vanwie" hidden>
+      <span class="initiaal" id="vanwieInit"></span>
+      <span id="vanwieNaam"></span>
+    </div>
     <p class="toen" id="toen" hidden></p>
     <div class="resultpack" id="resultpack"></div>
     <div class="verdict" id="verdict">
       <div class="face" id="face">🍮</div>
-      <p class="vanwie" id="vanwie" hidden></p>
       <h2 id="t3">—</h2>
       <p class="days" id="days"></p>
       <p class="klok" id="klok" hidden></p>
@@ -833,7 +847,11 @@ function toon(d, open, uit){
 
   /* Van wie is deze vla? */
   const vanwie = document.getElementById('vanwie');
-  vanwie.textContent = deelNaam ? `De vla van ${deelNaam}` : '';
+  if (deelNaam){
+    /* spread, want deelNaam[0] hakt een emoji doormidden */
+    document.getElementById('vanwieInit').textContent = [...deelNaam][0].toUpperCase();
+    document.getElementById('vanwieNaam').textContent = `De vla van ${deelNaam}`;
+  }
   vanwie.hidden = !deelNaam;
 
   /* Is dit een gedeelde uitslag van een andere dag? */
