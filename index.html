@@ -852,8 +852,19 @@ function toon(d, open, uit){
   if (toen.hidden) startKlok(document.getElementById('datum').value);
   else { stopKlok(); document.getElementById('klok').hidden = true; }
 
-  const wie = deelNaam ? `De vla van ${deelNaam} — ` : '';
-  laatsteTekst = `${wie}${v.merk} ${v.soort}: ${o.titel.toUpperCase()} — ${dagen}${BUITEN[uit] ? ` Stond ${BUITEN[uit].label} buiten de koelkast.` : ''} Vla-score ${score}/100.`;
+  /* Deeltekst over meerdere regels: in een chat leest dat een stuk prettiger
+     dan één lange zin. De link komt er los onder, niet in de tekst zelf,
+     want het deelvenster van je telefoon plakt die er zelf al bij. */
+  const regels = [];
+  if (deelNaam) regels.push(`De vla van ${deelNaam}`);
+  regels.push(`${o.face} ${v.merk} ${v.soort}`);
+  regels.push(o.titel.toUpperCase());
+  regels.push('');
+  regels.push(dagen);
+  if (open) regels.push('Het pak was al open.');
+  if (BUITEN[uit]) regels.push(`Stond ${BUITEN[uit].label} buiten de koelkast.`);
+  regels.push(`Vla-score: ${score}/100`);
+  laatsteTekst = regels.join('\n');
   try { history.replaceState(null, '', deelUrl()); } catch {}
   ga(3);
   if (o.k === 'ok') confetti(v);
@@ -950,7 +961,7 @@ document.getElementById('deelnu').onclick = async () => {
     try { await navigator.share({ title: 'Houdbare Vla', text: laatsteTekst, url }); return; }
     catch (e) { if (e && e.name === 'AbortError') return; }
   }
-  toast(await naarKlembord(laatsteTekst + '\n' + url) ? 'Link gekopieerd \u{1F4CB}' : 'Delen lukte niet \u{1F937}');
+  toast(await naarKlembord(laatsteTekst + '\n\n' + url) ? 'Link gekopieerd \u{1F4CB}' : 'Delen lukte niet \u{1F937}');
 };
 
 /* ============ DELEN VIA DE URL ============ */

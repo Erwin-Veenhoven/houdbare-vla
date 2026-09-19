@@ -73,7 +73,21 @@ De twee aftrekpunten zijn het enige onderdeel van deze site dat op waarheid beru
 
 ## Je uitslag delen
 
-Elke uitslag past in een link. De knop **Uitslag delen** vraagt eerst even je naam — mag leeg — en gebruikt daarna het deelvenster van je telefoon. Op de desktop, waar dat venster meestal niet bestaat, kopieert hij de tekst plus de link.
+Elke uitslag past in een link. De knop **Uitslag delen** vraagt eerst even je naam — mag leeg — en gebruikt daarna het deelvenster van je telefoon. Op de desktop, waar dat venster meestal niet bestaat, kopieert hij de tekst plus de link:
+
+```
+De vla van Erwin
+😎 Melkunie Boerenvla
+KRAAKVERS
+
+Nog 16 dagen te gaan.
+Het pak was al open.
+Vla-score: 84/100
+
+https://houdbarevla.nl/?vla=melkunie-boerenvla&tht=2026-10-05&op=2026-09-19&naam=Erwin
+```
+
+De link zit bewust niet in de tekst zelf, want het deelvenster van je telefoon plakt die er al onder.
 
 ```
 houdbarevla.nl/?vla=campina-dubbelvla&tht=2026-09-06&op=2026-09-19&uit=nacht&naam=Erwin
