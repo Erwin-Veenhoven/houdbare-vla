@@ -286,15 +286,17 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .dialoog input{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:14px}
 .dialoog input:focus{outline:2px solid var(--accent);outline-offset:1px}
 #delen{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+/* De keuzeknoppen staan in een .keuzes-groep, die de tussenruimte regelt. */
+.keuzes{display:grid;gap:12px;margin-top:18px}
 .keuzeknop{
-  display:block;width:100%;margin-top:10px;padding:13px 15px;text-align:left;
+  display:block;width:100%;padding:15px 17px;text-align:left;
   font:inherit;color:var(--ink);background:var(--bg);
   border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;
 }
 .keuzeknop:hover{border-color:var(--accent);transform:translateY(-1px)}
 .keuzeknop .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
-.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
-.deelnoot{margin:12px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
+.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.deelnoot{margin:16px 2px 0;font-size:12px;color:var(--muted);line-height:1.5}
 .subveld{margin:10px 0 0 30px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
 .subveld[hidden]{display:none}
 .subveld select{font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
@@ -524,14 +526,16 @@ footer strong{color:var(--ink);font-weight:600}
         <input type="text" id="dier" maxlength="16" placeholder="Bijvoorbeeld Kevin">
       </div>
 
-      <button type="button" class="keuzeknop" id="deelplaatje">
-        <span class="wat">Deel als plaatje</span>
-        <span class="hoe">een kaartje voor je story of een appje</span>
-      </button>
-      <button type="button" class="keuzeknop" id="deellink">
-        <span class="wat">Deel als link</span>
-        <span class="hoe">tekst met een link die je uitslag opent</span>
-      </button>
+      <div class="keuzes">
+        <button type="button" class="keuzeknop" id="deelplaatje">
+          <span class="wat">Deel als plaatje</span>
+          <span class="hoe">een kaartje voor je story of een appje</span>
+        </button>
+        <button type="button" class="keuzeknop" id="deellink">
+          <span class="wat">Deel als link</span>
+          <span class="hoe">tekst met een link die je uitslag opent</span>
+        </button>
+      </div>
       <p class="deelnoot">Het moet er één van de twee zijn: een telefoon kan een plaatje en een link niet in hetzelfde deelvenster stoppen.</p>
 
       <div class="btnrow" style="margin-top:14px">
@@ -546,14 +550,16 @@ footer strong{color:var(--ink);font-weight:600}
       <h3 id="agendatitel">Waar moet hij in?</h3>
       <p class="sub">Een website mag niet zelf in je agenda schrijven, geen enkele. Wat we wél kunnen: het agendapunt helemaal invullen en aan je agenda geven. Jij tikt alleen nog op bewaren.</p>
 
-      <button type="button" class="keuzeknop" id="agendaGoogle">
-        <span class="wat">Google Agenda</span>
-        <span class="hoe">opent het agendapunt, ingevuld en wel</span>
-      </button>
-      <button type="button" class="keuzeknop" id="agendaIcs">
-        <span class="wat">Apple Agenda, Outlook, de rest</span>
-        <span class="hoe">geeft je een .ics-bestand door</span>
-      </button>
+      <div class="keuzes">
+        <button type="button" class="keuzeknop" id="agendaGoogle">
+          <span class="wat">Google Agenda</span>
+          <span class="hoe">opent het agendapunt, ingevuld en wel</span>
+        </button>
+        <button type="button" class="keuzeknop" id="agendaIcs">
+          <span class="wat">Apple Agenda, Outlook, de rest</span>
+          <span class="hoe">geeft je een .ics-bestand door</span>
+        </button>
+      </div>
 
       <div class="btnrow" style="margin-top:16px">
         <button class="btn ghost" id="agendaAnnuleer">Annuleren</button>

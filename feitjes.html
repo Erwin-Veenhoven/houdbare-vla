@@ -190,15 +190,17 @@ body.gescrold .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
 }
 @media (min-width:560px){ .blad{border-radius:var(--radius)} }
 .blad .kop{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:2px}
+/* De keuzeknoppen staan in een .keuzes-groep, die de tussenruimte regelt. */
+.keuzes{display:grid;gap:12px;margin-top:18px}
 .keuzeknop{
-  display:block;width:100%;margin-top:10px;padding:13px 15px;text-align:left;
+  display:block;width:100%;padding:15px 17px;text-align:left;
   font:inherit;color:var(--ink);background:var(--bg);
   border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;
 }
 .keuzeknop:hover{border-color:var(--accent)}
 .keuzeknop .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
-.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
-.deelnoot{margin:12px 0 4px;font-size:12px;color:var(--muted);line-height:1.45}
+.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.deelnoot{margin:16px 2px 18px;font-size:12px;color:var(--muted);line-height:1.5}
 .blad h2{font-family:Fredoka;font-weight:600;font-size:19px;margin:0}
 .blad .wis{font:inherit;font-size:13px;color:var(--muted);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
 .subkop{color:var(--muted);font-size:13px;margin:0 0 14px}
@@ -254,14 +256,16 @@ body.gescrold .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
 <div class="overlay" id="deelvenster" hidden>
   <div class="blad" role="dialog" aria-modal="true" aria-labelledby="deeltitel">
     <div class="kop"><h2 id="deeltitel">Hoe wil je hem delen?</h2></div>
-    <button type="button" class="keuzeknop" id="deelplaatje">
-      <span class="wat">Als plaatje</span>
-      <span class="hoe">een kaartje voor je story of een appje</span>
-    </button>
-    <button type="button" class="keuzeknop" id="deellink">
-      <span class="wat">Als link</span>
-      <span class="hoe">tekst met een link naar dit feitje</span>
-    </button>
+    <div class="keuzes">
+      <button type="button" class="keuzeknop" id="deelplaatje">
+        <span class="wat">Als plaatje</span>
+        <span class="hoe">een kaartje voor je story of een appje</span>
+      </button>
+      <button type="button" class="keuzeknop" id="deellink">
+        <span class="wat">Als link</span>
+        <span class="hoe">tekst met een link naar dit feitje</span>
+      </button>
+    </div>
     <p class="deelnoot">Het moet er één van de twee zijn: een telefoon kan een plaatje en een link niet in hetzelfde deelvenster stoppen.</p>
     <button class="btn" id="deelSluit">Annuleren</button>
   </div>

@@ -105,15 +105,17 @@ footer a{color:var(--ink)}
 .dialoog h3{font-family:Fredoka;font-weight:600;font-size:19px;margin:0 0 6px}
 .dialoog p{color:var(--muted);font-size:14px;margin:0}
 .dialoog .naamveld{margin-top:18px}
+/* De keuzeknoppen staan in een .keuzes-groep, die de tussenruimte regelt. */
+.keuzes{display:grid;gap:12px;margin-top:18px}
 .keuzeknop{
-  display:block;width:100%;margin-top:10px;padding:13px 15px;text-align:left;
+  display:block;width:100%;padding:15px 17px;text-align:left;
   font:inherit;color:var(--ink);background:var(--bg);
   border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;
 }
 .keuzeknop:hover{border-color:var(--accent);transform:translateY(-1px)}
 .keuzeknop .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
-.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
-.deelnoot{margin:12px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
+.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.dialoog p.deelnoot{margin:16px 2px 0;font-size:12px;color:var(--muted);line-height:1.5}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
   background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:11px 20px;
   box-shadow:var(--shadow);font-size:14px;transition:.25s;pointer-events:none;z-index:9}
@@ -141,14 +143,16 @@ footer a{color:var(--ink)}
     <h3 id="deeltitel">Zet je naam op het pak</h3>
     <p>Dan staat jouw naam op het etiket in plaats van het merk. Mag ook leeg.</p>
     <input class="naamveld" id="naam" maxlength="14" placeholder="Je naam (of niet)" autocomplete="name">
-    <button type="button" class="keuzeknop" id="deelplaatje">
-      <span class="wat">Deel als plaatje</span>
-      <span class="hoe">een kaartje voor je story of een appje</span>
-    </button>
-    <button type="button" class="keuzeknop" id="deellink">
-      <span class="wat">Deel als link</span>
-      <span class="hoe">tekst met een link naar jouw vla</span>
-    </button>
+    <div class="keuzes">
+      <button type="button" class="keuzeknop" id="deelplaatje">
+        <span class="wat">Deel als plaatje</span>
+        <span class="hoe">een kaartje voor je story of een appje</span>
+      </button>
+      <button type="button" class="keuzeknop" id="deellink">
+        <span class="wat">Deel als link</span>
+        <span class="hoe">tekst met een link naar jouw vla</span>
+      </button>
+    </div>
     <p class="deelnoot">Het moet er één van de twee zijn: een telefoon kan een plaatje en een link niet in hetzelfde deelvenster stoppen.</p>
     <div class="knoppen" style="justify-content:flex-end;margin-top:14px">
       <button class="btn ghost" id="deelannuleer">Annuleren</button>
