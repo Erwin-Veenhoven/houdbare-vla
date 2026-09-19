@@ -204,6 +204,8 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .bon .nr{flex:none;font-weight:600;color:var(--ink)}
 .bon .tot{margin-top:9px;padding-top:9px;border-top:1.5px solid var(--line);color:var(--ink);font-weight:600}
 .bon .klem{margin-top:8px;font-size:12px;font-style:italic}
+.bon .bonvoet{margin:10px 0 0;padding-top:9px;border-top:1px dashed var(--line);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;text-align:center}
 .kaartjes{display:grid;gap:12px;margin:26px auto 0;max-width:660px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .quizkaart{display:flex;flex-direction:column;justify-content:center;padding:16px 18px;border-radius:var(--radius);
   border:1.5px dashed var(--line);background:linear-gradient(180deg,var(--bg2),transparent);
@@ -863,18 +865,35 @@ function ics(){
     'DTSTAMP:' + stempel,
     'DTSTART;VALUE=DATE:' + kaal(eind),
     'DTEND;VALUE=DATE:' + kaal(volgend),
-    'SUMMARY:Vla opmaken: ' + v.merk + ' ' + v.soort,
-    'DESCRIPTION:Vandaag verloopt je ' + v.merk + ' ' + v.soort +
-      '. Gecheckt op houdbarevla.nl',
+    'SUMMARY:' + tekst('Vla opmaken: ' + v.merk + ' ' + v.soort),
+    'DESCRIPTION:' + tekst('Vandaag verloopt je ' + v.merk + ' ' + v.soort +
+      '. Je hebt hier een agendapunt voor aangemaakt, dus het zal wel menens zijn.' +
+      '\n\nGecheckt op houdbarevla.nl'),
     'BEGIN:VALARM',
     'TRIGGER:-P1D',
     'ACTION:DISPLAY',
-    'DESCRIPTION:Morgen verloopt je vla',
+    'DESCRIPTION:' + tekst('Morgen verloopt je vla. Nu nog niets doen.'),
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR',
   ];
-  return regels.join('\r\n');
+  return regels.map(vouw).join('\r\n');
+}
+/* In een .ics zijn komma's, puntkomma's en backslashes bijzondere tekens, en
+   een witregel schrijf je als \\n. */
+function tekst(t){
+  return t.replace(/([\\,;])/g, '\\$1').replace(/\n/g, '\\n');
+}
+/* En regels mogen niet langer zijn dan 75 tekens: de rest gaat naar de
+   volgende regel, die met een spatie begint. We houden 74 aan, zodat een
+   letter met een accent (twee bytes) er ook nog bij kan. */
+function vouw(regel){
+  if (regel.length <= 74) return regel;
+  const uit = [regel.slice(0, 74)];
+  let rest = regel.slice(74);
+  while (rest.length > 73){ uit.push(' ' + rest.slice(0, 73)); rest = rest.slice(73); }
+  if (rest) uit.push(' ' + rest);
+  return uit.join('\r\n');
 }
 /* Google doet het met een link: hij opent het agendapunt al ingevuld en jij
    hoeft alleen nog op opslaan te tikken. Een herinnering vooraf kan er niet in
@@ -1385,7 +1404,8 @@ function toonBon(bon){
     `<div class="r"><span class="wat">${esc(r.wat)}</span><span class="punt"></span><span class="nr">${r.nr === 0 ? '0' : r.nr > 0 ? (r.plus ? '+' : '') + r.nr : '\u2212' + Math.abs(r.nr)}</span></div>`
   ).join('') +
   `<div class="r tot"><span class="wat">Vla-score</span><span class="punt"></span><span class="nr">${bon.totaal}</span></div>` +
-  (bon.geknepen ? '<p class="klem">Lager dan 1 bestaat niet. De aftrek kon dus niet volledig aankomen.</p>' : '');
+  (bon.geknepen ? '<p class="klem">Lager dan 1 bestaat niet. De aftrek kon dus niet volledig aankomen.</p>' : '') +
+  '<p class="bonvoet">Bewaar deze bon.</p>';
 }
 
 function toon(d, open, uit, opt){
@@ -1737,6 +1757,14 @@ function uitUrl(){
 }
 toonKoelkast();
 uitUrl();
+
+/* Voor wie de console opendoet om te kijken wat hier gebeurt. */
+console.log('%choudbarevla.nl', 'font:600 15px Fredoka,sans-serif;color:#f2a63b');
+console.log(
+  'Geen API, geen backend, geen tracking. De hele beoordeling gebeurt hier,\n' +
+  'in jouw browser, op basis van een getal dat jij zelf hebt ingetypt.\n\n' +
+  'Je staat nu in de console van een vla-website. Dat is verder prima.'
+);
 
 /* ============ EXTRAATJES ============ */
 let toastT;
