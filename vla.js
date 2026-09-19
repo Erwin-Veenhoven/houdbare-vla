@@ -89,7 +89,33 @@ function wrap(t, max){
   if (cur) lines.push(cur);
   return lines.slice(0,2);
 }
-function pack(v, size){
+/* De drie teksten op het etiket, los berekend. Ze worden op twee manieren
+   gebruikt: normaal als <text> in de SVG, en bij het deelplaatje als losse
+   regels die op het canvas gezet worden. Dat laatste moet, want een SVG die je
+   als <img> inlaadt mag geen webfont ophalen; het etiket zou daar dus in een
+   systeemletter komen te staan in plaats van in Fredoka.
+
+   De maten zijn in de eenheden van de viewBox (120 bij 152). */
+function pakTekst(v){
+  const dy = v.geknepen ? -15 : 0;
+  const lines = wrap(v.soort.replace(/\s*\(.*\)/, ''), 12);
+  const fs = lines.some(l => l.length > 10) ? 7.6 : 8.6;
+  const mLen = v.merk.length;
+  const mfs = mLen > 13 ? 4.6 : mLen > 10 ? 5.3 : 6;
+  const mls = mLen > 13 ? .2 : mLen > 10 ? .5 : .9;
+  return [
+    { t: v.merk.toUpperCase(), y: 80 + dy, fam: 'Inter', dik: 700, fs: mfs, sp: mls, kleur: '#9d8d78' },
+    ...lines.map((l, i) => ({
+      t: l, y: 99 + dy + i * 10.5 - (lines.length - 1) * 5,
+      fam: 'Fredoka', dik: 600, fs, sp: 0, kleur: '#33261b',
+    })),
+    { t: v.geknepen ? 'BIJNA LEEG' : v.puzzel ? 'LEEG' : '1 LITER',
+      y: (lines.length > 1 ? 112.5 : 109) + dy,
+      fam: 'Inter', dik: 600, fs: 5, sp: .7, kleur: '#b7a894' },
+  ];
+}
+/* `opties.zonderTekst` laat het etiket leeg, voor wie de letters zelf zet. */
+function pack(v, opties){
   const id = 'g' + (uid++);
   const stops = v.split
     ? `<stop offset="50%" stop-color="${v.c1}"/><stop offset="50%" stop-color="${v.c2}"/>`
@@ -99,13 +125,10 @@ function pack(v, size){
   const kn = !!v.geknepen;
   const dy = kn ? -15 : 0;
   const lines = wrap(v.soort.replace(/\s*\(.*\)/, ''), 12);
-  const fs = lines.some(l => l.length > 10) ? 7.6 : 8.6;
-  const label = lines.map((l, i) =>
-    `<text x="60" y="${99 + dy + i * 10.5 - (lines.length - 1) * 5}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="${fs}" fill="#33261b">${esc(l)}</text>`
+  const etiket = (opties && opties.zonderTekst) ? '' : pakTekst(v).map(r =>
+    `<text x="60" y="${r.y}" text-anchor="middle" font-family="${r.fam},sans-serif" font-weight="${r.dik}" font-size="${r.fs}"` +
+    (r.sp ? ` letter-spacing="${r.sp}"` : '') + ` fill="${r.kleur}">${esc(r.t)}</text>`
   ).join('');
-  const mLen = v.merk.length;
-  const mfs = mLen > 13 ? 4.6 : mLen > 10 ? 5.3 : 6;
-  const mls = mLen > 13 ? .2 : mLen > 10 ? .5 : .9;
   /* Een leeg pak dat je bewaart om de puzzel op de zijkant. */
   const zwart = (x, y) => `<rect x="${x}" y="${y}" width="5" height="5" fill="rgba(51,38,27,.6)"/>`;
   const puzzel = `<rect x="47.5" y="37" width="25" height="20" rx="1" fill="rgba(255,255,255,.85)"/>`
@@ -144,9 +167,7 @@ function pack(v, size){
   ${glans}
   ${mark}
   <rect x="29" y="${68 + dy}" width="62" height="46" rx="7" fill="#fffaf0" opacity=".94"/>
-  <text x="60" y="${80 + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="${mfs}" letter-spacing="${mls}" fill="#9d8d78">${esc(v.merk.toUpperCase())}</text>
-  ${label}
-  <text x="60" y="${(lines.length > 1 ? 112.5 : 109) + dy}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="5" letter-spacing=".7" fill="#b7a894">${kn ? 'BIJNA LEEG' : v.puzzel ? 'LEEG' : '1 LITER'}</text>
+  ${etiket}
   ${kreuk}
 </svg>`;
 }

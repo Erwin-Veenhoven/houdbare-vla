@@ -286,14 +286,15 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 .dialoog input{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:14px}
 .dialoog input:focus{outline:2px solid var(--accent);outline-offset:1px}
 #delen{display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.agendakeuze{
+.keuzeknop{
   display:block;width:100%;margin-top:10px;padding:13px 15px;text-align:left;
   font:inherit;color:var(--ink);background:var(--bg);
   border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;
 }
-.agendakeuze:hover{border-color:var(--accent);transform:translateY(-1px)}
-.agendakeuze .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
-.agendakeuze .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.keuzeknop:hover{border-color:var(--accent);transform:translateY(-1px)}
+.keuzeknop .wat{display:block;font-family:Fredoka;font-weight:600;font-size:15px}
+.keuzeknop .hoe{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.deelnoot{margin:12px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
 .subveld{margin:10px 0 0 30px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
 .subveld[hidden]{display:none}
 .subveld select{font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer}
@@ -523,9 +524,18 @@ footer strong{color:var(--ink);font-weight:600}
         <input type="text" id="dier" maxlength="16" placeholder="Bijvoorbeeld Kevin">
       </div>
 
-      <div class="btnrow" style="margin-top:16px">
+      <button type="button" class="keuzeknop" id="deelplaatje">
+        <span class="wat">Deel als plaatje</span>
+        <span class="hoe">een kaartje voor je story of een appje</span>
+      </button>
+      <button type="button" class="keuzeknop" id="deellink">
+        <span class="wat">Deel als link</span>
+        <span class="hoe">tekst met een link die je uitslag opent</span>
+      </button>
+      <p class="deelnoot">Het moet er één van de twee zijn: een telefoon kan een plaatje en een link niet in hetzelfde deelvenster stoppen.</p>
+
+      <div class="btnrow" style="margin-top:14px">
         <button class="btn ghost" id="deelannuleer">Annuleren</button>
-        <button class="btn" id="deelnu">Delen</button>
       </div>
     </div>
   </div>
@@ -536,11 +546,11 @@ footer strong{color:var(--ink);font-weight:600}
       <h3 id="agendatitel">Waar moet hij in?</h3>
       <p class="sub">Een website mag niet zelf in je agenda schrijven, geen enkele. Wat we wél kunnen: het agendapunt helemaal invullen en aan je agenda geven. Jij tikt alleen nog op bewaren.</p>
 
-      <button type="button" class="agendakeuze" id="agendaGoogle">
+      <button type="button" class="keuzeknop" id="agendaGoogle">
         <span class="wat">Google Agenda</span>
         <span class="hoe">opent het agendapunt, ingevuld en wel</span>
       </button>
-      <button type="button" class="agendakeuze" id="agendaIcs">
+      <button type="button" class="keuzeknop" id="agendaIcs">
         <span class="wat">Apple Agenda, Outlook, de rest</span>
         <span class="hoe">geeft je een .ics-bestand door</span>
       </button>
@@ -1348,6 +1358,7 @@ let laatsteOordeelHuisdier = false;
 let naamUitLink = false;   /* een naam uit een gedeelde link is van de afzender, niet van jou */
 let klokTimer = null;
 let vorigeK = '';          /* het vorige oordeel, om confetti niet te herhalen */
+let laatsteOordeel = null, laatsteScore = 0, laatsteDagen = '';
 
 function middernacht(dt){ const x = new Date(dt); x.setHours(0,0,0,0); return x; }
 function isoDag(dt){
@@ -1430,6 +1441,8 @@ function toon(d, open, uit, opt){
   /* Bij een leeg pak zeggen we niet hoeveel dagen het nog heeft. */
   /* Heeft het huisdier een naam gekregen, dan gebruiken we die. Is het geen
      huisdier meer (andere datum, andere vla), dan vergeten we de naam. */
+  /* Wat het deelplaatje nodig heeft, zodat dat later in één tik te tekenen is. */
+  laatsteOordeel = o; laatsteScore = score; laatsteDagen = v.puzzel ? 'Er zit niets meer in.' : dagen;
   laatsteOordeelHuisdier = !!o.huisdier;
   if (!o.huisdier) dierNaam = '';
   const uitleg = o.huisdier && dierNaam
@@ -1633,6 +1646,10 @@ document.getElementById('delen').onclick = () => {
   document.getElementById('dier').value = dierNaam;
   deelvenster.hidden = false;
   setTimeout(() => inp.focus(), 50);
+  /* Alvast het pak decoderen en de letters ophalen, terwijl jij je naam typt.
+     Straks moet het tekenen in één tik kunnen. */
+  laadPakBeeld(gekozen).catch(() => {});
+  lettersKlaar();
 };
 document.getElementById('deelannuleer').onclick = sluitDeelvenster;
 deelvenster.onclick = e => { if (e.target === deelvenster) sluitDeelvenster(); };
@@ -1642,15 +1659,19 @@ document.addEventListener('keydown', e => {
   else if (!document.getElementById('agendavenster').hidden) document.getElementById('agendavenster').hidden = true;
 });
 document.getElementById('naam').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('deelnu').click();
+  if (e.key === 'Enter') document.getElementById('deellink').click();
 });
-document.getElementById('deelnu').onclick = async () => {
+/* De naam uit het venster overnemen en de uitslag ermee bijwerken. */
+function neemNaamOver(){
   deelNaam = document.getElementById('naam').value.trim().slice(0, 24);
   naamUitLink = false;
   dierNaam = document.getElementById('dier').value.trim().slice(0, 16);
   try { localStorage.setItem('vlanaam', deelNaam); } catch {}
+  bereken({ stil: true });
+}
+document.getElementById('deellink').onclick = async () => {
+  neemNaamOver();
   sluitDeelvenster();
-  bereken();                      /* naam en peildatum opnieuw in de uitslag verwerken */
   const url = deelUrl();
   /* De tekst eindigt op "Bekijk:" en de link gaat mee in het losse url-veld.
      Zo staat de witregel in het deel dat wij bepalen, en houden bestemmingen
@@ -1662,6 +1683,163 @@ document.getElementById('deelnu').onclick = async () => {
   }
   toast(await naarKlembord(laatsteTekst + '\n\nBekijk: ' + url) ? 'Link gekopieerd \u{1F4CB}' : 'Delen lukte niet \u{1F937}');
 };
+document.getElementById('deelplaatje').onclick = () => {
+  neemNaamOver();
+  sluitDeelvenster();
+  deelPlaatje();
+};
+
+/* ============ HET DEELPLAATJE ============ */
+/* Een uitslag als plaatje van 1080 bij 1350, zodat hij in een story of een
+   appgesprek past. Een telefoon kan een bestand en een link niet samen in het
+   deelvenster stoppen (op iOS gaat dat mis zodra er meer dan `files` in zit),
+   dus het adres staat onderaan op de kaart zelf.
+
+   Het pak komt als SVG binnen, maar zonder de etiketteksten: een SVG die je
+   als <img> inlaadt mag geen webfont ophalen, en dan zou het etiket in een
+   systeemletter komen te staan. Die drie regels zetten we hieronder zelf, met
+   de maten die pakTekst() teruggeeft. */
+const KAART_B = 1080, KAART_H = 1350;
+const KAART_KLEUR = { ok:'#2e9e5b', warn:'#e08a1e', bad:'#d94a3d' };
+let pakBeeld = null, pakBeeldVan = '';
+
+function laadPakBeeld(v){
+  if (pakBeeld && pakBeeldVan === slug(v)) return Promise.resolve(pakBeeld);
+  return new Promise((klaar, mis) => {
+    const img = new Image();
+    img.onload = () => { pakBeeld = img; pakBeeldVan = slug(v); klaar(img); };
+    img.onerror = mis;
+    img.src = 'data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(pack(v, { zonderTekst: true }));
+  });
+}
+function lettersKlaar(){
+  if (!document.fonts) return Promise.resolve();
+  return Promise.all(['600 74px Fredoka', '600 32px Fredoka', '700 25px Inter', '400 30px Inter']
+    .map(f => document.fonts.load(f).catch(() => {})));
+}
+/* Een kop die niet past, over twee regels verdelen. */
+function kaartRegels(x, tekst, max){
+  const woorden = tekst.split(' '), uit = [];
+  let r = '';
+  for (const w of woorden){
+    const poging = r ? r + ' ' + w : w;
+    if (x.measureText(poging).width > max && r){ uit.push(r); r = w; } else r = poging;
+  }
+  if (r) uit.push(r);
+  return uit;
+}
+/* Met de streepjes die canvas tussen letters zet loopt gecentreerde tekst een
+   halve spatie naar rechts. Die halen we er weer af. */
+function zetTekst(x, tekst, mx, y, sp){
+  x.letterSpacing = sp ? sp.toFixed(2) + 'px' : '0px';
+  x.fillText(tekst, mx - (sp || 0) / 2, y);
+  x.letterSpacing = '0px';
+}
+
+/* Tekent in één keer, zonder await: navigator.share wil in dezelfde tik als je
+   klik aangeroepen worden, en daar past geen wachten tussen. Het pak en de
+   letters zijn daarom al geladen voordat het venster openging. */
+function tekenKaart(){
+  const v = gekozen, o = laatsteOordeel;
+  const c = document.createElement('canvas');
+  c.width = KAART_B; c.height = KAART_H;
+  const x = c.getContext('2d');
+
+  const g = x.createLinearGradient(0, 0, 0, KAART_H);
+  g.addColorStop(0, '#ffeccd'); g.addColorStop(.5, '#fff7e9'); g.addColorStop(1, '#fff7e9');
+  x.fillStyle = g; x.fillRect(0, 0, KAART_B, KAART_H);
+
+  x.textAlign = 'center';
+  x.font = '600 74px Fredoka, sans-serif';
+  const kop = kaartRegels(x, o.titel, 900);
+  const breed = kop.length > 1;
+
+  /* De onderkant ligt vast. Daarboven groeit de kop naar boven, en de emoji en
+     de merkregel schuiven mee; anders loopt een kop van twee regels dwars door
+     de emoji heen. */
+  const REGEL = 76, kopOnder = 1078;
+  const kopBoven = kopOnder - REGEL * (kop.length - 1);
+  const emojiY = kopBoven - 100, merkY = emojiY - 112;
+
+  if (deelNaam){
+    x.fillStyle = '#c08a3a'; x.font = '700 26px Inter, sans-serif';
+    zetTekst(x, ('De vla van ' + deelNaam).toUpperCase(), KAART_B / 2, 140, 3);
+  }
+
+  /* het pak, en bij een afgekeurde vla ligt het net als op de site op zijn kant */
+  const ph = breed ? 405 : 470, pw = ph * (120 / 152), schaal = ph / 152;
+  x.save();
+  x.translate(KAART_B / 2, (breed ? 250 : 272) + ph / 2);
+  if (o.k === 'bad') x.rotate(Math.PI / 2);
+  x.shadowColor = 'rgba(43,33,25,.24)'; x.shadowBlur = 44; x.shadowOffsetY = 20;
+  x.drawImage(pakBeeld, -pw / 2, -ph / 2, pw, ph);
+  x.shadowColor = 'transparent';
+  for (const r of pakTekst(v)){
+    x.fillStyle = r.kleur;
+    x.font = `${r.dik} ${(r.fs * schaal).toFixed(1)}px ${r.fam}, sans-serif`;
+    zetTekst(x, r.t, 0, -ph / 2 + r.y * schaal, r.sp * schaal);
+  }
+  x.restore();
+
+  x.fillStyle = '#8b7a66'; x.font = '700 25px Inter, sans-serif';
+  zetTekst(x, v.merk.toUpperCase() + '   ·   ' + v.soort.toUpperCase(), KAART_B / 2, merkY, 2);
+
+  x.fillStyle = '#2b2119'; x.font = '400 88px sans-serif';
+  x.fillText(o.face, KAART_B / 2, emojiY);
+
+  x.fillStyle = KAART_KLEUR[o.k]; x.font = '600 74px Fredoka, sans-serif';
+  kop.forEach((r, i) => x.fillText(r, KAART_B / 2, kopBoven + i * REGEL));
+
+  x.fillStyle = '#8b7a66'; x.font = '400 30px Inter, sans-serif';
+  x.fillText(laatsteDagen, KAART_B / 2, 1134);
+
+  /* de vla-meter, met het bolletje op jouw score */
+  const mw = 620, mx = (KAART_B - mw) / 2, my = 1178;
+  const mg = x.createLinearGradient(mx, 0, mx + mw, 0);
+  mg.addColorStop(0, '#d94a3d'); mg.addColorStop(.45, '#e08a1e'); mg.addColorStop(1, '#2e9e5b');
+  x.globalAlpha = .3; x.fillStyle = mg;
+  x.beginPath(); x.roundRect(mx, my, mw, 14, 99); x.fill();
+  x.globalAlpha = 1;
+  x.fillStyle = '#fff7e9'; x.strokeStyle = '#2b2119'; x.lineWidth = 5;
+  x.beginPath(); x.arc(mx + mw * laatsteScore / 100, my + 7, 15, 0, Math.PI * 2); x.fill(); x.stroke();
+
+  x.fillStyle = '#2b2119'; x.font = '600 32px Fredoka, sans-serif';
+  x.fillText('Vla-score: ' + laatsteScore + '/100', KAART_B / 2, 1248);
+  x.fillStyle = '#b3a38e'; x.font = '700 23px Inter, sans-serif';
+  zetTekst(x, 'HOUDBAREVLA.NL', KAART_B / 2, 1306, 7);
+  return c;
+}
+
+/* toDataURL is synchroon, toBlob niet. Dat scheelt hier: zo blijft de klik
+   die het deelvenster opent geldig. */
+function kaartBestand(c){
+  const bytes = atob(c.toDataURL('image/png').split(',')[1]);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new File([arr], 'vla-' + slug(gekozen) + '.png', { type: 'image/png' });
+}
+
+async function deelPlaatje(){
+  if (!gekozen || !laatsteOordeel){ toast('Bereken eerst een vla \u{1F4C5}'); return; }
+  try { await laadPakBeeld(gekozen); } catch { toast('Het pak wilde niet mee \u{1F937}'); return; }
+  let bestand;
+  try { bestand = kaartBestand(tekenKaart()); }
+  catch { toast('Tekenen lukte niet \u{1F937}'); return; }
+
+  if (navigator.canShare && navigator.canShare({ files: [bestand] })){
+    /* Alleen `files`, verder niets. Zet je er een titel of een link bij, dan
+       laat iOS het bestand soms vallen. */
+    try { await navigator.share({ files: [bestand] }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(bestand);
+  a.download = bestand.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast('Plaatje opgeslagen \u{1F5BC}\uFE0F');
+}
 
 /* ============ DELEN VIA DE URL ============ */
 /* De uitslag past volledig in een link: welke vla, welke datum, en of het

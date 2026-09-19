@@ -125,7 +125,27 @@ De aftrekpunten zijn het enige onderdeel van deze site dat op waarheid berust: *
 
 ## Je uitslag delen
 
-Elke uitslag past in een link. De knop **Uitslag delen** vraagt eerst even je naam (mag leeg) en gebruikt daarna het deelvenster van je telefoon. Op de desktop, waar dat venster meestal niet bestaat, kopieert hij de tekst plus de link:
+De knop **Uitslag delen** vraagt eerst even je naam (mag leeg) en laat je daarna kiezen: als plaatje of als link.
+
+### Waarom je moet kiezen
+
+Op papier mag je `files`, `text` en `url` in één keer meegeven aan de Web Share API. In Safari op iOS werkt het delen van een bestand alleen betrouwbaar als `files` het enige is dat erin zit. Zet je er een link bij, dan wordt die genegeerd, of belandt je tekst op het klembord in plaats van de link, of mislukt het delen helemaal. Dus: één van de twee, en de gebruiker kiest welke.
+
+Omdat een plaatje de link niet kan meenemen, staat het adres op de kaart zelf.
+
+### Als plaatje
+
+Een canvas van 1080 bij 1350, met het pak, het oordeel, de vla-score en `houdbarevla.nl` eronder. Ligt je vla op de site om, dan ligt hij op het plaatje ook om.
+
+Het pak komt als SVG binnen, maar zonder de etiketteksten. Een SVG die je als `<img>` inlaadt mag namelijk geen webfont ophalen, en dan zou *Vanillevla* op het etiket in een systeemletter staan in plaats van in Fredoka. `pack(v, { zonderTekst: true })` laat het etiket dus leeg, en `pakTekst(v)` geeft dezelfde drie regels terug met hun maten en posities, die daarna op het canvas worden gezet. Beide komen uit dezelfde berekening, dus ze kunnen niet uit elkaar gaan lopen.
+
+Het tekenen gebeurt zonder `await`. `navigator.share` wil in dezelfde tik als je klik aangeroepen worden en een wachtmoment ertussen breekt dat op iOS, dus het pak en de letters worden al geladen op het moment dat het deelvenster opengaat, en `toDataURL` (synchroon) doet het werk dat `toBlob` (niet synchroon) niet mag doen.
+
+Heeft je toestel geen deelvenster voor bestanden, dan wordt het een download.
+
+### Als link
+
+Elke uitslag past ook gewoon in een link. Op de desktop, waar het deelvenster meestal niet bestaat, kopieert hij de tekst plus de link:
 
 ```
 De vla van Erwin
