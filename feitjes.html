@@ -41,16 +41,10 @@
 :root[data-theme="light"]{ color-scheme: light; }
 *{box-sizing:border-box}
 html,body{height:100%}
-/* De pagina zelf scrollt, niet een div erin. Een geneste scroller krijgt op
-   iOS veel minder vooruit-geschilderd gebied, en dan zie je de tegels van een
-   binnenkomende kaart van boven naar beneden invullen. */
-html{scroll-snap-type:y mandatory}
 body{
-  margin:0;background:var(--bg);
-  overscroll-behavior-y:contain;overflow-anchor:none;
+  margin:0;overflow:hidden;background:var(--bg);
   color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.55;
 }
-body.vast{overflow:hidden}
 /* Het verloop als vaste laag achter de pagina: zo is het precies één scherm
    groot en wordt het niet over de hele documenthoogte uitgesmeerd.
    (background-attachment:fixed doet op iOS niet wat je hoopt.) */
@@ -79,13 +73,20 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;
 .telling{font-variant-numeric:tabular-nums}
 
 /* ---------- de scroller ---------- */
+.reel{
+  height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior-y:contain;
+  scroll-snap-type:y mandatory;
+  /* Wij corrigeren de scrollpositie zelf als we oude kaarten opruimen. Laat
+     de browser dat er niet nog een keer overheen doen. */
+  overflow-anchor:none;
+}
 .kaart{
   position:relative;
   /* Alleen layout-isolatie: een kaart kan de rest van de reel niet
      herindelen. Bewust geen 'paint' erbij, want dat geeft de browser juist
      toestemming om buiten beeld helemaal niets te schilderen. */
   contain:layout;
-  height:100vh;height:100svh;scroll-snap-align:start;scroll-snap-stop:always;
+  height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
   display:flex;align-items:center;justify-content:center;
   padding:74px 20px calc(30px + env(safe-area-inset-bottom,0px));
 }
@@ -318,11 +319,11 @@ function wissel(id){
 /* ============ DE REEL ============ */
 const reel = document.getElementById('reel');
 
-/* Eén plek die weet wie de scroller is en hoe hoog een kaart is. De hoogte
-   komt van een kaart zelf en niet van innerHeight, want die twee lopen op een
-   telefoon uiteen zodra de adresbalk weg schuift. */
-const baan = document.scrollingElement || document.documentElement;
-const kaartHoogte = () => (reel.firstElementChild || {}).offsetHeight || innerHeight;
+/* De reel scrollt zelf. Laat de pagina eromheen stilstaan: zodra het document
+   scrollt, schuift de balk van de browser weg, verandert de zichtbare hoogte
+   en staat de inhoud van een kaart niet meer gecentreerd. */
+const baan = reel;
+const kaartHoogte = () => (reel.firstElementChild || {}).offsetHeight || reel.clientHeight;
 const ICOON = {
   hart: '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 0 0 0-7.1z"/></svg>',
   deel: '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4"/><path d="M15.4 17.4l-6.8-4"/></svg>',
@@ -462,7 +463,7 @@ async function naarKlembord(tekst){
    opruimen. Elke kaart is precies één scherm hoog, dus de scrollpositie
    corrigeren is exact en je ziet er niets van. */
 let bezig = false, negeer = false, rustTimer;
-addEventListener('scroll', () => {
+reel.addEventListener('scroll', () => {
   if (negeer) return;
   if (baan.scrollTop > 40) wenkWeg();
   clearTimeout(rustTimer);
@@ -524,12 +525,7 @@ function toonLijst(){
   document.getElementById('favLeeg').hidden = f.length > 0;
   document.getElementById('favWis').hidden = f.length === 0;
 }
-/* Nu de pagina zelf scrollt, moet die stilstaan zolang het lijstje eroverheen
-   ligt. */
-const zetVenster = aan => {
-  venster.hidden = !aan;
-  document.body.classList.toggle('vast', aan);
-};
+const zetVenster = aan => { venster.hidden = !aan; };
 document.getElementById('favBtn').onclick = () => { toonLijst(); zetVenster(true); };
 document.getElementById('favSluit').onclick = () => zetVenster(false);
 venster.onclick = e => { if (e.target === venster) zetVenster(false); };
@@ -542,7 +538,7 @@ document.addEventListener('keydown', e => {
   if (!stap) return;
   e.preventDefault();
   const h = kaartHoogte();
-  scrollTo({ top: (Math.round(baan.scrollTop / h) + stap) * h, behavior: 'smooth' });
+  baan.scrollTo({ top: (Math.round(baan.scrollTop / h) + stap) * h, behavior: 'smooth' });
 });
 lijst.onclick = e => {
   const b = e.target.closest('.weg');
@@ -562,7 +558,7 @@ function openFeitje(id){
   if (!f || !nu) return;
   zetVenster(false);
   nu.insertAdjacentHTML('afterend', kaartje({ v: f.v, i: Number(id.split('|')[1]), t: f.t, echt: f.echt }));
-  scrollTo({ top: (hier + 1) * h, behavior: 'smooth' });
+  baan.scrollTo({ top: (hier + 1) * h, behavior: 'smooth' });
 }
 document.getElementById('favWis').onclick = () => {
   bewaard = []; opslaan(); toonLijst();
