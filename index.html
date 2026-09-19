@@ -809,6 +809,19 @@ function vlaTips(v){
 }
 
 function oordeel(d, open, uit, v){
+  /* Een leeg pak kan niet bederven. De datum erop is echt, maar betekenisloos:
+     er is niets meer om over datum te gaan. */
+  if (v.puzzel){
+    return {
+      k: 'ok', face: '\u{1F9E9}', titel: 'Onbeperkt houdbaar',
+      tekst: 'Er zit niets meer in. Een leeg pak bederft niet, en een kruiswoordpuzzel al helemaal niet.',
+      tips: [
+        ...vlaTips(v),
+        ['\u{1F4C5}', 'De datum mocht je invullen, maar we hebben er niets mee gedaan. Er valt hier niets te bederven.'],
+        ['\u{1F58A}\uFE0F', 'Zeven verticaal is "vla". Dat is het bij dit pak altijd.'],
+      ],
+    };
+  }
   let r;
   if (d > 365)       r = { k:'ok',  face:'\u{1F52E}', titel:'Deze vla komt uit de toekomst', tekst:'Meer dan een jaar te gaan. Weet je zeker dat je goed hebt gekeken?' };
   else if (d > 180)  r = { k:'ok',  face:'\u{1F5FF}', titel:'Deze vla overleeft je plannen', tekst:'Een half jaar. Jij bent eerder van gedachten veranderd dan deze vla van kleur.' };
@@ -914,7 +927,8 @@ function schrijfDatum(iso){
 /* De score in stappen, zodat de uitsplitsing altijd optelt tot het getal dat
    erboven staat. De ondergrens van 1 kan een aftrek afknijpen; dan tonen we
    wat het werkelijk kostte, niet wat het op papier had moeten kosten. */
-function bonnetje(d, open, uit){
+function bonnetje(d, open, uit, v){
+  if (v.puzzel) return { rijen: [{ wat: 'Er zit niets meer in', nr: 100 }], totaal: 100, geknepen: false };
   const rijen = [];
   let score = d >= 0 ? Math.min(100, 58 + d * 1.6) : Math.max(1, 58 + d * 2.6);
   rijen.push({
@@ -949,7 +963,7 @@ function toonBon(bon){
 function toon(d, open, uit){
   const v = gekozen;
   const o = oordeel(d, open, uit, v);
-  const bon = bonnetje(d, open, uit);
+  const bon = bonnetje(d, open, uit, v);
   const score = bon.totaal;
 
   document.getElementById('resultpack').innerHTML = pack(v);
@@ -961,7 +975,8 @@ function toon(d, open, uit){
   const dagen = d === 0 ? 'De houdbaarheidsdatum is vandaag.'
     : d > 0 ? `Nog ${d} ${d === 1 ? 'dag' : 'dagen'} te gaan.`
     : `${Math.abs(d)} ${Math.abs(d) === 1 ? 'dag' : 'dagen'} over datum.`;
-  document.getElementById('days').textContent = dagen + ' ' + o.tekst;
+  /* Bij een leeg pak zeggen we niet hoeveel dagen het nog heeft. */
+  document.getElementById('days').textContent = v.puzzel ? o.tekst : dagen + ' ' + o.tekst;
 
   toonBon(bon);
   document.getElementById('bon').hidden = true;
@@ -993,7 +1008,7 @@ function toon(d, open, uit){
 
   /* Een aftelklok hoort alleen bij een uitslag van nu; bij een gedeelde
      uitslag van een andere dag spreekt hij het aantal dagen tegen. */
-  if (toen.hidden) startKlok(document.getElementById('datum').value);
+  if (toen.hidden && !v.puzzel) startKlok(document.getElementById('datum').value);
   else { stopKlok(); document.getElementById('klok').hidden = true; }
 
   /* Deeltekst over meerdere regels: in een chat leest dat een stuk prettiger
@@ -1004,7 +1019,7 @@ function toon(d, open, uit){
   regels.push(`${o.face} ${v.merk} ${v.soort}`);
   regels.push(o.titel.toUpperCase());
   regels.push('');
-  regels.push(dagen);
+  regels.push(v.puzzel ? 'Er zit niets meer in.' : dagen);
   if (open) regels.push('Het pak was al open.');
   if (BUITEN[uit]) regels.push(`Stond ${BUITEN[uit].label} buiten de koelkast.`);
   regels.push(`Vla-score: ${score}/100`);
