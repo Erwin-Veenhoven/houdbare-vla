@@ -37,6 +37,9 @@
   --warn:#e08a1e;
   --bad:#d94a3d;
   --radius:18px;
+  /* Vertelt de browser hoe hij zijn eigen onderdelen moet tekenen:
+     de kalenderknop in een datumveld, het pijltje van een keuzelijst. */
+  color-scheme: light;
 }
 :root:not([data-theme="light"]){
   @media (prefers-color-scheme: dark){
@@ -50,6 +53,7 @@
     --ok:#4ec47c;
     --warn:#f0ab45;
     --bad:#f4695b;
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
@@ -57,7 +61,10 @@
   --line:rgba(246,238,226,.12);
   --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
   --ok:#4ec47c; --warn:#f0ab45; --bad:#f4695b;
+  color-scheme: dark;
 }
+
+:root[data-theme="light"]{ color-scheme: light; }
 
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -119,6 +126,11 @@ input[type="search"],input[type="date"]{
   outline:none;transition:border-color .15s, box-shadow .15s;
 }
 input[type="date"]{padding-left:14px;font-family:Fredoka;font-size:18px;text-align:center}
+/* Safari geeft datumvelden een eigen minimumbreedte en laat de binnenkant
+   niet krimpen, waardoor de waarde op een telefoon rechts uit het veld loopt. */
+input[type="date"]{min-width:0;max-width:100%;display:block}
+input[type="date"]::-webkit-date-and-time-value{width:100%;text-align:center;margin:0;padding:0}
+input[type="date"]::-webkit-calendar-picker-indicator{flex:none;margin:0 0 0 4px}
 input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(242,166,59,.18)}
 input[type="search"]::-webkit-search-cancel-button{filter:grayscale(1);opacity:.5}
 
@@ -291,9 +303,9 @@ footer strong{color:var(--ink);font-weight:600}
   <section class="panel card" id="panel2" aria-labelledby="t2">
     <div class="chosen" id="chosen"></div>
     <h2 class="section" id="t2">Wat staat er op het pak?</h2>
-    <p class="sub">Vul de houdbaarheidsdatum in (THT / "te gebruiken tot").</p>
+    <p class="sub" id="datumsub">Vul de houdbaarheidsdatum in (THT / "te gebruiken tot").</p>
 
-    <label class="fld" for="datum">Houdbaarheidsdatum</label>
+    <label class="fld" for="datum" id="datumlabel">Houdbaarheidsdatum</label>
     <input type="date" id="datum" aria-describedby="datumhint">
     <p class="hint" id="datumhint">Staat meestal op de bovenkant van het pak, in kleine lettertjes waar je een bril voor nodig hebt.</p>
 
@@ -435,22 +447,22 @@ const VLAS = [
   {merk:'Provamel',soort:'Vanille (soja)',    groep:'Plantaardig', c1:'#f2ead6', c2:'#3f7d4a'},
 
   /* --- Bijzonder --- */
-  {merk:'Zelfgemaakt', soort:'Vla van oma',   groep:'Bijzonder',c1:'#ffeec2', c2:'#e0a94e'},
-  {merk:'Vlaflip', soort:'Vla met limonade',  groep:'Bijzonder',c1:'#ffd85e', c2:'#e8467f', split:true},
-  {merk:'Met vel', soort:'Vla met een vel',   groep:'Bijzonder',c1:'#ffeec2', c2:'#c99a4e'},
-  {merk:'Eigen pan', soort:'Restjes vla',     groep:'Bijzonder',c1:'#f7e3b8', c2:'#c08a3a'},
+  {merk:'Zelfgemaakt', soort:'Vla van oma',   groep:'Bijzonder',c1:'#ffeec2', c2:'#e0a94e', zelf:{vraag:'Wanneer heeft oma deze vla gemaakt?', hint:'Zelfgemaakte vla heeft geen etiket, dus rekenen we vanaf de pan. Wij houden drie dagen aan.', dagen:3}},
+  {merk:'Vlaflip', soort:'Vla met limonade',  groep:'Bijzonder',c1:'#ffd85e', c2:'#e8467f', split:true, zelf:{vraag:'Wanneer heb je de vlaflip gemaakt?', hint:'Een vlaflip erft de houdbaarheid van de vla eronder, maar niet de datum. Wij rekenen één dag.', dagen:1}},
+  {merk:'Met vel', soort:'Vla met een vel',   groep:'Bijzonder',c1:'#ffeec2', c2:'#c99a4e', zelf:{vraag:'Wanneer heb je dit pak opengemaakt?', hint:'Dat vel verraadt dat hij al even staat. Na openen rekenen we drie dagen.', dagen:3}},
+  {merk:'Eigen pan', soort:'Restjes vla',     groep:'Bijzonder',c1:'#f7e3b8', c2:'#c08a3a', zelf:{vraag:'Wanneer heb je gekookt?', hint:'Restjes in een pan houden het korter vol dan je hoopt. Wij rekenen twee dagen.', dagen:2}},
   {merk:'Custard', soort:'Engelse vla',       groep:'Bijzonder',c1:'#ffe9b0', c2:'#c0392b'},
-  {merk:'Kantine', soort:'Vla van het werk',  groep:'Bijzonder',c1:'#efe6d2', c2:'#9a8f78'},
+  {merk:'Kantine', soort:'Vla van het werk',  groep:'Bijzonder',c1:'#efe6d2', c2:'#9a8f78', zelf:{vraag:'Wanneer stond hij er al?', hint:'Niemand weet wie deze vla heeft neergezet. Wij rekenen vanaf het moment dat jij hem zag.', dagen:2}},
   {merk:'Camping', soort:'Vla uit de koelbox',groep:'Bijzonder',c1:'#fdf0cf', c2:'#3f8f5f'},
-  {merk:'Ziekenhuis', soort:'Vla op een dienblad',groep:'Bijzonder',c1:'#eef2f4', c2:'#9db6c2'},
+  {merk:'Ziekenhuis', soort:'Vla op een dienblad',groep:'Bijzonder',c1:'#eef2f4', c2:'#9db6c2', zelf:{vraag:'Wanneer kreeg je dit dienblad?', hint:'Ziekenhuisvla komt zonder etiket maar met een strak schema. Wij rekenen één dag.', dagen:1}},
   {merk:'Griesmeel', soort:'Pudding (geen vla)',groep:'Bijzonder',c1:'#f6f0e2',c2:'#c9b98f', nietVla:true},
   {merk:'Yoghurt', soort:'Echt geen vla',     groep:'Bijzonder',c1:'#fbfbf7', c2:'#bcc6cc', nietVla:true},
   {merk:'Kwark',   soort:'Zeker geen vla',    groep:'Bijzonder',c1:'#fbfbf7', c2:'#cfd6da', nietVla:true},
   {merk:'Chocomel',soort:'Geen vla (drinken)',groep:'Bijzonder',c1:'#6b4326', c2:'#2e1a0e', nietVla:true},
   {merk:'Fristi',  soort:'Ook geen vla',      groep:'Bijzonder',c1:'#f2b8cf', c2:'#c0326b', nietVla:true},
   {merk:'Mona',    soort:'Toetje (geen vla)', groep:'Bijzonder',c1:'#f6e7d2', c2:'#b98a5e', nietVla:true},
-  {merk:'Koelkast',soort:'Achterin gevonden', groep:'Bijzonder',c1:'#cfd6cd', c2:'#6f7a6b', mysterie:true},
-  {merk:'Onbekend',soort:'Vla zonder etiket', groep:'Bijzonder',c1:'#d8d2c8', c2:'#8d8478', mysterie:true},
+  {merk:'Koelkast',soort:'Achterin gevonden', groep:'Bijzonder',c1:'#cfd6cd', c2:'#6f7a6b', mysterie:true, zelf:{vraag:'Wanneer zag je hem voor het eerst?', hint:'Achterin de koelkast bestaat geen tijd. Gok gerust, wij rekenen er twee dagen bij.', dagen:2}},
+  {merk:'Onbekend',soort:'Vla zonder etiket', groep:'Bijzonder',c1:'#d8d2c8', c2:'#8d8478', mysterie:true, zelf:{vraag:'Wanneer kwam dit pak in huis?', hint:'Zonder etiket is elke datum een schatting. Wij rekenen er vier dagen bij en hopen er het beste van.', dagen:4}},
 ];
 
 /* ============ PAK TEKENEN ============ */
@@ -545,6 +557,28 @@ zoek.addEventListener('keydown', e => {
 });
 render();
 
+/* ============ DE VRAAG BIJ STAP 2 ============ */
+/* Op acht vla's staat geen houdbaarheidsdatum: oma's vla, restjes uit de pan,
+   dat pak achterin de koelkast. Daar vragen we wanneer hij gemaakt is en
+   tellen we er zelf een houdbaarheid bij op. */
+function stelVraag(v){
+  const z = v.zelf;
+  document.getElementById('t2').textContent   = z ? z.vraag : 'Wat staat er op het pak?';
+  document.getElementById('datumsub').textContent = z
+    ? z.hint
+    : 'Vul de houdbaarheidsdatum in (THT / "te gebruiken tot").';
+  document.getElementById('datumlabel').textContent = z ? 'Datum' : 'Houdbaarheidsdatum';
+  document.getElementById('datumhint').textContent = z
+    ? 'Een schatting is prima. Preciezer wordt het toch niet.'
+    : 'Staat meestal op de bovenkant van het pak, in kleine lettertjes waar je een bril voor nodig hebt.';
+  /* Oma kan geen vla maken die nog moet komen. */
+  const datum = document.getElementById('datum');
+  if (z) datum.max = isoDag(new Date()); else datum.removeAttribute('max');
+  document.querySelectorAll('#snel button').forEach(b => {
+    b.hidden = z ? Number(b.dataset.d) > 0 : false;
+  });
+}
+
 /* ============ VLA VAN DE DAG ============ */
 /* Ligt vast per kalenderdag, zodat iedereen dezelfde vla ziet. */
 function vlaVanDeDag(){
@@ -592,6 +626,7 @@ function kies(v){
       <button class="change" id="changeBtn">verkeerde vla? wijzig</button>
     </div>`;
   document.getElementById('changeBtn').onclick = () => ga(1);
+  stelVraag(v);
   ga(2);
   setTimeout(() => document.getElementById('datum').focus(), 300);
 }
@@ -690,6 +725,7 @@ function oordeel(d, open, uit, v){
   /* Belangrijkste eerst. De bovengrens is ruim; hij is er alleen zodat
      een open, warme, stokoude vla geen scrollbare preek oplevert. */
   const tips = [];
+  if (v.zelf) tips.push(['\u{1F5D3}\uFE0F', `Op deze vla staat geen houdbaarheidsdatum. We rekenen ${v.zelf.dagen} ${v.zelf.dagen === 1 ? 'dag' : 'dagen'} vanaf de datum die je invulde.`]);
   if (b) tips.push(['\u{1F321}\uFE0F', b.tip]);
   if (d < 0) tips.push(['\u{1F443}', 'Ruiktest: zuur, gistig of "interessant" = weggooien.']);
   else if (!b) tips.push(['\u{1F95B}', 'Bewaar bij 4\u20137 \u00B0C. De koelkastdeur is géén koelkast.']);
@@ -719,6 +755,7 @@ function bereken(){
   const peil = middernacht(peildatum || new Date());
   laatstePeil = isoDag(peil);
   const tht = new Date(inp.value + 'T00:00:00');
+  if (gekozen.zelf) tht.setDate(tht.getDate() + gekozen.zelf.dagen);
   const d = Math.round((tht - peil) / 86400000);
   toon(d, open, uit);
 }

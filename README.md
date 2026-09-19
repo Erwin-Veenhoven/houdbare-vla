@@ -100,6 +100,29 @@ open index.html
 
 Dat is het. Geen `npm install`, geen build, geen dev server, geen framework dat over drie jaar niet meer bestaat.
 
+## Vla's zonder etiket
+
+Op acht vla's staat helemaal geen houdbaarheidsdatum — oma's vla, restjes uit de pan, dat pak achterin de koelkast. Daar draait de tweede stap de vraag om: niet *wat staat er op het pak*, maar *wanneer is hij gemaakt*. De site telt er zelf een houdbaarheid bij op.
+
+| Vla | Vraag | Rekent erbij |
+|---|---|---|
+| Vla van oma | Wanneer heeft oma deze vla gemaakt? | 3 dagen |
+| Vla met limonade | Wanneer heb je de vlaflip gemaakt? | 1 dag |
+| Vla met een vel | Wanneer heb je dit pak opengemaakt? | 3 dagen |
+| Restjes vla | Wanneer heb je gekookt? | 2 dagen |
+| Vla van het werk | Wanneer stond hij er al? | 2 dagen |
+| Vla op een dienblad | Wanneer kreeg je dit dienblad? | 1 dag |
+| Achterin gevonden | Wanneer zag je hem voor het eerst? | 2 dagen |
+| Vla zonder etiket | Wanneer kwam dit pak in huis? | 4 dagen |
+
+Bij die vla's verdwijnen de snelknoppen naar de toekomst en accepteert het datumveld geen datum van later dan vandaag, want oma kan geen vla maken die nog moet komen. In de link blijft de parameter gewoon `tht` heten; daar staat dan de ingevulde datum in, en welke vla het is bepaalt hoe die gelezen wordt.
+
+Wil je zelf zo'n vla toevoegen, geef hem dan een `zelf`-veld:
+
+```js
+zelf: { vraag: 'Wanneer heb je hem gemaakt?', hint: '…', dagen: 3 }
+```
+
 ## Kleinigheden
 
 - **Vla van de dag.** Bovenaan staat elke dag een andere vla, vast gekoppeld aan de kalenderdag. Iedereen ziet dus dezelfde. Eén klik en hij staat klaar om door te rekenen.
@@ -133,7 +156,7 @@ Pull requests met nieuwe vlasoorten zijn welkom. Yoghurt staat er inmiddels ook 
 
 ## Techniek
 
-Eén `index.html` van zo'n 53 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
+Eén `index.html` van zo'n 57 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
 
 ## Disclaimer
 
