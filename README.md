@@ -265,6 +265,12 @@ Geef hem ook vijf feitjes in `feitjes.js`, op zijn slug. Vergeet je dat, dan val
 
 Pull requests met nieuwe vlasoorten zijn welkom. Yoghurt staat er inmiddels ook in, maar uitsluitend als waarschuwing.
 
+## Vindbaarheid
+
+`sitemap.xml` noemt de drie pagina's die er echt zijn — de voorpagina, de quiz en de feitjes — en `robots.txt` wijst ernaar. Dat is alles wat Google Search Console nodig heeft.
+
+Wat er bewust **niet** in staat: de deellinks met parameters (`?vla=…`, `?naam=…`, `?f=…`). Daar zijn er duizenden van en ze zijn allemaal dezelfde pagina met andere inhoud. Elke pagina heeft daarom een `<link rel="canonical">` naar zijn eigen adres zonder parameters, zodat een gedeelde uitslag geen tweede zoekresultaat wordt. `404.html` staat op `noindex`.
+
 ## Techniek
 
 Vijf bestanden: `index.html` (de checker), `quiz.html`, `feitjes.html`, `vla.js` met de gedeelde vlalijst en de paktekening, en `feitjes.js` met de feitjes. Samen zo'n 150 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
