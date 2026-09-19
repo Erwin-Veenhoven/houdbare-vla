@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vlafeitjes — Houdbare Vla</title>
+<meta name="description" content="Blijf scrollen, blijf feitjes over vla krijgen. Bewaar de goede.">
+<meta property="og:title" content="Vlafeitjes">
+<meta property="og:description" content="Blijf scrollen, blijf feitjes over vla krijgen.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://houdbarevla.nl/feitjes.html">
+<meta property="og:image" content="https://houdbarevla.nl/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2a63b">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7e9; --bg2:#ffeccd; --card:#fff; --ink:#2b2119; --muted:#8b7a66;
+  --accent:#f2a63b; --accent-ink:#2b2119; --line:rgba(43,33,25,.10);
+  --shadow:0 2px 0 rgba(43,33,25,.06), 0 12px 28px -12px rgba(43,33,25,.25);
+  --radius:18px; color-scheme: light;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#16120e; --bg2:#1e1812; --card:#241d16; --ink:#f6eee2; --muted:#a3927c;
+    --line:rgba(246,238,226,.12);
+    --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16120e; --bg2:#1e1812; --card:#241d16; --ink:#f6eee2; --muted:#a3927c;
+  --line:rgba(246,238,226,.12);
+  --shadow:0 2px 0 rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-theme="light"]{ color-scheme: light; }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;overflow:hidden;background:var(--bg);
+  color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.55;
+}
+
+/* ---------- balk bovenin ---------- */
+.balk{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 14px calc(12px + env(safe-area-inset-top,0px));
+  pointer-events:none;
+}
+.balk > *{pointer-events:auto}
+.pil{
+  display:inline-flex;align-items:center;gap:7px;font:inherit;font-family:Fredoka;font-weight:600;font-size:14.5px;
+  color:var(--ink);text-decoration:none;background:var(--card);border:1.5px solid var(--line);
+  border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow);line-height:1;
+}
+.pil .blob{
+  width:17px;height:17px;flex:none;border-radius:46% 54% 52% 48%/48% 44% 56% 52%;
+  background:linear-gradient(160deg,#ffe193,var(--accent));
+}
+.rechts{display:flex;gap:8px}
+.pil.rond{padding:0;width:38px;height:38px;justify-content:center;font-size:16px}
+.telling{font-variant-numeric:tabular-nums}
+
+/* ---------- de scroller ---------- */
+.reel{
+  height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior-y:contain;
+  scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;
+  /* Wij corrigeren de scrollpositie zelf als we oude kaarten opruimen. Laat
+     de browser dat er niet nog een keer overheen doen. */
+  overflow-anchor:none;
+  background:linear-gradient(180deg,var(--bg2),var(--bg) 60vh);
+}
+.kaart{
+  position:relative;
+  height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
+  display:flex;align-items:center;justify-content:center;
+  padding:74px 20px calc(30px + env(safe-area-inset-bottom,0px));
+}
+/* Het hartje dat opbloeit als je dubbeltikt. */
+.bloei{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;
+  pointer-events:none;animation:bloei .8s ease-out forwards}
+.bloei svg{width:110px;height:110px;fill:var(--accent);stroke:none;
+  filter:drop-shadow(0 10px 20px rgba(43,33,25,.35))}
+@keyframes bloei{
+  0%{opacity:0;transform:scale(.4)}
+  22%{opacity:1;transform:scale(1.12)}
+  42%{transform:scale(.96)}
+  100%{opacity:0;transform:scale(1.3)}
+}
+.binnen{width:100%;max-width:420px;text-align:center}
+/* Alleen het pak zelf: anders worden de icoontjes eronder ook 104px. */
+.binnen > svg{width:104px;height:132px;filter:drop-shadow(0 12px 22px rgba(43,33,25,.18))}
+.merknaam{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted);margin:12px 0 0}
+.soort{font-family:Fredoka;font-weight:600;font-size:19px;line-height:1.2;margin:1px 0 0}
+/* Staat alleen boven de feitjes die echt waar zijn. De rest is verzonnen. */
+.etiket{
+  display:inline-block;margin:16px 0 0;padding:4px 11px;border-radius:999px;
+  background:var(--accent);color:var(--accent-ink);
+  font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;line-height:1.4;
+}
+.feit{
+  font-family:Fredoka;font-weight:500;font-size:clamp(20px,5.4vw,25px);line-height:1.35;
+  margin:18px auto 0;max-width:22ch;
+}
+.etiket + .feit{margin-top:10px;font-size:clamp(17px,4.6vw,21px);max-width:26ch}
+/* Het rijtje onder het feitje: bewaren, delen, en doorklikken naar de checker. */
+.acties{display:flex;justify-content:center;gap:20px;margin-top:24px}
+.acties button, .acties a{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  font:inherit;font-family:Fredoka;font-weight:600;font-size:11.5px;line-height:1;
+  color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-decoration:none;
+}
+.acties .bol{
+  display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:999px;
+  background:var(--card);border:1.5px solid var(--line);box-shadow:var(--shadow);
+  color:var(--ink);transition:.15s;
+}
+.acties button:hover .bol, .acties a:hover .bol{border-color:var(--accent);transform:translateY(-2px)}
+.acties svg{width:19px;height:19px;filter:none;fill:none;stroke:currentColor;stroke-width:2}
+.hart[aria-pressed="true"] .bol{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.hart[aria-pressed="true"] .bol svg{fill:currentColor}
+
+/* Staat onderaan het scherm bij het eerste feitje, en verdwijnt zodra je
+   voor het eerst scrolt. */
+.wenk{
+  position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);z-index:15;
+  display:flex;align-items:center;gap:9px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:999px;
+  padding:11px 20px;box-shadow:var(--shadow);
+  font-family:Fredoka;font-weight:600;font-size:14.5px;line-height:1;color:var(--ink);
+  /* Met left:50% rekent de browser de breedte vanaf het midden, dus zonder
+     dit breekt de zin in tweeën. */
+  white-space:nowrap;max-width:calc(100vw - 32px);
+  pointer-events:none;transition:opacity .35s, transform .35s;
+}
+.wenk[hidden]{display:none}
+.wenk b{font-size:17px;font-weight:600;animation:wip 1.5s ease-in-out infinite}
+@keyframes wip{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
+body.weg .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
+
+/* ---------- bewaarde feitjes ---------- */
+.overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(43,33,25,.45);backdrop-filter:blur(2px)}
+.overlay[hidden]{display:none}
+@media (min-width:560px){ .overlay{align-items:center;padding:20px} }
+.blad{
+  background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius) var(--radius) 0 0;
+  box-shadow:var(--shadow);width:100%;max-width:480px;max-height:82vh;display:flex;flex-direction:column;
+  padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));
+}
+@media (min-width:560px){ .blad{border-radius:var(--radius)} }
+.blad .kop{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:2px}
+.blad h2{font-family:Fredoka;font-weight:600;font-size:19px;margin:0}
+.blad .wis{font:inherit;font-size:13px;color:var(--muted);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.subkop{color:var(--muted);font-size:13px;margin:0 0 14px}
+.lijst{overflow-y:auto;margin:0;padding:1px;list-style:none;-webkit-overflow-scrolling:touch}
+/* Elk bewaard feitje krijgt zijn eigen pak mee, anders is het een tekstlijstje. */
+.lijst li{display:flex;align-items:center;gap:12px;padding:11px 12px;
+  border:1.5px solid var(--line);border-radius:14px;background:var(--bg)}
+.lijst li + li{margin-top:9px}
+.mini{flex:none}
+.mini svg{width:40px;height:51px;display:block}
+.lijst .tekst{flex:1;min-width:0}
+.lijst .regel{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.lijst .van{font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--muted)}
+.lijst .etiket{margin:0;padding:3px 8px;font-size:9.5px;letter-spacing:.08em}
+.lijst .tekst p{margin:3px 0 0;font-family:Fredoka;font-weight:500;font-size:14.5px;line-height:1.35}
+.lijst .weg{flex:none;align-self:flex-start;font:inherit;font-size:15px;line-height:1;color:var(--muted);
+  background:none;border:0;padding:4px 5px;border-radius:8px;cursor:pointer}
+.lijst .weg:hover{color:var(--ink);background:var(--line)}
+.leeg{text-align:center;color:var(--muted);padding:12px 0 4px}
+.leeg p{margin:12px 0 0;font-size:14px;line-height:1.5}
+.leegpak svg{width:58px;height:73px;display:block;margin:0 auto;opacity:.45}
+.btn{font:inherit;font-family:Fredoka;font-weight:600;font-size:15px;background:var(--accent);color:var(--accent-ink);
+  border:0;border-radius:14px;padding:12px 20px;cursor:pointer;box-shadow:var(--shadow);margin-top:16px;align-self:flex-end}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;z-index:70;
+  background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:11px 20px;
+  box-shadow:var(--shadow);font-size:14px;transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="balk">
+  <a class="pil" href="/"><span class="blob"></span> Houdbare&nbsp;Vla</a>
+  <div class="rechts">
+    <button class="pil" id="favBtn" aria-haspopup="dialog">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 0 0 0-7.1z"/></svg>
+      <span class="telling" id="favTel">0</span>
+    </button>
+    <button class="pil rond" id="themeBtn" title="Licht / donker" aria-label="Wissel thema">🌙</button>
+  </div>
+</div>
+
+<main class="reel" id="reel" aria-label="Vlafeitjes"></main>
+
+<p class="wenk" id="wenk">Scroll voor het volgende feitje <b>↓</b></p>
+
+<div class="overlay" id="favvenster" hidden>
+  <div class="blad" role="dialog" aria-modal="true" aria-labelledby="favtitel">
+    <div class="kop">
+      <h2 id="favtitel">Bewaarde feitjes</h2>
+      <button class="wis" id="favWis" hidden>alles wissen</button>
+    </div>
+    <p class="subkop" id="favSub"></p>
+    <ul class="lijst" id="favLijst"></ul>
+    <div class="leeg" id="favLeeg" hidden>
+      <div class="leegpak" id="leegpak"></div>
+      <p>Zo leeg als dit pak.<br>Tik op het hartje onder een feitje.</p>
+    </div>
+    <button class="btn" id="favSluit">Sluiten</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="vla.js"></script>
+<script src="feitjes.js"></script>
+<script>
+/* =====================================================================
+   DE STAPEL
+   Alle feitjes van alle vla's gaan één keer geschud in een bak. Je krijgt
+   ze in die volgorde, dus je ziet niets dubbel tot de bak leeg is. Daarna
+   wordt er opnieuw geschud.
+   ===================================================================== */
+let bak = [], pos = 0, vorige = null;
+
+function schud(){
+  bak = [];
+  VLAS.forEach(v => feitjesVan(v).forEach((f, i) => bak.push({ v, i, t: f.t, echt: f.echt })));
+  for (let j = bak.length - 1; j > 0; j--){
+    const k = Math.floor(Math.random() * (j + 1));
+    [bak[j], bak[k]] = [bak[k], bak[j]];
+  }
+  pos = 0;
+}
+function volgende(){
+  if (pos >= bak.length) schud();
+  /* Twee keer achter elkaar hetzelfde pak voelt als een fout, dus die ruilen
+     we om met de kaart erna. */
+  if (bak[pos].v === vorige && pos + 1 < bak.length){
+    [bak[pos], bak[pos + 1]] = [bak[pos + 1], bak[pos]];
+  }
+  const kaart = bak[pos++];
+  vorige = kaart.v;
+  return kaart;
+}
+
+/* ============ BEWAREN ============ */
+const SLEUTEL = 'vlafeitjes';
+let bewaard = [];
+try { bewaard = JSON.parse(localStorage.getItem(SLEUTEL)) || []; } catch {}
+if (!Array.isArray(bewaard)) bewaard = [];
+
+const sleutelVan = (v, i) => slug(v) + '|' + i;
+function zoek(id){
+  const [s, i] = id.split('|');
+  const v = VLAS.find(x => slug(x) === s);
+  if (!v) return null;
+  const f = feitjesVan(v)[Number(i)];
+  return f ? { v, t: f.t, echt: f.echt } : null;
+}
+function opslaan(){
+  try { localStorage.setItem(SLEUTEL, JSON.stringify(bewaard)); } catch {}
+  document.getElementById('favTel').textContent = bewaard.length;
+}
+function wissel(id){
+  const i = bewaard.indexOf(id);
+  if (i < 0){ bewaard.push(id); toast('Bewaard ❤️'); } else { bewaard.splice(i, 1); }
+  opslaan();
+  /* Hetzelfde feitje kan meerdere keren in de reel staan. */
+  reel.querySelectorAll('.hart').forEach(b => {
+    if (b.dataset.id !== id) return;
+    b.setAttribute('aria-pressed', i < 0);
+    b.querySelector('.lab').textContent = i < 0 ? 'Bewaard' : 'Bewaren';
+  });
+}
+
+/* ============ DE REEL ============ */
+const reel = document.getElementById('reel');
+const ICOON = {
+  hart: '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 0 0 0-7.1z"/></svg>',
+  deel: '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4"/><path d="M15.4 17.4l-6.8-4"/></svg>',
+  pak:  '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6-4.5 6 4.5"/><path d="M6 9h12v11H6z"/><path d="M9 13.5h6"/></svg>',
+};
+
+function kaartje({ v, i, t, echt }){
+  const id = sleutelVan(v, i);
+  const aan = bewaard.includes(id);
+  return `<article class="kaart">
+    <div class="binnen">
+      ${pack(v)}
+      <p class="merknaam">${esc(v.merk)}</p>
+      <p class="soort">${esc(v.soort)}</p>
+      ${echt ? '<p class="etiket">echt waar</p>' : ''}
+      <p class="feit">${esc(t)}</p>
+      <div class="acties">
+        <button class="hart" data-id="${id}" aria-pressed="${aan}">
+          <span class="bol">${ICOON.hart}</span><span class="lab">${aan ? 'Bewaard' : 'Bewaren'}</span>
+        </button>
+        <button class="deel" data-id="${id}">
+          <span class="bol">${ICOON.deel}</span><span class="lab">Delen</span>
+        </button>
+        <a href="/?vla=${encodeURIComponent(slug(v))}">
+          <span class="bol">${ICOON.pak}</span><span class="lab">Checken</span>
+        </a>
+      </div>
+    </div>
+  </article>`;
+}
+/* Staat er bij elk bezoek onder het eerste feitje, en verdwijnt zodra je
+   voor het eerst scrolt. */
+const wenk = document.getElementById('wenk');
+let uitgelegd = false;
+function wenkWeg(){
+  if (uitgelegd) return;
+  uitgelegd = true;
+  document.body.classList.add('weg');
+  setTimeout(() => { wenk.hidden = true; }, 400);
+}
+
+function vul(n){
+  let h = '';
+  for (let i = 0; i < n; i++) h += kaartje(volgende());
+  reel.insertAdjacentHTML('beforeend', h);
+}
+
+(function start(){
+  const p = new URLSearchParams(location.search);
+  const v = VLAS.find(x => slug(x) === p.get('vla'));
+  const f = v && feitjesVan(v)[Number(p.get('f'))];
+  if (f){
+    reel.insertAdjacentHTML('beforeend', kaartje({ v, i: Number(p.get('f')), t: f.t, echt: f.echt }));
+    vorige = v;                       /* niet meteen hetzelfde pak eronder */
+  }
+  vul(6);
+})();
+
+reel.addEventListener('click', e => {
+  const h = e.target.closest('.hart');
+  if (h){ wissel(h.dataset.id); return; }
+  const d = e.target.closest('.deel');
+  if (d) deel(d.dataset.id);
+});
+
+/* Dubbeltikken bewaart, net als in een reel. Het haalt nooit iets weg: dan
+   zou een tik te veel je favoriet wissen zonder dat je het doorhebt. */
+function bloei(kaart){
+  const b = kaart.querySelector('.hart');
+  if (!b) return;
+  if (!bewaard.includes(b.dataset.id)) wissel(b.dataset.id);
+  const h = document.createElement('span');
+  h.className = 'bloei';
+  h.innerHTML = ICOON.hart;
+  kaart.appendChild(h);
+  setTimeout(() => h.remove(), 800);
+}
+
+/* Op een telefoon zelf geteld, want dubbeltikken is daar ook het zoomgebaar.
+   De preventDefault op de tweede tik houdt dat tegen, en meteen ook de
+   nagebootste dblclick die er anders achteraan komt. */
+let vorigeTik = 0, vorigeKaart = null;
+reel.addEventListener('touchend', e => {
+  if (e.touches.length || e.target.closest('.acties')) return;
+  const k = e.target.closest('.kaart');
+  if (!k) return;
+  const nu = Date.now();
+  if (nu - vorigeTik < 320 && vorigeKaart === k){
+    e.preventDefault();
+    vorigeTik = 0;
+    bloei(k);
+  } else {
+    vorigeTik = nu;
+    vorigeKaart = k;
+  }
+}, { passive: false });
+
+reel.addEventListener('dblclick', e => {
+  if (e.target.closest('.acties')) return;
+  const k = e.target.closest('.kaart');
+  if (k) bloei(k);
+});
+
+/* De link opent precies dit feitje, dus de ontvanger ziet waar je het over had. */
+async function deel(id){
+  const f = zoek(id);
+  if (!f) return;
+  const u = new URL(location.origin + location.pathname);
+  u.searchParams.set('vla', slug(f.v));
+  u.searchParams.set('f', id.split('|')[1]);
+  const url = u.toString();
+  const tekst = `Vlafeitje \u2014 ${f.v.merk} ${f.v.soort}\n\n${f.t}`
+    + (f.echt ? '\n\nEn dit is er een die echt waar is.' : '');
+  if (navigator.share){
+    try { await navigator.share({ title: 'Vlafeitjes', text: tekst + '\n\nBekijk:', url }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  toast(await naarKlembord(tekst + '\n\nBekijk: ' + url) ? 'Gekopieerd \u{1F4CB}' : 'Delen lukte niet \u{1F937}');
+}
+
+/* Zelfde klembordtruc als op de hoofdpagina: navigator.clipboard bestaat
+   alleen op https, dus daaronder ligt de ouderwetse weg. */
+async function naarKlembord(tekst){
+  try {
+    if (navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(tekst); return true; }
+  } catch {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = tekst; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, tekst.length);
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
+  } catch { return false; }
+}
+
+/* Bijvullen zodra het einde in zicht komt, en vanaf zestig kaarten de oudste
+   opruimen. Elke kaart is precies één scherm hoog, dus de scrollpositie
+   corrigeren is exact en je ziet er niets van. */
+let bezig = false, negeer = false, rustTimer;
+reel.addEventListener('scroll', () => {
+  if (negeer) return;
+  if (reel.scrollTop > 40) wenkWeg();
+  clearTimeout(rustTimer);
+  rustTimer = setTimeout(opruimen, 220);
+  if (bezig) return;
+  bezig = true;
+  requestAnimationFrame(() => {
+    bezig = false;
+    if (reel.scrollTop + reel.clientHeight * 2.5 >= reel.scrollHeight) vul(5);
+  });
+}, { passive: true });
+
+/* Pas opruimen als je even stilstaat. Het verzetten van scrollTop breekt
+   anders een vloeiende scroll of een uitrollend veegje af. */
+function opruimen(){
+  const h = reel.clientHeight, hier = Math.round(reel.scrollTop / h);
+  if (reel.children.length <= 60 || hier <= 25) return;
+  const weg = 10;
+  /* Dat verzetten is zelf ook een scroll, en die mag hier niet binnenkomen. */
+  negeer = true;
+  for (let i = 0; i < weg; i++) reel.firstElementChild.remove();
+  reel.scrollTop = (hier - weg) * h;
+  requestAnimationFrame(() => { negeer = false; });
+}
+
+/* ============ HET BEWAARDE LIJSTJE ============ */
+const venster = document.getElementById('favvenster');
+const lijst = document.getElementById('favLijst');
+/* Het lege pak bewaakt het lege lijstje. */
+document.getElementById('leegpak').innerHTML = pack(VLAS.find(v => v.puzzel) || VLAS[0]);
+
+function telregel(n, echt){
+  const w = n === 1 ? 'Eén feitje' : n + ' feitjes';
+  if (!echt) return w + ' bewaard.';
+  return w + ' bewaard, waarvan ' + (echt === 1 ? 'één' : echt) + ' echt waar.';
+}
+function toonLijst(){
+  /* De id blijft aan het feitje hangen, zodat een feitje dat niet meer
+     bestaat de kruisjes eronder niet laat verschuiven. */
+  const f = bewaard.map(id => ({ id, ...zoek(id) })).filter(x => x.t);
+  lijst.innerHTML = f.map(x => `<li>
+      <span class="mini">${pack(x.v)}</span>
+      <span class="tekst">
+        <span class="regel">
+          <span class="van">${esc(x.v.merk)} — ${esc(x.v.soort)}</span>
+          ${x.echt ? '<span class="etiket">echt waar</span>' : ''}
+        </span>
+        <p>${esc(x.t)}</p>
+      </span>
+      <button class="weg" data-id="${x.id}" aria-label="Verwijderen">✕</button>
+    </li>`).join('');
+  document.getElementById('favSub').textContent = f.length ? telregel(f.length, f.filter(x => x.echt).length) : '';
+  document.getElementById('favLeeg').hidden = f.length > 0;
+  document.getElementById('favWis').hidden = f.length === 0;
+}
+document.getElementById('favBtn').onclick = () => { toonLijst(); venster.hidden = false; };
+document.getElementById('favSluit').onclick = () => { venster.hidden = true; };
+venster.onclick = e => { if (e.target === venster) venster.hidden = true; };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ venster.hidden = true; return; }
+  if (!venster.hidden || e.metaKey || e.ctrlKey || e.altKey) return;
+  /* Op een toetsenbord scroll je met de pijltjes, kaart voor kaart. */
+  const stap = { ArrowDown: 1, ArrowRight: 1, PageDown: 1, ' ': 1,
+                 ArrowUp: -1, ArrowLeft: -1, PageUp: -1 }[e.key];
+  if (!stap) return;
+  e.preventDefault();
+  const h = reel.clientHeight;
+  reel.scrollTo({ top: (Math.round(reel.scrollTop / h) + stap) * h, behavior: 'smooth' });
+});
+lijst.onclick = e => {
+  const b = e.target.closest('.weg');
+  if (!b) return;
+  wissel(b.dataset.id);
+  toonLijst();
+};
+document.getElementById('favWis').onclick = () => {
+  bewaard = []; opslaan(); toonLijst();
+  reel.querySelectorAll('.hart').forEach(b => {
+    b.setAttribute('aria-pressed', 'false');
+    b.querySelector('.lab').textContent = 'Bewaren';
+  });
+};
+opslaan();
+
+let toastT;
+function toast(m){
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 1800);
+}
+
+/* ============ LICHT / DONKER ============ */
+const themeBtn = document.getElementById('themeBtn');
+function pasThemeToe(t){
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const donker = t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches);
+  themeBtn.textContent = donker ? '☀️' : '\u{1F319}';
+}
+try { pasThemeToe(localStorage.getItem('vlatheme')); } catch { pasThemeToe(null); }
+themeBtn.onclick = () => {
+  const donker = document.documentElement.dataset.theme
+    ? document.documentElement.dataset.theme === 'dark'
+    : matchMedia('(prefers-color-scheme: dark)').matches;
+  const nieuw = donker ? 'light' : 'dark';
+  pasThemeToe(nieuw);
+  try { localStorage.setItem('vlatheme', nieuw); } catch {}
+};
+</script>
+</body>
+</html>
