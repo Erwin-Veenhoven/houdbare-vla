@@ -126,11 +126,23 @@ input[type="search"],input[type="date"]{
   outline:none;transition:border-color .15s, box-shadow .15s;
 }
 input[type="date"]{padding-left:14px;font-family:Fredoka;font-size:18px;text-align:center}
-/* Safari geeft datumvelden een eigen minimumbreedte en laat de binnenkant
-   niet krimpen, waardoor de waarde op een telefoon rechts uit het veld loopt. */
-input[type="date"]{min-width:0;max-width:100%;display:block}
+/* Safari negeert width op een datumveld en krimpt het naar de breedte van de
+   inhoud: 126px in een kaart van 361. appearance:none haalt het native uiterlijk
+   weg, en dan gedraagt het zich als een gewoon veld dat wél meeschaalt. */
+input[type="date"]{-webkit-appearance:none;appearance:none;min-width:0;max-width:100%;display:block}
 input[type="date"]::-webkit-date-and-time-value{width:100%;text-align:center;margin:0;padding:0}
 input[type="date"]::-webkit-calendar-picker-indicator{flex:none;margin:0 0 0 4px}
+.datumveld{position:relative}
+.datumveld .ph{display:none}
+/* iOS toont niets in een leeg datumveld: geen dd/mm/jjjj, geen icoon. Deze
+   feature query bestaat alleen daar, dus de rest van de wereld merkt niets. */
+@supports (-webkit-touch-callout: none){
+  .datumveld .ph{
+    display:flex;position:absolute;inset:0;align-items:center;justify-content:center;
+    font-family:Fredoka;font-size:18px;color:var(--muted);pointer-events:none;
+  }
+  .datumveld.gevuld .ph{display:none}
+}
 input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(242,166,59,.18)}
 input[type="search"]::-webkit-search-cancel-button{filter:grayscale(1);opacity:.5}
 
@@ -306,7 +318,10 @@ footer strong{color:var(--ink);font-weight:600}
     <p class="sub" id="datumsub">Vul de houdbaarheidsdatum in (THT / "te gebruiken tot").</p>
 
     <label class="fld" for="datum" id="datumlabel">Houdbaarheidsdatum</label>
-    <input type="date" id="datum" aria-describedby="datumhint">
+    <div class="datumveld" id="datumveld">
+      <input type="date" id="datum" aria-describedby="datumhint">
+      <span class="ph" aria-hidden="true">dd/mm/jjjj</span>
+    </div>
     <p class="hint" id="datumhint">Staat meestal op de bovenkant van het pak, in kleine lettertjes waar je een bril voor nodig hebt.</p>
 
     <div class="snel" id="snel">
@@ -561,6 +576,12 @@ render();
 /* Op acht vla's staat geen houdbaarheidsdatum: oma's vla, restjes uit de pan,
    dat pak achterin de koelkast. Daar vragen we wanneer hij gemaakt is en
    tellen we er zelf een houdbaarheid bij op. */
+function datumBij(){
+  document.getElementById('datumveld').classList.toggle('gevuld', !!document.getElementById('datum').value);
+}
+document.getElementById('datum').addEventListener('input', datumBij);
+document.getElementById('datum').addEventListener('change', datumBij);
+
 function stelVraag(v){
   const z = v.zelf;
   document.getElementById('t2').textContent   = z ? z.vraag : 'Wat staat er op het pak?';
@@ -603,6 +624,7 @@ snelEl.addEventListener('click', e => {
   const dt = new Date(); dt.setHours(0,0,0,0);
   dt.setDate(dt.getDate() + Number(b.dataset.d));
   document.getElementById('datum').value = isoDag(dt);
+  datumBij();
   snelEl.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
 });
 /* Zelf een datum kiezen zet de snelknop weer uit. */
@@ -856,6 +878,7 @@ function startKlok(thtISO){
 
 document.getElementById('opnieuw').onclick = () => {
   document.getElementById('datum').value = '';
+  datumBij();
   document.getElementById('open').checked = false;
   document.getElementById('warm').checked = false;
   document.getElementById('warmhoelang').hidden = true;
@@ -956,6 +979,7 @@ function uitUrl(){
   if (!v) return false;
   kies(v);
   document.getElementById('datum').value = tht;
+  datumBij();
   document.getElementById('open').checked = p.get('open') === '1';
   const uit = p.get('uit');
   if (uit && BUITEN[uit]){
