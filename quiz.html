@@ -56,10 +56,15 @@ h1{font-family:Fredoka;font-weight:700;font-size:clamp(26px,7vw,36px);margin:0 0
 .balk i.on{background:var(--accent)}
 .rekenen{text-align:center;padding:26px 0 18px}
 .rekenbalk{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
-.rekenbalk i{display:block;height:100%;width:0;border-radius:99px;background:var(--accent);animation:vullen 1.3s linear forwards}
+.rekenbalk i{display:block;height:100%;width:0;border-radius:99px;background:var(--accent);animation:vullen linear forwards}
 @keyframes vullen{from{width:0}to{width:100%}}
-.rekenstap{font-family:Fredoka;font-weight:600;font-size:16px;margin:18px 0 0}
-.rekenvoet{font-size:13px;color:var(--muted);margin:6px 0 0}
+.rekenlijst{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:8px;text-align:left}
+.rekenlijst li{display:flex;align-items:flex-start;gap:9px;font-size:14.5px;color:var(--muted);transition:color .2s}
+.rekenlijst li.klaar{color:var(--ink)}
+.rekenlijst .vink{flex:none;width:17px;height:17px;margin-top:1px;border-radius:50%;
+  border:1.5px solid var(--line);display:grid;place-items:center;font-size:10px;line-height:1;color:transparent}
+.rekenlijst li.klaar .vink{background:var(--accent);border-color:var(--accent);color:#2b2119}
+.rekenvoet{font-size:13px;color:var(--muted);margin:16px 0 0;text-align:center}
 h2{font-family:Fredoka;font-weight:600;font-size:20px;line-height:1.3;margin:0 0 18px}
 .opties{display:flex;flex-direction:column;gap:9px}
 .opties button{
@@ -314,23 +319,29 @@ const REKENSTAPPEN = [
   'Karakter, temperament en bekendheid wegen',
   'Uitslag vaststellen',
 ];
-const REKENTIJD = 1300;
+/* Alle stappen staan er meteen, en worden één voor één afgevinkt. Eerst
+   verwisselden ze elkaar op dezelfde regel, maar dan is er geen tijd om ze te
+   lezen. Nu bepaalt de snelheid niet meer of je het mee kunt krijgen. */
+const STAPTIJD = 430;
+const NALEZEN = 320;   /* laatste vinkje nog even laten staan */
 function toonUitslag(){
   const v = bepaal(keuzes);
-  /* Wie beweging liever overslaat, krijgt hem meteen. */
+  /* Wie beweging liever overslaat, krijgt de uitslag meteen. */
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return toonPak(v, null);
+  const totaal = STAPTIJD * REKENSTAPPEN.length;
   paneel.innerHTML = balk(VRAGEN.length) + `
     <div class="rekenen">
-      <div class="rekenbalk"><i></i></div>
-      <p class="rekenstap" id="rekenstap">${esc(REKENSTAPPEN[0])}</p>
+      <div class="rekenbalk"><i style="animation-duration:${totaal}ms"></i></div>
+      <ul class="rekenlijst">
+        ${REKENSTAPPEN.map(t => `<li><span class="vink" aria-hidden="true">✓</span><span>${esc(t)}</span></li>`).join('')}
+      </ul>
       <p class="rekenvoet">Dit had ook meteen gekund.</p>
     </div>`;
-  const stap = document.getElementById('rekenstap');
-  REKENSTAPPEN.forEach((t, i) => {
-    if (i) setTimeout(() => { if (stap.isConnected) stap.textContent = t; },
-                      REKENTIJD * i / REKENSTAPPEN.length);
-  });
-  setTimeout(() => toonPak(v, null), REKENTIJD);
+  const rijen = [...paneel.querySelectorAll('.rekenlijst li')];
+  rijen.forEach((li, i) => setTimeout(() => {
+    if (li.isConnected) li.classList.add('klaar');
+  }, STAPTIJD * (i + 1)));
+  setTimeout(() => toonPak(v, null), totaal + NALEZEN);
 }
 
 /* van = de naam van wie hem deelde. Is die gezet, dan kijk je naar andermans
