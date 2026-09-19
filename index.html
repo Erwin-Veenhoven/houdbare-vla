@@ -769,7 +769,7 @@ function oordeel(d, open, uit, v){
   if (v.zelf) tips.push(['\u{1F5D3}\uFE0F', `Op deze vla staat geen houdbaarheidsdatum. We rekenen ${v.zelf.dagen} ${v.zelf.dagen === 1 ? 'dag' : 'dagen'} vanaf de datum die je invulde.`]);
   if (b) tips.push(['\u{1F321}\uFE0F', b.tip]);
   if (d < 0) tips.push(['\u{1F443}', 'Ruiktest: zuur, gistig of "interessant" = weggooien.']);
-  else if (!b) tips.push(['\u{1F95B}', 'Bewaar bij 4\u20137 \u00B0C. De koelkastdeur is géén koelkast.']);
+  else if (!b) tips.push(['\u{1F95B}', 'Bewaar bij 4\u20137 \u00B0C, en niet in de deur: dat is het warmste plekje van je koelkast.']);
   tips.push(...vlaTips(v));
   if (open) tips.push(['\u{1F4E6}', 'Open pak? Dan telt de THT niet meer. Reken op 2\u20133 dagen na openen, en niet meer dan dat.']);
   if (v.nietVla) tips.push(['\u{1F928}', 'Kleine kanttekening: dit is strikt genomen een toetje, geen vla. Wij beoordelen het toch, want wij zijn ruimdenkend.']);
