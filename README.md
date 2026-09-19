@@ -174,9 +174,19 @@ Delen geeft een link naar dat ene feitje: `feitjes.html?vla=campina-hopjesvla&f=
 
 Wat je bewaart staat in je eigen browser (`vlafeitjes`) en is terug te vinden achter de teller bovenin. Elk bewaard feitje krijgt daar zijn eigen kaartje met het pak erbij, zodat het lijstje er net zo uitziet als de rest van de site, met een regel eronder die telt hoeveel er echt waar zijn. Klik je op zo'n kaartje, dan wordt dat feitje als volgende kaart in de scroller gezet en schuift hij ernaartoe — je ziet hem dus gewoon in het grote scherm en scrollt van daaraf verder. Is er niets bewaard, dan staat er het lege pak.
 
-De scroller houdt hooguit zestig kaarten in het document: hij vult vijf nieuwe bij zodra het einde in zicht komt, en ruimt de oudste tien op als je ver genoeg bent. Opruimen gebeurt pas als je even stilstaat, want het verzetten van de scrollpositie breekt anders een uitrollend veegje of een vloeiende pijltjes-scroll af. Die scrollpositie zetten we zelf terug, dus `overflow-anchor` staat uit — anders corrigeren de browser en de pagina allebei en spring je tien kaarten terug.
+De scroller houdt hooguit twaalf kaarten in het document: hij vult er drie bij zodra het einde in zicht komt, en ruimt de oudste vier op als je ver genoeg bent. Met `scroll-snap-stop: always` schuif je toch maar één kaart per veeg op, dus meer dan een paar vooruit heeft geen zin. Opruimen gebeurt pas als je even stilstaat, want het verzetten van de scrollpositie breekt anders een uitrollend veegje of een vloeiende pijltjes-scroll af. Die scrollpositie zetten we zelf terug, dus `overflow-anchor` staat uit — anders corrigeren de browser en de pagina allebei en spring je tien kaarten terug.
 
 Een vla zonder eigen feitjes valt terug op `ALGEMEEN` en blijft gewoon meedoen.
+
+### Soepel scrollen
+
+Op een telefoon werd elke kaart pas geschilderd als hij in beeld kwam, en dan zag je hem een halve seconde half staan. Wat daaraan gedaan is:
+
+- **Geen `drop-shadow`-filter meer.** Zo'n filter laat de browser het hele pak eerst apart uittekenen en dan vervagen, elke keer opnieuw. De schaduw onder het pak is nu een `radial-gradient` in een `::after`, en dat kost vrijwel niets.
+- **Het venster is klein.** Van zestig kaarten naar hooguit twaalf; er staan er altijd minstens twee voor je klaar.
+- **`-webkit-overflow-scrolling: touch` is eruit.** Dat is op moderne iOS overbodig en stond bekend om precies dit soort half geschilderde inhoud.
+- **De achtergrond staat op `body`** in plaats van op de scroller zelf, zodat hij niet meescrollt.
+- **`contain: layout`** op elke kaart, bewust zonder `paint`: dat laatste geeft de browser juist toestemming om buiten beeld niets te schilderen.
 
 ### Echt waar
 

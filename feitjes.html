@@ -42,7 +42,7 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;overflow:hidden;background:var(--bg);
+  margin:0;overflow:hidden;background:linear-gradient(180deg,var(--bg2),var(--bg) 60vh);
   color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.55;
 }
 
@@ -70,14 +70,17 @@ body{
 /* ---------- de scroller ---------- */
 .reel{
   height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior-y:contain;
-  scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:y mandatory;
   /* Wij corrigeren de scrollpositie zelf als we oude kaarten opruimen. Laat
      de browser dat er niet nog een keer overheen doen. */
   overflow-anchor:none;
-  background:linear-gradient(180deg,var(--bg2),var(--bg) 60vh);
 }
 .kaart{
   position:relative;
+  /* Alleen layout-isolatie: een kaart kan de rest van de reel niet
+     herindelen. Bewust geen 'paint' erbij, want dat geeft de browser juist
+     toestemming om buiten beeld helemaal niets te schilderen. */
+  contain:layout;
   height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
   display:flex;align-items:center;justify-content:center;
   padding:74px 20px calc(30px + env(safe-area-inset-bottom,0px));
@@ -85,8 +88,7 @@ body{
 /* Het hartje dat opbloeit als je dubbeltikt. */
 .bloei{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;
   pointer-events:none;animation:bloei .8s ease-out forwards}
-.bloei svg{width:110px;height:110px;fill:var(--accent);stroke:none;
-  filter:drop-shadow(0 10px 20px rgba(43,33,25,.35))}
+.bloei svg{width:110px;height:110px;fill:var(--accent);stroke:none}
 @keyframes bloei{
   0%{opacity:0;transform:scale(.4)}
   22%{opacity:1;transform:scale(1.12)}
@@ -94,8 +96,17 @@ body{
   100%{opacity:0;transform:scale(1.3)}
 }
 .binnen{width:100%;max-width:420px;text-align:center}
-/* Alleen het pak zelf: anders worden de icoontjes eronder ook 104px. */
-.binnen > svg{width:104px;height:132px;filter:drop-shadow(0 12px 22px rgba(43,33,25,.18))}
+/* Alleen het pak zelf: anders worden de icoontjes eronder ook 104px.
+   De schaduw is een verloop en geen drop-shadow-filter: zo'n filter laat de
+   browser het hele pak eerst apart uittekenen en dan vervagen, en dat is
+   precies wat je op een telefoon ziet gebeuren als een kaart in beeld komt. */
+.pak{position:relative;display:inline-block;line-height:0}
+.pak > svg{width:104px;height:132px;display:block}
+.pak::after{
+  content:"";position:absolute;left:50%;bottom:2px;width:92px;height:18px;margin-left:-46px;
+  border-radius:50%;z-index:-1;
+  background:radial-gradient(closest-side,rgba(43,33,25,.26),rgba(43,33,25,0));
+}
 .merknaam{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted);margin:12px 0 0}
 .soort{font-family:Fredoka;font-weight:600;font-size:19px;line-height:1.2;margin:1px 0 0}
 /* Staat alleen boven de feitjes die echt waar zijn. De rest is verzonnen. */
@@ -160,7 +171,7 @@ body.gescrold .wenk{opacity:0;transform:translateX(-50%) translateY(12px)}
 .blad h2{font-family:Fredoka;font-weight:600;font-size:19px;margin:0}
 .blad .wis{font:inherit;font-size:13px;color:var(--muted);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
 .subkop{color:var(--muted);font-size:13px;margin:0 0 14px}
-.lijst{overflow-y:auto;margin:0;padding:1px;list-style:none;-webkit-overflow-scrolling:touch}
+.lijst{overflow-y:auto;margin:0;padding:1px;list-style:none}
 /* Elk bewaard feitje krijgt zijn eigen pak mee, anders is het een tekstlijstje.
    De rij zelf is een knop die het feitje in de reel opent. */
 .lijst li{display:flex;align-items:center;gap:4px;
@@ -305,7 +316,7 @@ function kaartje({ v, i, t, echt }){
   const aan = bewaard.includes(id);
   return `<article class="kaart">
     <div class="binnen">
-      ${pack(v)}
+      <div class="pak">${pack(v)}</div>
       <p class="merknaam">${esc(v.merk)}</p>
       <p class="soort">${esc(v.soort)}</p>
       ${echt ? '<p class="etiket">echt waar</p>' : ''}
@@ -349,7 +360,7 @@ function vul(n){
     reel.insertAdjacentHTML('beforeend', kaartje({ v, i: Number(p.get('f')), t: f.t, echt: f.echt }));
     vorige = v;                       /* niet meteen hetzelfde pak eronder */
   }
-  vul(6);
+  vul(4);
 })();
 
 reel.addEventListener('click', e => {
@@ -442,16 +453,20 @@ reel.addEventListener('scroll', () => {
   bezig = true;
   requestAnimationFrame(() => {
     bezig = false;
-    if (reel.scrollTop + reel.clientHeight * 2.5 >= reel.scrollHeight) vul(5);
+    if (reel.scrollTop + reel.clientHeight * 2 >= reel.scrollHeight) vul(3);
   });
 }, { passive: true });
 
 /* Pas opruimen als je even stilstaat. Het verzetten van scrollTop breekt
-   anders een vloeiende scroll of een uitrollend veegje af. */
+   anders een vloeiende scroll of een uitrollend veegje af.
+
+   Het venster is klein gehouden: met scroll-snap-stop schuif je toch maar
+   een kaart per veeg op, dus meer dan een paar vooruit heeft geen zin en
+   kost de browser alleen maar werk bij elke kaart die in beeld komt. */
 function opruimen(){
   const h = reel.clientHeight, hier = Math.round(reel.scrollTop / h);
-  if (reel.children.length <= 60 || hier <= 25) return;
-  const weg = 10;
+  if (reel.children.length <= 12 || hier <= 5) return;
+  const weg = 4;
   /* Dat verzetten is zelf ook een scroll, en die mag hier niet binnenkomen. */
   negeer = true;
   for (let i = 0; i < weg; i++) reel.firstElementChild.remove();
