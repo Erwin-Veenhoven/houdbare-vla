@@ -291,23 +291,44 @@ function toonVraag(){
   const t = document.getElementById('terug');
   if (t) t.onclick = () => { keuzes.pop(); toonVraag(); };
 }
-function toonUitslag(){
-  const v = bepaal(keuzes);
-  let naam = '';
-  try { naam = localStorage.getItem('vlanaam') || ''; } catch {}
+function toonUitslag(){ toonPak(bepaal(keuzes), null); }
+
+/* van = de naam van wie hem deelde. Is die gezet, dan kijk je naar andermans
+   uitslag en hoort er een knop bij om zelf te beginnen. */
+function toonPak(v, van){
+  const gedeeld = van !== null;
+  let eigenNaam = '';
+  try { eigenNaam = localStorage.getItem('vlanaam') || ''; } catch {}
+  const opEtiket = gedeeld ? van : eigenNaam;
+
   paneel.innerHTML = `
     <div class="uitslag">
-      <div id="pakhier">${pack(naam ? { ...v, merk: naam } : v)}</div>
-      <p class="kop">Jij bent</p>
+      <div id="pakhier">${pack(opEtiket ? { ...v, merk: opEtiket } : v)}</div>
+      <p class="kop">${gedeeld ? (van ? esc(van) + ' is' : 'Hieruit kwam') : 'Jij bent'}</p>
       <p class="merknaam">${esc(v.merk)}</p>
       <h2 class="naam">${esc(v.soort)}</h2>
-      <p class="uitleg">${esc(uitleg(v))}</p>
+      ${gedeeld ? '' : `<p class="uitleg">${esc(uitleg(v))}</p>`}
       <div class="knoppen">
-        <button class="btn ghost" id="deel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4"/><path d="M15.4 17.4l-6.8-4"/></svg> Delen</button>
-        <button class="btn ghost" id="opnieuw">Opnieuw</button>
-        <a class="btn" href="/?vla=${encodeURIComponent(slug(v))}">Check deze vla</a>
+        ${gedeeld ? `
+          <button class="btn" id="zelfdoen">Doe de quiz zelf</button>
+          <a class="btn ghost" href="/?vla=${encodeURIComponent(slug(v))}">Check deze vla</a>
+        ` : `
+          <button class="btn ghost" id="deel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4"/><path d="M15.4 17.4l-6.8-4"/></svg> Delen</button>
+          <button class="btn ghost" id="opnieuw">Opnieuw</button>
+          <a class="btn" href="/?vla=${encodeURIComponent(slug(v))}">Check deze vla</a>
+        `}
       </div>
     </div>`;
+
+  if (gedeeld){
+    document.getElementById('zelfdoen').onclick = () => {
+      try { history.replaceState(null, '', location.pathname); } catch {}
+      keuzes = [];
+      toonVraag();
+    };
+    return;
+  }
+
   document.getElementById('opnieuw').onclick = () => { keuzes = []; toonVraag(); };
 
   /* Delen vraagt eerst om je naam, net als op de hoofdpagina. */
@@ -328,9 +349,12 @@ function toonUitslag(){
     try { localStorage.setItem('vlanaam', n); } catch {}
     document.getElementById('pakhier').innerHTML = pack(n ? { ...v, merk: n } : v);
     sluit();
+    /* De link toont jouw uitslag, met je naam op het etiket. */
+    const u = new URL(location.origin + location.pathname);
+    u.searchParams.set('vla', slug(v));
+    if (n) u.searchParams.set('naam', n);
+    const url = u.toString();
     const tekst = `Welke vla ben jij?\n\nIk ben ${v.merk} \u2014 ${v.soort}.`;
-    const url = location.origin + location.pathname;
-    /* Tekst eindigt op "Bekijk:", de link gaat mee als los url-veld. */
     if (navigator.share){
       try { await navigator.share({ title: 'Welke vla ben jij?', text: tekst + '\n\nBekijk:', url }); return; }
       catch (e) { if (e && e.name === 'AbortError') return; }
@@ -390,7 +414,13 @@ themeBtn.onclick = () => {
 document.getElementById('lead').textContent =
   `Vier vragen. ${VLAS.length} pakken. E\u00e9n ben jij.`;
 
-toonVraag();
+/* Een link met een vla erin toont die uitslag meteen. */
+(function start(){
+  const p = new URLSearchParams(location.search);
+  const gedeeld = VLAS.find(x => slug(x) === p.get('vla'));
+  if (gedeeld) toonPak(gedeeld, (p.get('naam') || '').slice(0, 14));
+  else toonVraag();
+})();
 </script>
 </body>
 </html>

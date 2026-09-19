@@ -154,6 +154,8 @@ Het werkt niet met losse punten per vla — dat is geprobeerd en het viel om. Ho
 
 Wat wel werkt: zowel de vla's als de antwoorden krijgen een plek op dezelfde drie assen — karakter, temperament en bekendheid. Beide kanten worden in dezelfde volgorde gelegd, en elke vla krijgt een even groot stuk van de antwoordruimte. Naast elkaar liggende antwoorden geven dus naast elkaar liggende vla's, en elke vla is gegarandeerd bereikbaar. Alle 256 combinaties samen dekken alle 61, elk 3 à 5 keer.
 
+Deel je je uitslag, dan krijgt de link jouw vla en je naam mee: `quiz.html?vla=campina-stroopwafelvla&naam=Erwin`. Wie hem opent ziet jouw pak met jouw naam op het etiket, en een knop om zelf te beginnen. De omschrijving eronder blijft dan weg, want die spreekt jou aan en niet de kijker.
+
 Vragen staan bovenaan `quiz.html` in een lijst die je kunt herschrijven zonder de rest aan te raken. De eigenschappen worden afgeleid uit de vla zelf, dus een nieuwe vla in `vla.js` doet automatisch mee.
 
 ## Kleinigheden
