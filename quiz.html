@@ -330,11 +330,13 @@ function toonUitslag(){
     sluit();
     const tekst = `Welke vla ben jij?\n\nIk ben ${v.merk} \u2014 ${v.soort}.`;
     const url = location.origin + location.pathname;
+    /* Link in de tekst, niet in het losse url-veld: zo blijft de witregel staan. */
+    const alles = tekst + '\n\n' + url;
     if (navigator.share){
-      try { await navigator.share({ title: 'Welke vla ben jij?', text: tekst, url }); return; }
+      try { await navigator.share({ title: 'Welke vla ben jij?', text: alles }); return; }
       catch (e) { if (e && e.name === 'AbortError') return; }
     }
-    toast(await naarKlembord(tekst + '\n\n' + url) ? 'Gekopieerd \u{1F4CB}' : 'Kopiëren lukte niet \u{1F937}');
+    toast(await naarKlembord(alles) ? 'Gekopieerd \u{1F4CB}' : 'Kopiëren lukte niet \u{1F937}');
   };
 }
 function uitleg(v){
