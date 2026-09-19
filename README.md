@@ -12,11 +12,12 @@
 
 ## Wat is dit
 
-Een website die drie dingen doet:
+Een website die vier dingen doet:
 
 1. **Je kiest je vla.** 61 soorten, van Campina Vanillevla tot *Vla zonder etiket*. Met plaatjes, want niemand herkent zijn vla aan een tekstlijstje.
-2. **Je vult de houdbaarheidsdatum in.** Die kleine lettertjes op de bovenkant van het pak waar je een bril voor nodig hebt.
+2. **Je vult de houdbaarheidsdatum in.** Die kleine lettertjes op de bovenkant van het pak waar je een bril voor nodig hebt. En of het pak al open is, en sinds wanneer.
 3. **Je krijgt een oordeel.** Geen genuanceerd advies. Een oordeel.
+4. **Twijfel je nog, dan doe je de [ruiktest](#de-ruiktest).** Vier vragen over hoe het pak eruitziet en ruikt. Die mogen de datum overrulen, allebei de kanten op.
 
 En daarnaast: [welke vla ben jij](#de-quiz), en [331 vlafeitjes](#de-feitjes) om doorheen te scrollen.
 
@@ -47,7 +48,21 @@ De hele wetenschappelijke onderbouwing, in één tabel:
 
 Vanaf *Over datum* kantelt het pak op je scherm om. Dat leek ons gepast.
 
-Er is nog een tweede vraag: **heeft de vla buiten de koelkast gestaan, en hoe lang?** Een THT geldt namelijk alleen voor vla die netjes koud heeft gestaan.
+Er zijn nog twee vragen. De eerste: **is het pak al open, en sinds wanneer?** Na openen zegt de THT niets meer — dan telt de dag dat je hem opendeed.
+
+| Wanneer geopend | Aftrek | Gevolg voor het oordeel |
+|---|---|---|
+| vandaag | −8 | niets, je hebt nog twee dagen |
+| gisteren | −15 | niets, je zit in de marge |
+| 2 tot 3 dagen geleden | −22 | één trede omlaag |
+| ruim een week geleden | −45 | twee treden omlaag |
+| geen idee meer | −50 | twee treden omlaag |
+
+Bij sommige vla's hoeven we dat niet te vragen, want dan weten we het al. Een uitgeknepen pak is open, anders was er geen laatste restje; een pan met restjes heeft nooit een dop gehad. Die staan in `vla.js` met `alOpen: true` en krijgen alleen nog de vraag *sinds wanneer*.
+
+En een deel krijgt de vraag helemaal niet. Bij vla van oma, een vlaflip, restjes uit de pan en een vla met een vel vul je namelijk al een moment in — wanneer oma kookte, wanneer jij het pak opendeed — en die telling íís het openen; nog eens aftrekken zou dubbelop zijn. En bij het lege pak met de puzzel erop is het antwoord voor iedereen duidelijk, maar verandert het niets: aan een leeg pak valt niets te bederven.
+
+De tweede: **heeft de vla buiten de koelkast gestaan, en hoe lang?** Een THT geldt namelijk alleen voor vla die netjes koud heeft gestaan.
 
 | Hoe lang buiten de koelkast | Aftrek | Gevolg voor het oordeel |
 |---|---|---|
@@ -57,7 +72,40 @@ Er is nog een tweede vraag: **heeft de vla buiten de koelkast gestaan, en hoe la
 | de hele nacht | −50 | twee treden omlaag |
 | langer, of geen idee | −60 | twee treden omlaag |
 
-Een kraakverse vla die een nacht op het aanrecht stond komt zo alsnog uit op *Te lang warm geweest*.
+Een kraakverse vla die een nacht op het aanrecht stond komt zo alsnog uit op *Te lang warm geweest*. Open én warm tellen bij elkaar op, maar samen komen ze nooit verder dan de onderste trede: twee keer nee is nog steeds nee.
+
+## De ruiktest
+
+De datum weet alleen wat er op het pak gedrukt staat — en dat wist jij al toen je het pak uit de koelkast pakte. Onder elke uitslag staat daarom *twijfel je nog? doe de ruiktest*: vier vragen die je alleen kunt beantwoorden met het pak in je hand.
+
+| Vraag | Zwaarte | Aftrek |
+|---|---|---|
+| Staat de bovenkant van het pak bol? | 3 | −60 |
+| Ruikt het zuur, gistig of gewoon vreemd? | 3 | −55 |
+| Zitten er klontjes in, of is het geschift? | 1 | −22 |
+| Is de kleur anders dan je gewend bent? | 1 | −20 |
+
+Een bol pak is gas, en gas komt van iets dat leeft; dat wint altijd van de kalender. Vandaar de drie.
+
+Het probleem met zo'n zwaarste-signaal-wint: zodra je één keer ja hebt gezegd op een zware vraag, doen de andere antwoorden er niet meer toe. Het oordeel kán niet lager, dus alles eronder verdwijnt. Daarom telt de ruiktest de zwaartes bij elkaar op en loopt de **kop** door waar de trede ophoudt:
+
+| Som | Wat er staat |
+|---|---|
+| 1 | de kop van dat ene signaal — *Klontjes* |
+| 2 | *Twee dingen kloppen niet* |
+| 3 | de kop van het zware signaal — *Bolle verpakking* |
+| 4–5 | *Een bol pak, en dat is niet alles* |
+| 6–7 | *Bol én een vreemde lucht* |
+| 8 | *Vier van de vier* |
+
+Alle vijftien combinaties leveren zo een andere kop of een andere tekst op, en de tekst somt op wat je gevonden hebt. Op het bonnetje staat elk antwoord apart, ook als de score allang op 1 ligt: dan zie je wat een aftrek werkelijk kostte in plaats van wat hij op papier had moeten kosten.
+
+Het werkt ook de andere kant op. Vier keer nee tilt het oordeel één trede omhoog en levert 12 punten op, zodat een vla van vijf dagen over datum die er onberispelijk uitziet alsnog *Goedgekeurd door je eigen neus* kan worden. Met twee uitzonderingen, allebei waar:
+
+- **meer dan 30 dagen over datum** — dan is je neus niet meer het juiste meetinstrument;
+- **een nacht of langer buiten de koelkast** — wat je ruikt is bederf, en waar je na een nacht op het aanrecht bang voor moet zijn, ruikt nergens naar.
+
+Elk antwoord rekent meteen opnieuw door; het oordeel bovenaan verandert onder je handen mee, en onder de vragen staat dezelfde uitkomst nog eens kort herhaald. Nog eens op hetzelfde antwoord tikken neemt het terug.
 
 ### De vla-score
 
@@ -67,11 +115,13 @@ Elke uitslag krijgt een score van 0 tot 100, berekend met deze formule die ik vo
 score = dagen >= 0
   ? min(100, 58 + dagen * 1.6)   // nog houdbaar
   : max(1,   58 + dagen * 2.6)   // over datum, en het gaat hard
-if (pak_is_open)      score -= 22  // want dan telt de THT niet meer
+score -= aftrek_open              // 0 tot 50, zie de tabel hierboven
 score -= aftrek_buiten_koelkast   // 0 tot 60, zie de tabel hierboven
+score -= aftrek_ruiktest          // per rood vlaggetje, 20 tot 60
+if (ruiktest_helemaal_schoon) score += 12
 ```
 
-De twee aftrekpunten zijn het enige onderdeel van deze site dat op waarheid berust: **na openen is zuivel nog 2 à 3 dagen goed**, wat er ook op het pak staat, en **zuivel hoort niet langer dan twee uur op kamertemperatuur te staan**.
+De aftrekpunten zijn het enige onderdeel van deze site dat op waarheid berust: **na openen is zuivel nog 2 à 3 dagen goed**, wat er ook op het pak staat, en **zuivel hoort niet langer dan twee uur op kamertemperatuur te staan**.
 
 ## Je uitslag delen
 
@@ -83,16 +133,17 @@ De vla van Erwin
 KRAAKVERS
 
 Nog 16 dagen te gaan.
-Het pak was al open.
-Vla-score: 84/100
+Het pak is gisteren opengemaakt.
+Ruiktest: niets aan te merken.
+Vla-score: 81/100
 
-https://houdbarevla.nl/?vla=melkunie-boerenvla&tht=2026-10-05&op=2026-09-19&naam=Erwin
+https://houdbarevla.nl/?vla=melkunie-boerenvla&tht=2026-10-05&o=2&op=2026-09-19&naam=Erwin
 ```
 
 De link zit bewust niet in de tekst zelf, want het deelvenster van je telefoon plakt die er al onder.
 
 ```
-houdbarevla.nl/?vla=campina-dubbelvla&tht=2026-09-06&op=2026-09-19&uit=nacht&naam=Erwin
+houdbarevla.nl/?vla=campina-dubbelvla&tht=2026-09-06&u=4&op=2026-09-19&naam=Erwin
 ```
 
 | Parameter | Betekenis |
@@ -100,14 +151,27 @@ houdbarevla.nl/?vla=campina-dubbelvla&tht=2026-09-06&op=2026-09-19&uit=nacht&naa
 | `vla` | welke vla, als leesbare naam |
 | `tht` | de houdbaarheidsdatum van het pak |
 | `op` | de dag waarop het is doorgerekend |
-| `open` | `1` als het pak al open was |
-| `uit` | hoe lang hij buiten de koelkast stond |
+| `o` | sinds wanneer het pak open is: `1` t/m `5` |
+| `u` | hoe lang hij buiten de koelkast stond: `1` t/m `5` |
+| `z` | de ruiktest in vier tekens: `j`, `n` of `.` per vraag |
 | `naam` | van wie de vla is |
 | `dier` | hoe je huisdier heet, als de vla dat geworden is |
+
+De twee keuzelijsten gaan als **nummer** de link in: `1` is de bovenste optie, `2` de tweede, enzovoort. Staat het vinkje uit, dan blijft de parameter gewoon weg — dat is korter dan een nul, en `0` wordt trouwens ook gelezen als "uit". De volgorde komt uit het keuzemenu zelf (`select.options`) en niet uit een tweede lijstje in de code, zodat de nummers niet kunnen gaan afwijken van wat je op het scherm ziet staan.
 
 Die `op` is belangrijker dan hij lijkt. Zonder die datum zou een gedeelde link elke dag een ander antwoord geven: stuur je vandaag "nog 7 dagen te gaan", dan leest je vriend volgende week "over datum" en snapt hij niet waar je het over had. Nu ziet hij de uitslag zoals jij hem zag, met een regel erboven — *doorgerekend op 19 september* — en een knop om alsnog de stand van nu te bekijken.
 
 De adresbalk wordt meteen bijgewerkt zodra je een vla doorrekent, dus kopiëren wat daar staat werkt net zo goed.
+
+Oudere links blijven gewoon werken. Er zijn er drie generaties:
+
+| Vorm | Wordt gelezen als |
+|---|---|
+| `o=4&u=4` | de huidige vorm |
+| `open=week&uit=nacht` | dezelfde keuzes, voluit geschreven |
+| `open=1` | *2 tot 3 dagen geleden* — toen zei de link alleen dát het pak open was |
+
+Die laatste krijgt precies de aftrek die hij destijds ook kreeg, dus een link van voor de openingsdatum levert nog dezelfde score op. Open je zo'n oude link, dan staat in je adresbalk meteen de korte vorm: kopiëren wat daar staat geeft je de nieuwe link.
 
 ## Zelf draaien
 
@@ -145,6 +209,8 @@ zelf: { vraag: 'Wanneer heb je hem gemaakt?', hint: '…', dagen: 3 }
 Onder een uitslag staat *bewaar in mijn koelkast*. Wat je bewaart verschijnt bovenaan de eerste stap, op volgorde van urgentie, met rood, oranje en groen. Klik op een rij en hij rekent 'm opnieuw door, inclusief het open pak en de koelkasttijd die je destijds invulde.
 
 Het slaat de **datum** op en niet het oordeel, zodat de lijst vanzelf meeloopt met de tijd: wat vandaag "nog 1 dag" is, staat er morgen als "vandaag". Alles blijft in je eigen browser. Is de lijst leeg, dan is hij onzichtbaar.
+
+Een open pak veroudert mee. "Gisteren geopend" is een week later niet meer waar, dus naast de keuze bewaart hij ook de dag waarop je hem invulde en schuift hij de keuze op als de tijd verstrijkt. De antwoorden van de ruiktest gaan juist **niet** mee: die gaan over hoe het pak er op dat moment uitzag, en dat zegt volgende week niets meer.
 
 Daarnaast staat er *zet in mijn agenda*: een `.ics` met een hele dag op de vervaldatum en een herinnering een dag van tevoren.
 
@@ -254,6 +320,8 @@ Mis je jouw vla? Voeg een regel toe aan de `VLAS`-array in `vla.js`. Dat bestand
 | `split: true` | harde kleurscheiding in plaats van verloop (voor dubbelvla) |
 | `nietVla: true` | levert een snuivende opmerking op in de uitslag |
 | `mysterie: true` | zet een `?` op het pak in plaats van een scheut vla |
+| `alOpen: true` | dit pak is per definitie al open, dus die vraag wordt niet gesteld |
+| `zelf: {…}` | geen THT: je vult een moment in en wij tellen er `dagen` bij op |
 
 Wil je er ook een eigen sneer bij in de uitslag, voeg dan een regel toe aan `OPMERKINGEN`. De eerste twee regels die matchen worden getoond, dus zet specifieke vla's boven algemene:
 

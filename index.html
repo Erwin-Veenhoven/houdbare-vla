@@ -334,6 +334,50 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 }
 .advice li .ic{flex:none;font-size:16px;line-height:1.35}
 
+.check[hidden]{display:none}
+.openweet{display:flex;gap:10px;margin:18px 0 0;font-size:14px;color:var(--muted)}
+.openweet[hidden]{display:none}
+.openweet::before{content:"\1F4E6";flex:none;font-size:15px;line-height:1.4}
+.subveld.los{margin-left:0}
+
+/* ---------- de ruiktest ---------- */
+.ruiktest{margin:18px 0 0}
+.ruiktest[hidden]{display:none}
+.rtknop{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  font:inherit;font-family:Fredoka;font-weight:600;font-size:15px;color:var(--ink);text-align:left;
+  background:var(--bg);border:1.5px dashed var(--line);border-radius:14px;padding:13px 15px;cursor:pointer;transition:.15s;
+}
+.rtknop:hover{border-color:var(--accent)}
+.rtknop .pijl{flex:none;color:var(--muted);font-size:19px;line-height:1;transition:transform .2s}
+.rtknop.open .pijl{transform:rotate(90deg)}
+.rtbody{padding:4px 2px 0}
+.rtbody[hidden]{display:none}
+.rtintro{color:var(--muted);font-size:13px;margin:12px 0 14px}
+.rtv{padding:12px 0;border-bottom:1px solid var(--line)}
+.rtv .vr{margin:0;font-size:14.5px;font-weight:600}
+.rtv .hp{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+.jn{display:flex;gap:8px;margin-top:9px}
+.jn button{
+  flex:1;font:inherit;font-size:14px;color:var(--muted);background:var(--card);
+  border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;transition:.15s;
+}
+.jn button:hover{border-color:var(--ink);color:var(--ink)}
+.jn button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.rtv.rood .jn button.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.rtuit{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:14px 0 0;padding:11px 14px;border-radius:12px;background:var(--bg2);
+  font-family:Fredoka;font-weight:600;font-size:15px;text-align:center;
+}
+.rtuit[hidden]{display:none}
+.rtuit.ok{color:var(--ok)}
+.rtuit.warn{color:var(--warn)}
+.rtuit.bad{color:var(--bad)}
+.rtwis{display:block;margin:10px auto 0;font:inherit;font-size:12.5px;color:var(--muted);background:none;border:0;padding:2px 4px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.rtwis[hidden]{display:none}
+.rtwis:hover{color:var(--ink)}
+
 .toast{
   position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);
   background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:500;
@@ -423,7 +467,20 @@ footer strong{color:var(--ink);font-weight:600}
       <button type="button" data-d="30">volgende maand</button>
     </div>
 
-    <label class="check"><input type="checkbox" id="open"> <span>Het pak is al open (en staat er inmiddels… een tijdje)</span></label>
+    <label class="check" id="openvraag"><input type="checkbox" id="open"> <span>Het pak is al open</span></label>
+
+    <p class="openweet" id="openweet" hidden></p>
+
+    <div class="subveld" id="openwanneer" hidden>
+      <label for="sinds">Wanneer heb je hem opengemaakt?</label>
+      <select id="sinds">
+        <option value="vandaag">vandaag</option>
+        <option value="gisteren">gisteren</option>
+        <option value="paar" selected>2 tot 3 dagen geleden</option>
+        <option value="week">ruim een week geleden</option>
+        <option value="geen">geen idee meer</option>
+      </select>
+    </div>
 
     <label class="check"><input type="checkbox" id="warm"> <span>Heeft buiten de koelkast gestaan</span></label>
 
@@ -490,6 +547,19 @@ footer strong{color:var(--ink);font-weight:600}
     </div>
 
     <ul class="advice" id="advice"></ul>
+
+    <section class="ruiktest" id="ruiktest">
+      <button type="button" class="rtknop" id="rtknop" aria-expanded="false" aria-controls="rtbody">
+        <span id="rtkop">Twijfel je nog? Doe de ruiktest</span>
+        <span class="pijl" aria-hidden="true">›</span>
+      </button>
+      <div class="rtbody" id="rtbody" hidden>
+        <p class="rtintro">Vier vragen die je alleen kunt beantwoorden met het pak in je hand. Ze mogen de datum overrulen — allebei de kanten op.</p>
+        <div id="rtvragen"></div>
+        <p class="rtuit" id="rtuit" hidden></p>
+        <button type="button" class="rtwis" id="rtwis" hidden>wis de ruiktest</button>
+      </div>
+    </section>
 
     <div class="kleineknoppen">
       <button type="button" id="bewaar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Bewaar in mijn koelkast</button>
@@ -600,6 +670,49 @@ function stelVraag(v){
   document.querySelectorAll('#snel button').forEach(b => {
     b.hidden = z ? Number(b.dataset.d) > 0 : false;
   });
+  stelOpenVraag(v);
+}
+
+/* Sommige vla's zitten per definitie in een open pak: een uitgeknepen pak, een
+   pan met restjes, een vla met een vel erop. Dan hoef je niet te vertellen dat
+   het pak open is — dat zien we zelf ook wel.
+
+   Heeft zo'n vla ook een eigen dagentelling (`zelf`), dan is de datum die je
+   invult het moment dat hij openging, en zit het openen dus al in die telling
+   verwerkt. Er nog eens aftrek bovenop doen zou dubbelop zijn.
+
+   En een leeg pak is het duidelijkste geval van allemaal: dat is open geweest,
+   maar er valt niets meer aan te bederven. Daar vragen we dus ook niet wanneer. */
+let openGedwongen = false;   /* stond het vinkje aan omdat wij het aanzetten? */
+function stelOpenVraag(v){
+  const vraag = document.getElementById('openvraag');
+  const weet  = document.getElementById('openweet');
+  const wanneer = document.getElementById('openwanneer');
+  const vink = document.getElementById('open');
+  vraag.hidden = !!v.alOpen;
+  weet.hidden  = !v.alOpen;
+  wanneer.classList.toggle('los', !!v.alOpen);
+  if (v.puzzel){
+    vink.checked = false;
+    openGedwongen = false;
+    wanneer.hidden = true;
+    weet.textContent = 'Dat dit pak open is geweest staat wel vast, ja. Alleen valt er aan een leeg pak niets meer te bederven, dus we rekenen er niets mee.';
+  } else if (v.alOpen && v.zelf){
+    vink.checked = false;
+    openGedwongen = false;
+    wanneer.hidden = true;
+    weet.textContent = 'Dat dit al open is geweest, weten we. De datum hierboven is precies dat moment, dus we vragen er niet nog eens naar.';
+  } else if (v.alOpen){
+    vink.checked = true;
+    openGedwongen = true;
+    wanneer.hidden = false;
+    weet.textContent = 'Dit pak is open, anders was er geen laatste restje. De vraag is alleen nog: sinds wanneer?';
+  } else {
+    /* Kwam het vinkje van ons en niet van jou, dan gaat het weer uit. */
+    if (openGedwongen) vink.checked = false;
+    openGedwongen = false;
+    wanneer.hidden = !vink.checked;
+  }
 }
 
 /* ============ MIJN KOELKAST ============ */
@@ -613,12 +726,26 @@ function koelkastLees(){
 function koelkastSchrijf(l){
   try { localStorage.setItem(KOELKAST, JSON.stringify(l)); } catch {}
 }
+/* Een open pak veroudert ook in je koelkastlijst: "gisteren geopend" is een week
+   later niet meer waar. Daarom bewaren we ook de dag waarop je het invulde, en
+   schuift de keuze mee met de tijd — net zoals de houdbaarheidsdatum dat doet. */
+function koelkastOpen(item){
+  if (item.open === true) return 'paar';                /* uit een oudere versie */
+  if (!OPEN[item.open]) return '';
+  const start = OPEN[item.open].dagen;
+  if (start === null || !item.openOp) return item.open; /* "geen idee" blijft geen idee */
+  const verstreken = Math.max(0,
+    Math.round((middernacht(new Date()) - new Date(item.openOp + 'T00:00:00')) / 86400000));
+  return openBucket(start + verstreken);
+}
 function koelkastBewaar(){
   if (!gekozen || !document.getElementById('datum').value) return;
+  const nu = openKeuze();
   const nieuw = {
     vla: slug(gekozen),
     tht: document.getElementById('datum').value,
-    open: document.getElementById('open').checked,
+    open: nu,
+    openOp: nu ? isoDag(middernacht(new Date())) : '',
     uit: document.getElementById('warm').checked ? document.getElementById('uit').value : '',
   };
   const lijst = koelkastLees().filter(x => !(x.vla === nieuw.vla && x.tht === nieuw.tht));
@@ -672,7 +799,12 @@ document.getElementById('koelkastLijst').addEventListener('click', e => {
   kies(v);
   document.getElementById('datum').value = item.tht;
   datumBij();
-  document.getElementById('open').checked = !!item.open;
+  const opk = koelkastOpen(item);
+  if (!v.alOpen){
+    document.getElementById('open').checked = !!opk;
+    document.getElementById('openwanneer').hidden = !opk;
+  }
+  if (opk) document.getElementById('sinds').value = opk;
   document.getElementById('warm').checked = !!item.uit;
   document.getElementById('warmhoelang').hidden = !item.uit;
   if (item.uit) document.getElementById('uit').value = item.uit;
@@ -776,6 +908,9 @@ function kies(v){
       <button class="change" id="changeBtn">verkeerde vla? wijzig</button>
     </div>`;
   document.getElementById('changeBtn').onclick = () => ga(1);
+  /* Andere vla, ander pak: wat je aan de vorige rook telt niet meer mee. */
+  zint = {};
+  zetRuiktest(false);
   stelVraag(v);
   ga(2);
   setTimeout(() => document.getElementById('datum').focus(), 300);
@@ -792,6 +927,122 @@ const BUITEN = {
   nacht: { label:'de hele nacht',        zin:'de hele nacht',       straf: 50, stap: 2, tip:'Een nacht buiten de koelkast maakt de houdbaarheidsdatum volledig betekenisloos.' },
   lang:  { label:'langer, of geen idee', zin:'heel lang',           straf: 60, stap: 2, tip:'“Geen idee” is bij zuivel het verkeerde antwoord. Als je het niet weet, weet je het eigenlijk wel.' },
 };
+
+/* ============ EEN OPEN PAK ============ */
+/* Na openen telt de THT niet meer, maar de dag dat je hem opendeed. Twee à drie
+   dagen, zegt het Voedingscentrum, en dat is het enige getal op deze site dat
+   ergens op gebaseerd is. `dagen` is hoeveel dagen geleden dat ongeveer was;
+   die gebruiken we om de keuze in je koelkastlijst te laten meelopen met de tijd. */
+const OPEN = {
+  vandaag:  { label:'vandaag',                dagen: 0,    straf:  8, stap: 0,
+              deel:'Het pak is vandaag opengemaakt.',
+              tip:'Vandaag geopend: dan heb je nog twee dagen waarin niemand iets kan zeggen.' },
+  gisteren: { label:'gisteren',               dagen: 1,    straf: 15, stap: 0,
+              deel:'Het pak is gisteren opengemaakt.',
+              tip:'Gisteren geopend. Na openen is zuivel nog twee à drie dagen goed, dus je zit midden in die marge.' },
+  paar:     { label:'2 tot 3 dagen geleden',  dagen: 2,    straf: 22, stap: 1,
+              deel:'Het pak was al 2 à 3 dagen open.',
+              tip:'Twee à drie dagen open is precies de grens. Wat er op het pak staat doet er niet meer toe.' },
+  week:     { label:'ruim een week geleden',  dagen: 6,    straf: 45, stap: 2,
+              deel:'Het pak was ruim een week open.',
+              tip:'Een week open is ruim over de twee à drie dagen die zuivel na openen heeft. De THT is hier niet meer het onderwerp.' },
+  geen:     { label:'geen idee meer',         dagen: null, straf: 50, stap: 2,
+              deel:'Het pak was open, sinds wanneer weet niemand.',
+              tip:'“Geen idee” betekent bij een open pak zuivel meestal: te lang. Je zou het je anders wel herinneren.' },
+};
+/* Welke keuze hoort bij een pak dat zoveel dagen geleden is geopend? */
+function openBucket(dagen){
+  let uit = 'vandaag';
+  for (const k in OPEN) if (OPEN[k].dagen !== null && OPEN[k].dagen <= dagen) uit = k;
+  return uit;
+}
+
+/* ============ DE RUIKTEST ============ */
+/* De datum weet alleen wat er op het pak gedrukt staat. Deze vier vragen kun je
+   alleen beantwoorden met het pak in je hand, en ze mogen de datum overrulen.
+   Een bol pak of een verkeerde lucht is hard: dat wint altijd van de kalender. */
+const ZINTUIGEN = [
+  { id:'bol', hard:true, gewicht:3, straf:60, kort:'een bol pak',
+    vraag:'Staat de bovenkant van het pak bol?',
+    hulp:'Duw er zachtjes op. Een gespannen pak betekent gas, en gas maakt zichzelf niet.',
+    zin:'het pak stond bol', bon:'Het pak stond bol',
+    uit:{ face:'\u{1F388}', titel:'Bolle verpakking', tekst:'Dat is gas, en gas komt van iets dat leeft. Niet boven je gezicht openen, niet proeven, wel weggooien.' } },
+  { id:'ruik', hard:true, gewicht:3, straf:55, kort:'een vreemde lucht',
+    vraag:'Ruikt het zuur, gistig of gewoon vreemd?',
+    hulp:'Schud even, open het pak en ruik van een afstandje. Je weet meteen of het klopt.',
+    zin:'het rook niet goed', bon:'Het rook niet goed',
+    uit:{ face:'\u{1F443}', titel:'Je neus heeft gesproken', tekst:'Hier valt niets meer tegenin te brengen. Wat de datum ook zegt: dit is klaar.' } },
+  { id:'klont', gewicht:1, straf:22, kort:'klontjes',
+    vraag:'Zitten er klontjes in, of is het geschift?',
+    hulp:'Schenk een bodempje uit. Een vel bovenop telt niet — dat is gewoon eiwit.',
+    zin:'er zaten klontjes in', bon:'Er zaten klontjes in',
+    uit:{ face:'\u{1F944}', titel:'Klontjes', tekst:'Vla hoort één gladde massa te zijn. Klontjes betekenen dat het eiwit is gaan schiften.' } },
+  { id:'kleur', gewicht:1, straf:20, kort:'een kleur die niet klopt',
+    vraag:'Is de kleur anders dan je gewend bent?',
+    hulp:'Grijzige plekken, donkere randen, of iets wat op het oppervlak groeit.',
+    zin:'de kleur klopte niet', bon:'De kleur klopte niet',
+    uit:{ face:'\u{1F52C}', titel:'Verkeerde kleur', tekst:'Vla verandert niet uit zichzelf van kleur. Iets anders doet dat voor hem.' } },
+];
+/* De antwoorden gelden voor nu, voor dit pak, op dit moment. Ze gaan daarom
+   niet mee naar je koelkastlijst: wat vandaag goed ruikt, zegt niets over
+   volgende week. */
+let zint = {};
+
+/* Alleen ingevulde vragen tellen. Niets ingevuld = geen ruiktest gedaan. */
+function zintuigOordeel(z){
+  const beantwoord = ZINTUIGEN.filter(x => typeof z[x.id] === 'boolean');
+  if (!beantwoord.length) return null;
+  const ja = ZINTUIGEN.filter(x => z[x.id] === true);
+  return {
+    ja, aantal: beantwoord.length,
+    hard: ja.find(x => x.hard) || null,
+    som: ja.reduce((n, x) => n + x.gewicht, 0),
+    compleet: beantwoord.length === ZINTUIGEN.length,
+    schoon: beantwoord.length === ZINTUIGEN.length && !ja.length,
+  };
+}
+
+/* "een bol pak, klontjes en een vreemde lucht" */
+function opsomming(lijst){
+  if (lijst.length < 2) return lijst[0] || '';
+  return lijst.slice(0, -1).join(', ') + ' en ' + lijst[lijst.length - 1];
+}
+
+/* Het oordeel kan niet lager dan de onderste trede, maar wat je vond moet je
+   wel terugzien. Daarom loopt de kop dóór waar de trede ophoudt: één bol pak
+   leest anders dan een bol pak met klontjes, en dat leest weer anders dan alle
+   vier de vragen mis. Zwaarte: een bol pak of een vreemde lucht telt voor drie,
+   klontjes en kleur voor één. */
+function zintuigVerdict(z, r){
+  const lijst = opsomming(z.ja.map(x => x.kort));
+  const hard = z.hard;
+  switch (true){
+    case z.som === 1:      /* één zacht signaal */
+      return { k: r.k === 'ok' ? 'warn' : 'bad', ...z.ja[0].uit };
+    case z.som === 2:      /* allebei de zachte */
+      return { k:'bad', face:'\u{1F9EA}', titel:'Twee dingen kloppen niet',
+               tekst:'Klontjes én een kleur die er niet hoort. Elk apart is twijfel; samen is het een antwoord.' };
+    case z.som === 3:      /* één hard signaal, verder niets */
+      return { k:'bad', ...hard.uit };
+    case z.som < 6:        /* één hard signaal, en er is meer */
+      return { k:'bad', face: hard.uit.face,
+               titel: hard.kort[0].toUpperCase() + hard.kort.slice(1) + ', en dat is niet alles',
+               tekst:`Je vond ${lijst}. Het eerste was al genoeg geweest.` };
+    case z.som < 8:        /* allebei de harde */
+      return { k:'bad', face:'\u{2623}\uFE0F', titel:'Bol én een vreemde lucht',
+               tekst:`Je vond ${lijst}. Gas en een verkeerde lucht komen uit dezelfde hoek, en die hoek wil je niet.` };
+    default:               /* alles mis */
+      return { k:'bad', face:'\u{26B0}\uFE0F', titel:'Vier van de vier',
+               tekst:'Bol pak, verkeerde lucht, klontjes én de verkeerde kleur. Wij hebben geen vragen meer.' };
+  }
+}
+/* Een schone ruiktest mag een oordeel optillen, maar niet altijd. Bederf dat je
+   ruikt is niet het bederf waar je bij een nacht op het aanrecht bang voor bent,
+   en maanden over datum is je neus gewoon het verkeerde meetinstrument. */
+function ruiktestTelt(d, uit){
+  const b = BUITEN[uit];
+  return d >= -30 && !(b && b.stap >= 2);
+}
 
 /* ============ VLA-SPECIFIEKE OPMERKINGEN ============ */
 /* Meest specifiek bovenaan. Er worden er maximaal twee getoond, anders
@@ -840,6 +1091,27 @@ function vlaTips(v){
   return uit;
 }
 
+/* Zakt het oordeel doordat het pak open was of warm heeft gestaan, dan hoort
+   daar een andere kop bij dan de kop die alleen over de datum ging. Sleutel:
+   van welke trede naar welke trede. */
+const VERVANG = {
+  warm: {
+    '0>1': { k:'warn', face:'\u{1F321}\uFE0F', titel:'Datum goed, behandeling niet', tekst:'De THT geldt voor vla die netjes koud heeft gestaan. Deze dus niet.' },
+    '0>2': { k:'bad',  face:'\u{1F9A0}', titel:'Te lang warm geweest', tekst:'De datum klopt nog prima. Daar heb je nu alleen niets meer aan.' },
+    '1>2': d => ({ k:'bad', face:'\u{2623}\uFE0F', titel:'Absoluut niet', tekst: d < 0
+      ? 'Over datum én te lang warm. Twee keer nee is nog steeds nee.'
+      : 'De datum redt het nog net. De behandeling niet, en die weegt zwaarder.' }),
+  },
+  open: {
+    '0>1': { k:'warn', face:'\u{1F4E6}', titel:'Open, en dat telt zwaarder', tekst:'Na openen zegt de THT niets meer. Dan telt de dag dat je hem opendeed, en die is inmiddels geweest.' },
+    '0>2': { k:'bad',  face:'\u{1F4E6}', titel:'Te lang open', tekst:'De datum op het pak klopt nog. Alleen geldt die voor een pak dat nog dicht zat.' },
+    '1>2': { k:'bad',  face:'\u{1F570}\uFE0F', titel:'Allang niet meer', tekst:'Over datum én dagenlang open. Die twee versterken elkaar, en niet in jouw voordeel.' },
+  },
+  beide: {
+    '0>2': { k:'bad', face:'\u{2623}\uFE0F', titel:'Open én warm geweest', tekst:'Elk van de twee was op zichzelf al genoeg. Samen valt er niets meer te overleggen.' },
+    '1>2': { k:'bad', face:'\u{2623}\uFE0F', titel:'Absoluut niet', tekst:'Over datum, open, én te warm. Dit is geen twijfelgeval meer.' },
+  },
+};
 function oordeel(d, open, uit, v){
   /* Een leeg pak kan niet bederven. De datum erop is echt, maar betekenisloos:
      er is niets meer om over datum te gaan. */
@@ -874,33 +1146,57 @@ function oordeel(d, open, uit, v){
   else if (d >= -365)r = { k:'bad', face:'\u{26B0}\uFE0F', titel:'Vla-archeologie',    tekst:'Maanden over datum. Open dit pak niet binnenshuis.' };
   else               r = { k:'bad', face:'\u{1F3DB}\uFE0F', titel:'Historisch materiaal', tekst:'Dit hoort in een museum, achter dik glas.' };
 
-  /* Buiten de koelkast gestaan? Dan zegt de datum steeds minder. */
-  const b = BUITEN[uit];
-  if (b && b.stap > 0){
+  /* Een open pak en een pak dat warm heeft gestaan zeggen allebei hetzelfde:
+     de datum op het pak is minder waard geworden. Samen duwen ze het oordeel
+     omlaag, nooit verder dan 'bad'. De kop noemt de zwaarste oorzaak. */
+  const o = OPEN[open], b = BUITEN[uit];
+  const zak = Math.min(2, (o ? o.stap : 0) + (b ? b.stap : 0));
+  if (zak > 0){
     const rang = { ok:0, warn:1, bad:2 }[r.k];
-    const na = Math.min(2, rang + b.stap);
-    if (na === 1 && rang === 0)
-      r = { k:'warn', face:'\u{1F321}\uFE0F', titel:'Datum goed, behandeling niet', tekst:'De THT geldt voor vla die netjes koud heeft gestaan. Deze dus niet.' };
-    else if (na === 2 && rang === 0)
-      r = { k:'bad', face:'\u{1F9A0}', titel:'Te lang warm geweest', tekst:'De datum klopt nog prima. Daar heb je nu alleen niets meer aan.' };
-    else if (na === 2 && rang === 1)
-      r = { k:'bad', face:'\u{2623}\uFE0F', titel:'Absoluut niet', tekst: d < 0
-        ? 'Over datum én te lang warm. Twee keer nee is nog steeds nee.'
-        : 'De datum redt het nog net. De behandeling niet, en die weegt zwaarder.' };
+    const na = Math.min(2, rang + zak);
+    if (na > rang){
+      const oorzaak = (o && o.stap && b && b.stap) ? 'beide' : (o && o.stap) ? 'open' : 'warm';
+      const vervang = VERVANG[oorzaak][rang + '>' + na];
+      r = vervang ? (typeof vervang === 'function' ? vervang(d) : vervang)
+                  : { ...r, k: ['ok','warn','bad'][na] };
+    }
+  }
+
+  /* En dan je eigen zintuigen. Die krijgen het laatste woord, want zij hebben
+     het pak gezien en de kalender niet. */
+  const z = zintuigOordeel(zint);
+  if (z){
+    if (z.ja.length){
+      r = zintuigVerdict(z, r);
+    } else if (z.schoon && ruiktestTelt(d, uit)){
+      if (r.k === 'warn')
+        r = { k:'ok', face:'\u{1F44C}', titel:'Goedgekeurd door je eigen neus', tekst:'De datum was niet overtuigend, jij wel. Neem een klein slokje: prikkelt het niet, dan is het gewoon vla.' };
+      else if (r.k === 'bad')
+        r = { k:'warn', face:'\u{1F928}', titel:'Beter dan de datum belooft', tekst:'Niets aan te zien, niets aan te ruiken. Dat is geen vrijbrief, dat is uitstel.' };
+    }
   }
 
   /* Belangrijkste eerst. De bovengrens is ruim; hij is er alleen zodat
      een open, warme, stokoude vla geen scrollbare preek oplevert. */
   const tips = [];
   if (v.zelf) tips.push(['\u{1F5D3}\uFE0F', `Op deze vla staat geen houdbaarheidsdatum. We rekenen ${v.zelf.dagen} ${v.zelf.dagen === 1 ? 'dag' : 'dagen'} vanaf de datum die je invulde.`]);
+  if (o) tips.push(['\u{1F4E6}', o.tip]);
   if (b) tips.push(['\u{1F321}\uFE0F', b.tip]);
-  if (d < 0) tips.push(['\u{1F443}', 'Ruiktest: zuur, gistig of "interessant" = weggooien.']);
-  else if (!b) tips.push(['\u{1F95B}', 'Bewaar bij 4\u20137 \u00B0C. Niet in de deur, want die staat de halve dag open.']);
+  /* Heb je de ruiktest gedaan, dan is de algemene "ruik er eens aan" overbodig. */
+  if (z && z.schoon && ruiktestTelt(d, uit))
+    tips.push(['\u{1F44C}', 'Ruiktest doorstaan: geen bol pak, geen vreemde lucht, geen klontjes, de goede kleur.']);
+  else if (z && z.schoon)
+    tips.push(['\u{1F9A0}', b && b.stap >= 2
+      ? 'Wat je ruikt is bederf. Waar je na een nacht op het aanrecht bang voor moet zijn, ruikt nergens naar.'
+      : 'Zo ver over datum is je neus niet meer het juiste meetinstrument. De kalender telt hier zwaarder.']);
+  else if (z && !z.compleet)
+    tips.push(['\u{1F9EA}', `Je hebt ${z.aantal} van de ${ZINTUIGEN.length} vragen beantwoord. Wat je overslaat, telt niet mee.`]);
+  else if (!z && d < 0) tips.push(['\u{1F443}', 'Ruiktest: zuur, gistig of "interessant" = weggooien.']);
+  else if (!z && !b) tips.push(['\u{1F95B}', 'Bewaar bij 4\u20137 \u00B0C. Niet in de deur, want die staat de halve dag open.']);
   tips.push(...vlaTips(v));
-  if (open) tips.push(['\u{1F4E6}', 'Open pak? Dan telt de THT niet meer. Reken op 2\u20133 dagen na openen, en niet meer dan dat.']);
   if (v.nietVla) tips.push(['\u{1F928}', 'Kleine kanttekening: dit is strikt genomen een toetje, geen vla. Wij beoordelen het toch, want wij zijn ruimdenkend.']);
   if (v.mysterie) tips.push(['\u{1F575}\uFE0F', 'Een pak zonder etiket is per definitie verdacht. Vla hoort niet anoniem te zijn.']);
-  if (d < 0) tips.push(['\u{1F440}', 'Kijktest: bolle verpakking, klontjes of kleurtjes die er niet horen? Niet openen boven je gezicht.']);
+  if (!z && d < 0) tips.push(['\u{1F440}', 'Kijktest: bolle verpakking, klontjes of kleurtjes die er niet horen? Niet openen boven je gezicht.']);
   if (d < -7) tips.push(['\u{1F6AE}', 'Serieus: bij zuivel zo ver over datum is de gootsteen de beste smaakmaker.']);
   if (d >= 0) tips.push(['\u{1F944}', 'Vlaflip maken mag altijd: vla, yoghurt, een scheut limonadesiroop.']);
   return { ...r, tips: tips.slice(0, 6) };
@@ -909,6 +1205,13 @@ function oordeel(d, open, uit, v){
 document.getElementById('warm').onchange = e => {
   document.getElementById('warmhoelang').hidden = !e.target.checked;
 };
+document.getElementById('open').onchange = e => {
+  document.getElementById('openwanneer').hidden = !e.target.checked;
+};
+/* '' als het pak dicht is, anders de sleutel uit OPEN. */
+function openKeuze(){
+  return document.getElementById('open').checked ? document.getElementById('sinds').value : '';
+}
 /* De ingevulde datum is bij de meeste vla's de THT, maar bij een vla zonder
    etiket de dag van maken. Eén plek die dat verschil kent, zodat stap 3 en de
    koelkastlijst nooit uit elkaar kunnen lopen. */
@@ -920,7 +1223,10 @@ function effectieveTht(v, invoer){
 function dagenTot(v, invoer, peil){
   return Math.round((effectieveTht(v, invoer) - peil) / 86400000);
 }
-function bereken(){
+/* `stil` betekent: we staan al op stap 3 en rekenen alleen opnieuw door,
+   bijvoorbeeld omdat er een vraag van de ruiktest is beantwoord. Dan niet
+   opnieuw naar boven springen en niet opnieuw confetti gooien. */
+function bereken(opt){
   const inp = document.getElementById('datum');
   if (!inp.value){
     inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
@@ -928,11 +1234,10 @@ function bereken(){
     inp.focus();
     return;
   }
-  const open = document.getElementById('open').checked;
   const uit = document.getElementById('warm').checked ? document.getElementById('uit').value : '';
   const peil = middernacht(peildatum || new Date());
   laatstePeil = isoDag(peil);
-  toon(dagenTot(gekozen, inp.value, peil), open, uit);
+  toon(dagenTot(gekozen, inp.value, peil), openKeuze(), uit, opt);
 }
 document.getElementById('checkBtn').onclick = () => { peildatum = null; bereken(); };
 document.getElementById('datum').addEventListener('keydown', e => {
@@ -947,6 +1252,7 @@ let dierNaam = '';      /* de naam die je je bedorven vla hebt gegeven */
 let laatsteOordeelHuisdier = false;
 let naamUitLink = false;   /* een naam uit een gedeelde link is van de afzender, niet van jou */
 let klokTimer = null;
+let vorigeK = '';          /* het vorige oordeel, om confetti niet te herhalen */
 
 function middernacht(dt){ const x = new Date(dt); x.setHours(0,0,0,0); return x; }
 function isoDag(dt){
@@ -978,30 +1284,46 @@ function bonnetje(d, open, uit, v){
     rijen.push({ wat, nr: Math.round(na - score) });
     score = na;
   };
-  if (open) aftrek('Het pak was al open', 22);
+  const bij = (wat, punten) => {
+    const na = Math.min(100, score + punten);
+    rijen.push({ wat, nr: Math.round(na - score), plus: true });
+    score = na;
+  };
+  if (OPEN[open]) aftrek('Open: ' + OPEN[open].label, OPEN[open].straf);
   if (BUITEN[uit] && BUITEN[uit].straf){
     const l = BUITEN[uit].zin;
     aftrek(l[0].toUpperCase() + l.slice(1) + ' buiten de koelkast', BUITEN[uit].straf);
+  }
+  /* De ruiktest rekent mee zodra je hem gedaan hebt — omlaag per rood vlaggetje,
+     en omhoog als er niets aan te merken viel. */
+  const z = zintuigOordeel(zint);
+  if (z){
+    z.ja.forEach(x => aftrek(x.bon, x.straf));
+    if (z.schoon && ruiktestTelt(d, uit)) bij('De ruiktest doorstaan', 12);
   }
   return { rijen, totaal: Math.round(score), geknepen };
 }
 function toonBon(bon){
   const el = document.getElementById('bon');
   el.innerHTML = bon.rijen.map(r =>
-    `<div class="r"><span class="wat">${esc(r.wat)}</span><span class="punt"></span><span class="nr">${r.nr > 0 ? r.nr : r.nr === 0 ? '0' : '\u2212' + Math.abs(r.nr)}</span></div>`
+    `<div class="r"><span class="wat">${esc(r.wat)}</span><span class="punt"></span><span class="nr">${r.nr === 0 ? '0' : r.nr > 0 ? (r.plus ? '+' : '') + r.nr : '\u2212' + Math.abs(r.nr)}</span></div>`
   ).join('') +
   `<div class="r tot"><span class="wat">Vla-score</span><span class="punt"></span><span class="nr">${bon.totaal}</span></div>` +
   (bon.geknepen ? '<p class="klem">Lager dan 1 bestaat niet. De aftrek kon dus niet volledig aankomen.</p>' : '');
 }
 
-function toon(d, open, uit){
+function toon(d, open, uit, opt){
+  const stil = !!(opt && opt.stil);
   const v = gekozen;
   const o = oordeel(d, open, uit, v);
   const bon = bonnetje(d, open, uit, v);
   const score = bon.totaal;
 
-  document.getElementById('resultpack').innerHTML = pack(v);
-  document.getElementById('resultpack').classList.toggle('rot', o.k === 'bad');
+  /* Bij een stille herberekening laten we het pak staan, anders tuimelt hij
+     opnieuw bij elke vraag die je beantwoordt. */
+  const rp = document.getElementById('resultpack');
+  if (!stil) rp.innerHTML = pack(v);
+  rp.classList.toggle('rot', o.k === 'bad');
   document.getElementById('face').textContent = o.face;
   document.getElementById('t3').textContent = o.titel;
   document.getElementById('verdict').className = 'verdict ' + o.k;
@@ -1028,6 +1350,19 @@ function toon(d, open, uit){
   document.getElementById('score').textContent = `Vla-score: ${score}/100`;
   document.getElementById('advice').innerHTML = o.tips
     .map(t => `<li><span class="ic">${t[0]}</span><span>${esc(t[1])}</span></li>`).join('');
+
+  /* ---------- de ruiktest ---------- */
+  /* Een leeg pak valt niets aan te ruiken. */
+  document.getElementById('ruiktest').hidden = !!v.puzzel;
+  toonZintuigen();
+  const zn = Object.keys(zint).length;
+  document.getElementById('rtkop').textContent = zn
+    ? `De ruiktest \u2014 ${zn} van de ${ZINTUIGEN.length} beantwoord`
+    : 'Twijfel je nog? Doe de ruiktest';
+  const rtuit = document.getElementById('rtuit');
+  rtuit.hidden = !zn;
+  rtuit.className = 'rtuit ' + o.k;
+  rtuit.textContent = `${o.face} ${o.titel}`;
 
   /* Van wie is deze vla? */
   const vanwie = document.getElementById('vanwie');
@@ -1063,14 +1398,20 @@ function toon(d, open, uit){
   regels.push(o.titel.toUpperCase());
   regels.push('');
   regels.push(v.puzzel ? 'Er zit niets meer in.' : dagen);
-  if (open) regels.push('Het pak was al open.');
+  if (OPEN[open]) regels.push(OPEN[open].deel);
   if (BUITEN[uit]) regels.push(`Stond ${BUITEN[uit].zin} buiten de koelkast.`);
+  const zdeel = zintuigOordeel(zint);
+  if (zdeel && zdeel.ja.length) regels.push('Ruiktest: ' + zdeel.ja.map(x => x.zin).join(', ') + '.');
+  else if (zdeel && zdeel.schoon) regels.push('Ruiktest: niets aan te merken.');
   if (o.huisdier && dierNaam) regels.push(`Hij heet ${dierNaam}.`);
   regels.push(`Vla-score: ${score}/100`);
   laatsteTekst = regels.join('\n');
   try { history.replaceState(null, '', deelUrl()); } catch {}
-  ga(3);
-  if (o.k === 'ok') confetti(v);
+  if (!stil) ga(3);
+  /* Confetti bij een goede afloop, maar niet opnieuw bij elke vraag die je
+     beantwoordt: alleen als het oordeel net omsloeg naar goed. */
+  if (o.k === 'ok' && (!stil || vorigeK !== 'ok')) confetti(v);
+  vorigeK = o.k;
 }
 
 /* ============ AFTELKLOK ============ */
@@ -1095,6 +1436,46 @@ function startKlok(thtISO){
   klokTimer = setInterval(tik, 1000);
 }
 
+/* ============ DE RUIKTEST: BEDIENING ============ */
+const rtknop = document.getElementById('rtknop');
+const rtbody = document.getElementById('rtbody');
+document.getElementById('rtvragen').innerHTML = ZINTUIGEN.map(x => `
+  <div class="rtv" data-id="${x.id}">
+    <p class="vr">${esc(x.vraag)}</p>
+    <p class="hp">${esc(x.hulp)}</p>
+    <div class="jn">
+      <button type="button" data-a="ja">Ja</button>
+      <button type="button" data-a="nee">Nee</button>
+    </div>
+  </div>`).join('');
+
+function zetRuiktest(open){
+  rtbody.hidden = !open;
+  rtknop.classList.toggle('open', open);
+  rtknop.setAttribute('aria-expanded', String(open));
+}
+rtknop.onclick = () => zetRuiktest(rtbody.hidden);
+
+document.getElementById('rtvragen').addEventListener('click', e => {
+  const b = e.target.closest('button[data-a]');
+  if (!b) return;
+  const id = b.closest('.rtv').dataset.id, ja = b.dataset.a === 'ja';
+  /* Nog eens op hetzelfde antwoord tikken neemt het terug. */
+  if (zint[id] === ja) delete zint[id]; else zint[id] = ja;
+  bereken({ stil: true });
+});
+document.getElementById('rtwis').onclick = () => { zint = {}; bereken({ stil: true }); };
+
+function toonZintuigen(){
+  document.querySelectorAll('.rtv').forEach(el => {
+    const a = zint[el.dataset.id];
+    el.querySelectorAll('button[data-a]').forEach(b =>
+      b.classList.toggle('on', typeof a === 'boolean' && (b.dataset.a === 'ja') === a));
+    el.classList.toggle('rood', a === true);
+  });
+  document.getElementById('rtwis').hidden = !Object.keys(zint).length;
+}
+
 document.getElementById('bonknop').onclick = e => {
   const bon = document.getElementById('bon');
   bon.hidden = !bon.hidden;
@@ -1105,9 +1486,13 @@ document.getElementById('opnieuw').onclick = () => {
   document.getElementById('datum').value = '';
   datumBij();
   document.getElementById('open').checked = false;
+  document.getElementById('openwanneer').hidden = true;
+  document.getElementById('sinds').value = 'paar';
   document.getElementById('warm').checked = false;
   document.getElementById('warmhoelang').hidden = true;
   document.getElementById('uit').value = 'paar';
+  zint = {};
+  zetRuiktest(false);
   snelEl.querySelectorAll('button').forEach(x => x.classList.remove('on'));
   stopKlok();
   peildatum = null;
@@ -1183,16 +1568,49 @@ document.getElementById('deelnu').onclick = async () => {
 /* ============ DELEN VIA DE URL ============ */
 /* De uitslag past volledig in een link: welke vla, welke datum, en of het
    pak open was of buiten de koelkast heeft gestaan. */
+/* De ruiktest past in vier tekens, in de volgorde van ZINTUIGEN:
+   j = ja, n = nee, . = niet beantwoord. */
+function zintCode(){
+  const c = ZINTUIGEN.map(x => zint[x.id] === true ? 'j' : zint[x.id] === false ? 'n' : '.').join('');
+  return /[jn]/.test(c) ? c : '';
+}
+/* De twee keuzelijsten gaan als nummer de link in: 1 is de eerste optie, 2 de
+   tweede. Staat het vinkje uit, dan blijft de parameter gewoon weg — korter dan
+   een nul. De volgorde lezen we uit het keuzemenu zelf, zodat de nummers niet
+   kunnen gaan afwijken van wat je op het scherm ziet staan. */
+function opties(id){
+  return [...document.getElementById(id).options].map(o => o.value);
+}
+function nummer(id, keuze){
+  const i = opties(id).indexOf(keuze);
+  return i < 0 ? '' : String(i + 1);
+}
+/* Andersom, en met begrip voor hoe het vroeger in de link stond. */
+function keuzeUit(p, kort, lang, id, oud){
+  const nr = p.get(kort);
+  const lijst = opties(id);
+  if (nr !== null){
+    const i = Number(nr);
+    return Number.isInteger(i) && i >= 1 && i <= lijst.length ? lijst[i - 1] : '';
+  }
+  const w = p.get(lang);
+  if (w === null) return '';
+  if (w === '1' && oud) return oud;      /* van vóór de openingsdatum: alleen "open" */
+  return lijst.includes(w) ? w : '';
+}
+
 function deelUrl(){
   const u = new URL(location.href);
   u.search = ''; u.hash = '';
   u.searchParams.set('vla', slug(gekozen));
   u.searchParams.set('tht', document.getElementById('datum').value);
-  if (document.getElementById('open').checked) u.searchParams.set('open', '1');
-  if (document.getElementById('warm').checked) u.searchParams.set('uit', document.getElementById('uit').value);
+  if (openKeuze()) u.searchParams.set('o', nummer('sinds', openKeuze()));
+  if (document.getElementById('warm').checked) u.searchParams.set('u', nummer('uit', document.getElementById('uit').value));
   if (laatstePeil) u.searchParams.set('op', laatstePeil);
   if (deelNaam) u.searchParams.set('naam', deelNaam);
   if (dierNaam) u.searchParams.set('dier', dierNaam);
+  const z = zintCode();
+  if (z) u.searchParams.set('z', z);
   return u.toString();
 }
 function uitUrl(){
@@ -1207,9 +1625,24 @@ function uitUrl(){
   if (!/^\d{4}-\d{2}-\d{2}$/.test(tht || '')) return true;
   document.getElementById('datum').value = tht;
   datumBij();
-  document.getElementById('open').checked = p.get('open') === '1';
-  const uit = p.get('uit');
-  if (uit && BUITEN[uit]){
+  /* Oudere links zeiden alleen dát het pak open was, niet sinds wanneer. */
+  const opk = keuzeUit(p, 'o', 'open', 'sinds', 'paar');
+  /* Bij een vla die per definitie open is heeft stelVraag() dit al bepaald;
+     die laten we staan. De keuze uit de link nemen we wel over. */
+  if (!v.alOpen){
+    document.getElementById('open').checked = !!OPEN[opk];
+    document.getElementById('openwanneer').hidden = !OPEN[opk];
+  }
+  if (OPEN[opk]) document.getElementById('sinds').value = opk;
+  const zc = p.get('z') || '';
+  zint = {};
+  ZINTUIGEN.forEach((x, i) => {
+    if (zc[i] === 'j') zint[x.id] = true;
+    else if (zc[i] === 'n') zint[x.id] = false;
+  });
+  zetRuiktest(!!zintCode());
+  const uit = keuzeUit(p, 'u', 'uit', 'uit', '');
+  if (uit){
     document.getElementById('warm').checked = true;
     document.getElementById('warmhoelang').hidden = false;
     document.getElementById('uit').value = uit;

@@ -58,10 +58,10 @@ const VLAS = [
   {merk:'Provamel',soort:'Vanille (soja)',    groep:'Plantaardig', c1:'#f2ead6', c2:'#3f7d4a'},
 
   /* --- Bijzonder --- */
-  {merk:'Zelfgemaakt', soort:'Vla van oma',   groep:'Bijzonder',c1:'#ffeec2', c2:'#e0a94e', zelf:{vraag:'Wanneer heeft oma deze vla gemaakt?', hint:'Zelfgemaakte vla heeft geen etiket, dus rekenen we vanaf de pan. Wij houden drie dagen aan.', dagen:3}},
-  {merk:'Vlaflip', soort:'Vla met limonade',  groep:'Bijzonder',c1:'#ffd85e', c2:'#e8467f', split:true, zelf:{vraag:'Wanneer heb je de vlaflip gemaakt?', hint:'Een vlaflip erft de houdbaarheid van de vla eronder, maar niet de datum. Wij rekenen één dag.', dagen:1}},
-  {merk:'Met vel', soort:'Vla met een vel',   groep:'Bijzonder',c1:'#ffeec2', c2:'#c99a4e', zelf:{vraag:'Wanneer heb je dit pak opengemaakt?', hint:'Dat vel verraadt dat hij al even staat. Na openen rekenen we drie dagen.', dagen:3}},
-  {merk:'Eigen pan', soort:'Restjes vla',     groep:'Bijzonder',c1:'#f7e3b8', c2:'#c08a3a', zelf:{vraag:'Wanneer heb je gekookt?', hint:'Restjes in een pan houden het korter vol dan je hoopt. Wij rekenen twee dagen.', dagen:2}},
+  {merk:'Zelfgemaakt', soort:'Vla van oma',   groep:'Bijzonder',c1:'#ffeec2', c2:'#e0a94e', alOpen:true, zelf:{vraag:'Wanneer heeft oma deze vla gemaakt?', hint:'Zelfgemaakte vla heeft geen etiket, dus rekenen we vanaf de pan. Wij houden drie dagen aan.', dagen:3}},
+  {merk:'Vlaflip', soort:'Vla met limonade',  groep:'Bijzonder',c1:'#ffd85e', c2:'#e8467f', split:true, alOpen:true, zelf:{vraag:'Wanneer heb je de vlaflip gemaakt?', hint:'Een vlaflip erft de houdbaarheid van de vla eronder, maar niet de datum. Wij rekenen één dag.', dagen:1}},
+  {merk:'Met vel', soort:'Vla met een vel',   groep:'Bijzonder',c1:'#ffeec2', c2:'#c99a4e', alOpen:true, zelf:{vraag:'Wanneer heb je dit pak opengemaakt?', hint:'Dat vel verraadt dat hij al even staat. Na openen rekenen we drie dagen.', dagen:3}},
+  {merk:'Eigen pan', soort:'Restjes vla',     groep:'Bijzonder',c1:'#f7e3b8', c2:'#c08a3a', alOpen:true, zelf:{vraag:'Wanneer heb je gekookt?', hint:'Restjes in een pan houden het korter vol dan je hoopt. Wij rekenen twee dagen.', dagen:2}},
   {merk:'Custard', soort:'Engelse vla',       groep:'Bijzonder',c1:'#ffe9b0', c2:'#c0392b'},
   {merk:'Kantine', soort:'Vla van het werk',  groep:'Bijzonder',c1:'#efe6d2', c2:'#9a8f78', zelf:{vraag:'Wanneer stond hij er al?', hint:'Niemand weet wie deze vla heeft neergezet. Wij rekenen vanaf het moment dat jij hem zag.', dagen:2}},
   {merk:'Camping', soort:'Vla uit de koelbox',groep:'Bijzonder',c1:'#fdf0cf', c2:'#3f8f5f'},
@@ -73,8 +73,8 @@ const VLAS = [
   {merk:'Fristi',  soort:'Ook geen vla',      groep:'Bijzonder',c1:'#f2b8cf', c2:'#c0326b', nietVla:true},
   {merk:'Mona',    soort:'Toetje (geen vla)', groep:'Bijzonder',c1:'#f6e7d2', c2:'#b98a5e', nietVla:true},
   {merk:'Koelkast',soort:'Achterin gevonden', groep:'Bijzonder',c1:'#cfd6cd', c2:'#6f7a6b', mysterie:true, zelf:{vraag:'Wanneer zag je hem voor het eerst?', hint:'Achterin de koelkast bestaat geen tijd. Gok gerust, wij rekenen er twee dagen bij.', dagen:2}},
-  {merk:'Leeg pak', soort:'Puzzel erop',      groep:'Bijzonder',c1:'#f4f1e8', c2:'#cfc7b4', puzzel:true},
-  {merk:'Uitgeknepen', soort:'Laatste restje', groep:'Bijzonder',c1:'#f6e9cd', c2:'#c9a961', geknepen:true},
+  {merk:'Leeg pak', soort:'Puzzel erop',      groep:'Bijzonder',c1:'#f4f1e8', c2:'#cfc7b4', puzzel:true, alOpen:true},
+  {merk:'Uitgeknepen', soort:'Laatste restje', groep:'Bijzonder',c1:'#f6e9cd', c2:'#c9a961', geknepen:true, alOpen:true},
   {merk:'Onbekend',soort:'Vla zonder etiket', groep:'Bijzonder',c1:'#d8d2c8', c2:'#8d8478', mysterie:true, zelf:{vraag:'Wanneer kwam dit pak in huis?', hint:'Zonder etiket is elke datum een schatting. Wij rekenen er vier dagen bij en hopen er het beste van.', dagen:4}},
 ];
 
