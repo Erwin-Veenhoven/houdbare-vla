@@ -332,6 +332,7 @@ De overige drie (het vel, de koelkastdeur en THT versus TGT) staan in de [discla
 - **Vla van de dag.** Bovenaan staat elke dag een andere vla, vast gekoppeld aan de kalenderdag. Iedereen ziet dus dezelfde. Eén klik en hij staat klaar om door te rekenen.
 - **Feitje van de dag.** Staat bovenin naast de vla van de dag, in hetzelfde kaartje, op dezelfde manier aan de kalenderdag gekoppeld. Het linkt naar precies dat feitje in de scroller. Daarvoor laadt `index.html` ook `feitjes.js`.
 - **Snelknoppen bij de datum.** *Vorige maand* tot *volgende maand*, want een datumveld op een telefoon is geen pretje en de meeste vla's zitten toch in die marge.
+- **Koekje?** Eén keer per browser verschijnt onderin een melding die eruitziet als een cookiemelding en dat nadrukkelijk niet is: hij gaat over een echt koekje, bij de vla. Dat de site geen cookies gebruikt staat in de eerste zin, want een grap die je eerst verkeerd moet begrijpen is geen grap. Zeg je ja, dan doet de melding wat een echte nooit doet: eerlijk vertellen dat er nu niets gebeurt. Je antwoord gaat naar `localStorage`, dus hij komt niet terug.
 - **Aftelklok.** Is je vla nog goed, dan telt het scherm de seconden af tot de houdbaarheidsdatum. Volstrekt overbodig. Bij een gedeelde uitslag van een andere dag blijft hij weg, want dan zou hij het aantal dagen tegenspreken.
 
 ## Een vla toevoegen
@@ -371,7 +372,7 @@ Wat er bewust **niet** in staat: de deellinks met parameters (`?vla=…`, `?naam
 
 ## Techniek
 
-Zes bestanden: `index.html` (de checker), `quiz.html`, `feitjes.html`, `vla.js` met de gedeelde vlalijst en de paktekening, `feitjes.js` met de feitjes, en `kaart.js` dat van een uitslag een deelbaar plaatje maakt. Samen zo'n 165 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, geen banner die je vraagt of je cookies wilt. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
+Zes bestanden: `index.html` (de checker), `quiz.html`, `feitjes.html`, `vla.js` met de gedeelde vlalijst en de paktekening, `feitjes.js` met de feitjes, en `kaart.js` dat van een uitslag een deelbaar plaatje maakt. Samen zo'n 165 kB. Alle vlapakken zijn met de hand getekende SVG's, dus er zitten geen afbeeldingen in de repo. Verder: geen JavaScript-dependencies, geen tracking, geen cookies, en dus ook geen banner die je daar toestemming voor vraagt. De enige melding die erop lijkt gaat over een koekje. Licht en donker thema. Werkt op je telefoon terwijl je voor die koelkast staat, wat eerlijk gezegd de belangrijkste use case is.
 
 ## Disclaimer
 

@@ -398,6 +398,30 @@ label.fld{display:block;font-size:14px;font-weight:600;margin:0 0 8px}
 }
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
+/* ---------- het koekje ---------- */
+/* Ziet eruit als een cookiemelding en gedraagt zich er ook naar: hij komt
+   ongevraagd onder in beeld en vraagt iets waar niemand om gevraagd heeft.
+   Dat het niet over cookies gaat staat in de eerste zin, want een grap die
+   je eerst verkeerd moet begrijpen is geen grap maar een storing. */
+.koekje{
+  position:fixed;left:50%;transform:translateX(-50%);z-index:55;
+  /* viewport-fit=cover zet de pagina onder de streep van de iPhone door,
+     en daar moet geen knop onder verdwijnen. */
+  bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  width:min(420px,calc(100% - 32px));
+  background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px;
+  animation:koekjeop .35s cubic-bezier(.2,.8,.3,1) both;
+}
+.koekje[hidden]{display:none}
+@keyframes koekjeop{from{opacity:0;transform:translate(-50%,18px)}to{opacity:1;transform:translate(-50%,0)}}
+.koekje h3{font-family:Fredoka;font-weight:600;font-size:17px;margin:0 0 6px}
+.koekje p{margin:0;font-size:14px;line-height:1.55;color:var(--muted)}
+.koekje .klein{margin-top:9px;font-size:12px;line-height:1.5}
+.koekje .btnrow{display:grid;gap:10px;margin-top:16px}
+.koekje .btn{margin-top:0;font-size:15px;padding:12px}
+.koekje .kruimel{display:inline-block;animation:pop .5s cubic-bezier(.2,1.5,.4,1) both}
+
 .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
 .confetti i{position:absolute;top:-24px;width:9px;height:14px;border-radius:2px;opacity:.95;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
@@ -636,6 +660,26 @@ footer strong{color:var(--ink);font-weight:600}
     <p style="opacity:.75">Geen enkel zuivelmerk was betrokken bij deze website. De pakken zijn met de hand getekend en lijken alleen maar op vla omdat vla er nu eenmaal zo uitziet.</p>
   </footer>
 </div>
+
+<!-- Geen cookiemelding. Een koekjesmelding. -->
+<section class="koekje" id="koekje" hidden aria-label="Koekje bij de vla">
+  <div id="koekjevraag">
+    <h3>🍪 Koekje?</h3>
+    <p>Deze site gebruikt geen cookies. Dit gaat over een echt koekje, bij de vla.</p>
+    <p class="klein">Wat we wél bewaren: je koelkast, je thema, je naam en dit antwoord. In jouw browser, niet bij ons.</p>
+    <div class="btnrow">
+      <button class="btn" id="koekjeja">Ja, lekker</button>
+      <button class="btn ghost" id="koekjenee">Nee, alleen vla</button>
+    </div>
+  </div>
+  <div id="koekjedank" hidden>
+    <h3><span class="kruimel">🍪</span> Genoteerd</h3>
+    <p>Er gebeurt nu niets. Het koekje moet je zelf pakken.</p>
+    <div class="btnrow">
+      <button class="btn ghost" id="koekjeklaar">Logisch</button>
+    </div>
+  </div>
+</section>
 
 <div class="toast" id="toast"></div>
 
@@ -1896,6 +1940,43 @@ themeBtn.onclick = () => {
   pasThemeToe(nieuw);
   try { localStorage.setItem('vlatheme', nieuw); } catch {}
 };
+/* ---------- het koekje ---------- */
+/* De enige melding op deze site die op een cookiemelding lijkt. Hij vraagt
+   niets, hij volgt niets, en hij komt één keer: het antwoord gaat naar
+   localStorage, want daar zijn koekjes niet voor nodig.
+
+   Lukt opslaan niet, dan staat hij er de volgende keer gewoon weer. Dat is
+   nog steeds minder erg dan wat een echte cookiemelding doet. */
+const KOEKJE = 'vlakoekje';
+const koekje = document.getElementById('koekje');
+const koekjeVraag = document.getElementById('koekjevraag');
+const koekjeDank = document.getElementById('koekjedank');
+let koekjeT;
+function koekjeOnthoud(antwoord){
+  try { localStorage.setItem(KOEKJE, antwoord); } catch {}
+}
+/* Zeg je ja, dan doet de melding precies wat een echte cookiemelding nooit
+   doet: eerlijk zijn over wat er daarna gebeurt. Hij gaat vanzelf weg, want
+   niemand wil twee keer op iets klikken om van een koekje af te komen. */
+document.getElementById('koekjeja').onclick = () => {
+  koekjeOnthoud('ja');
+  koekjeVraag.hidden = true;
+  koekjeDank.hidden = false;
+  koekjeT = setTimeout(() => { koekje.hidden = true; }, 5200);
+};
+document.getElementById('koekjeklaar').onclick = () => {
+  clearTimeout(koekjeT);
+  koekje.hidden = true;
+};
+document.getElementById('koekjenee').onclick = () => {
+  koekjeOnthoud('nee');
+  koekje.hidden = true;
+  toast('Ook goed. Dan houden we het bij vla \u{1F44D}');
+};
+let koekjeGevraagd = false;
+try { koekjeGevraagd = !!localStorage.getItem(KOEKJE); } catch {}
+if (!koekjeGevraagd) setTimeout(() => { koekje.hidden = false; }, 1400);
+
 /* ---------- feitje van de dag ---------- */
 /* Vast aan de kalenderdag, net als de vla van de dag. Staat ernaast bovenin
    en linkt naar precies dat feitje in de scroller. */
